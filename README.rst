@@ -66,6 +66,9 @@ Add a software collection to your site, then to that add software projects.
 For software projects, you can provide a date, which you will need to
 manually keep up to date. Or, you can provide a json_url instead of a date
 and the update date for the project will be gathered from a json source.
+
+Out-of-the-box, kotti_software works for Python-based projects.
+
 The examples working so far are:
 
 pypi
@@ -90,6 +93,24 @@ json_url = "https://raw.github.com/geojeff/kotti_fruits_example/master/json"
 
 You will need to copy the json from pypi and follow that format, as it is
 used as the basis for kotti_software project data.
+
+bitbucket
+---------
+
+[TODO] One possibility is to get the tags via the REST API, with something
+like:
+
+json_url = https://api.bitbucket.org/1.0/repositories/pypy/pypy/tags"
+
+and in the kotti_software code:
+
+json_raw = urllib2.urlopen(json_url).read()
+
+... code to try for update_time in json
+
+if not update_time_found:
+    json_obj = json.loads(json_raw)
+    json_obj['tip']['utctimestamp']
 
 .. _Find out more about Kotti: http://pypi.python.org/pypi/Kotti
 .. _Kotti documentation about the asset_overrides setting: http://kotti.readthedocs.org/en/latest/configuration.html?highlight=asset#adjust-the-look-feel-kotti-asset-overrides
