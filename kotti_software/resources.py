@@ -59,7 +59,7 @@ class SoftwareProject(Document):
             json_raw = urllib2.urlopen(self.json_url).read()
             json_obj = json.loads(json_raw)
 
-            if json_obj and len(json_obj['urls']) > 0 and
+            if json_obj and len(json_obj['urls']) > 0 and \
                     'upload_time' in json_obj['urls'][0]:
                 upload_time_string = \
                         json_obj['urls'][0]['upload_time']
