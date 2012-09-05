@@ -1,0 +1,9 @@
+.softwarecollection-view .softwareproject {
+    margin-top: 2em;
+}
+.softwareproject-view h1,
+.softwarecollection-view .softwareproject h2 {
+    border-top: 1px solid black;
+    margin-top: 0.75em;
+    padding-top: 0.5em;
+}

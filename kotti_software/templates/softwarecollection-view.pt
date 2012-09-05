@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="en"
+      i18n:domain="kotti_software"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      metal:use-macro="api.macro('kotti:templates/view/master.pt')">
+
+  <article metal:fill-slot="content" class="softwarecollection-view content">
+
+    <h1>${api.context.title}</h1>
+    <p class="description">
+      ${api.context.description}
+    </p>
+    <p class="body">
+      ${structure: api.context.body}
+    </p>
+
+    <div tal:condition="items" class="softwareprojects">
+      <div tal:repeat="item items" class="softwareproject" data-uri="${api.url(item)}">
+        <span class="date" tal:content="item.formatted_date" />
+        <h2>
+          <a href="${api.url(item)}" title="${item.description}" tal:omit-tag="not: settings['link_headline_overview']">
+            ${item.title}
+          </a>
+        </h2>
+        <p>${structure: item.body}</p>
+      </div>
+    </div>
+
+   <tal:pagination tal:condition="settings['use_batching']"
+                   metal:use-macro="macros.macros['pagination']" />
+
+  </article>
+</html>
