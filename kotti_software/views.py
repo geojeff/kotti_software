@@ -76,14 +76,17 @@ def add_softwareproject(context, request):
 def view_softwareproject(context, request):
     json_obj = None
 
-    if context.json_url:
-        json_raw = urllib2.urlopen(context.json_url).read()
-        json_obj = json.loads(json_raw)
+    # [TODO] Expensive: ?
+    context.refresh_date()
 
-    if json_obj:
-        upload_time = datetime.datetime.strptime(json_obj['urls'][0]['upload_time'],
-                                                 "%Y-%m-%dT%H:%M:%S")
-        context.formatted_date = format_date(upload_time)
+#    if context.json_url:
+#        json_raw = urllib2.urlopen(context.json_url).read()
+#        json_obj = json.loads(json_raw)
+#
+#    if json_obj:
+#        upload_time = datetime.datetime.strptime(json_obj['urls'][0]['upload_time'],
+#                                                 "%Y-%m-%dT%H:%M:%S")
+#        context.formatted_date = format_date(upload_time)
 
     return {}
 
@@ -94,6 +97,10 @@ def view_softwarecollection(context, request):
     session = DBSession()
     query = session.query(SoftwareProject).filter(\
                 SoftwareProject.parent_id == context.id).order_by(SoftwareProject.date.desc())
+    # [TODO] Expensive: ?
+    items = query.all()
+    [item.refresh_date() for item in items]
+    query.order_by(SoftwareProject.date.desc())
     items = query.all()
     page = request.params.get('page', 1)
     if settings['use_batching']:

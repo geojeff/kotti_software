@@ -55,7 +55,11 @@ class SoftwareProject(Document):
         super(SoftwareProject, self).__init__(**kwargs)
         self.date = date
         self.json_url = json_url
-        if self.date is None and self.json_url:
+        if self.date is None:
+            self.refresh_date()
+
+    def refresh_date(self):
+        if self.json_url:
             json_raw = urllib2.urlopen(self.json_url).read()
             json_obj = json.loads(json_raw)
 
