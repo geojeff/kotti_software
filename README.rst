@@ -59,6 +59,38 @@ same as in ``kotti_software``.
 
 Be warned: This addon is in alpha state. Use it at your own risk.
 
+Using kotti_software
+====================
+
+Add a software collection to your site, then to that add software projects.
+For software projects, you can provide a date, which you will need to
+manually keep up to date. Or, you can provide a json_url instead of a date
+and the update date for the project will be gathered from a json source.
+The examples working so far are:
+
+pypi
+----
+
+Pass json_url of the form "http://pypi.python.org/pypi/{project name}/json",
+where {project name} is the case-sensitive name of the project on pypi. For
+example, for Kotti the url would be "http://pypi.python.org/pypi/Kotti/json".
+
+See http://pypi.python.org/pypi/Kotti/json to see the json that is parsed.
+The date is taken from urls[0]['update_time'].
+
+[TODO] What else should be parsed for a project?
+
+github
+------
+
+As an alternative to pypi, if your project is not posted there, you may put
+a json file somewhere in your repo, and access it with the raw url, as in:
+
+json_url = "https://raw.github.com/geojeff/kotti_fruits_example/master/json"
+
+You will need to copy the json from pypi and follow that format, as it is
+used as the basis for kotti_software project data.
+
 .. _Find out more about Kotti: http://pypi.python.org/pypi/Kotti
 .. _Kotti documentation about the asset_overrides setting: http://kotti.readthedocs.org/en/latest/configuration.html?highlight=asset#adjust-the-look-feel-kotti-asset-overrides
 
