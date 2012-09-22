@@ -44,13 +44,13 @@ class SoftwareProject(Document):
     id = Column(Integer, ForeignKey('documents.id'), primary_key=True)
 
     description_handling_choice = 'use_entered'
-    #  others: ('use_json_summary', 'use_json_description')
+    #  other choices: ('use_json_summary', 'use_json_description')
 
     json_url = Column('json_url', String())
 
     date = Column('date', UTCDateTime())
     date_handling_choice = 'use_json_date'
-    #  others: ('use_entered', 'use_now')
+    #  other choices: ('use_entered', 'use_now')
 
     home_page_url = Column('home_page_url', String())
     docs_url = Column('docs_url', String())
@@ -140,11 +140,11 @@ class SoftwareProject(Document):
                             self.formatted_date = format_date(self.date)
 
                 if 'info' in json_obj:
-                    if self.overwrite_package_url:
-                        if 'package_url' in json_obj['info']:
-                            package_url = json_obj['info']['package_url']
-                            if package_url:
-                                self.package_url = package_url
+                    if self.overwrite_home_page_url:
+                        if 'home_page' in json_obj['info']:
+                            home_page_url = json_obj['info']['home_page']
+                            if home_page_url:
+                                self.home_page_url = home_page_url
 
                     if self.overwrite_docs_url:
                         if 'docs_url' in json_obj['info']:
@@ -152,25 +152,24 @@ class SoftwareProject(Document):
                             if docs_url:
                                 self.docs_url = docs_url
 
+                    if self.overwrite_package_url:
+                        if 'package_url' in json_obj['info']:
+                            package_url = json_obj['info']['package_url']
+                            if package_url:
+                                self.package_url = package_url
+
                     if self.overwrite_bugtrack_url:
                         if 'bugtrack_url' in json_obj['info']:
                             bugtrack_url = json_obj['info']['bugtrack_url']
                             if bugtrack_url:
                                 self.bugtrack_url = bugtrack_url
 
-                    if self.overwrite_home_page_url:
-                        if 'home_page' in json_obj['info']:
-                            home_page_url = json_obj['info']['home_page']
-                            if home_page_url:
-                                self.home_page_url = home_page_url
-
                     if self.description_handling_choice == 'use_json_summary':
                         if 'summary' in json_obj['info']:
                             summary = json_obj['info']['summary']
                             if summary:
                                 self.description = summary
-
-                    if self.description_handling_choice == 'use_json_description':
+                    elif self.description_handling_choice == 'use_json_description':
                         if 'description' in json_obj['info']:
                             description = json_obj['info']['description']
                             if description:
