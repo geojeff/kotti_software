@@ -89,7 +89,8 @@ somewhere, then enter that URL.
             "docs_url": "http://packages.python.org/Kotti", 
             "package_url": "http://pypi.python.org/pypi/Kotti", 
             "bugtrack_url": "", 
-            "home_page": "http://kotti.pylonsproject.org"
+            "home_page": "http://kotti.pylonsproject.org",
+            "summary": "Kotti is a high-level, 'Pythonic' framework..."
         }, 
         "urls": [ { "upload_time": "2012-08-30T11:59:58", } ]
     }
@@ -106,6 +107,10 @@ format above for creating a custom JSON data structure for each project.
 If you need to customize kotti_software itself, the urls are accessed as
 json_obj['info']['docs_url'], and the upload_time is accessed as
 json_obj['urls'][0]['upload_time'].
+
+If the description is entered manually, it is used, but if left blank, and the
+"summary" item in the JSON data is not empty, the summary is used as the
+description.
 
 **Instructions for common JSON sources:**
 
