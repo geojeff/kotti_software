@@ -24,8 +24,8 @@
           </a>
         </h2>
         <ul class="nav nav-pills">
-            <li tal:condition="item.home_page" class="active">
-              <a href="${item.home_page}" title="${item.home_page}">
+            <li tal:condition="item.home_page_url" class="active">
+              <a href="${item.home_page_url}" title="${item.home_page_url}">
                 Home Page
               </a>
             </li>

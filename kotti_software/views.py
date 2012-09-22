@@ -5,6 +5,8 @@ from dateutil.tz import tzutc
 from plone.batching import Batch
 from pyramid.renderers import get_renderer
 import colander
+from deform.widget import SelectWidget
+from deform.widget import CheckboxWidget
 from deform.widget import DateTimeInputWidget
 
 from kotti import DBSession
@@ -44,12 +46,29 @@ class SoftwareProjectSchema(DocumentSchema):
     # [TODO] Dress up the form, to reflect ways to use (Or post this as label):
     #
     #            1) enter the JSON url only (normal JSON-fetched)
-    #            2) enter the date and any of: home_page, docs_url,
+    #            2) enter the date and any of: home_page_url, docs_url,
     #               package_url, bugtrack_url (Manual entry)
     #            3) enter the date only (bare-bones entry, with just date and
     #               title, and whatever is in body -- useful for defunct
     #               projects)
     #
+    choices = (
+        ('', '- Select -'),
+        ('use_entered', 'Used entered description (can be blank)'),
+        ('use_json_summary', 'Use summary in JSON data'),
+        ('use_json_description', 'Use description in JSON data'))
+    description_handling_choice = colander.SchemaNode(
+        colander.String(),
+        default='use_entered',
+        missing='use_entered',
+        title=_(u'Description Handling'),
+        widget=SelectWidget(values=choices))
+    json_url = colander.SchemaNode(
+        colander.String(),
+        title=_(u'JSON URL'),
+        description=_(u'Enter unless doing a manual entry.'),
+        missing=_(''),)
+
     date = colander.SchemaNode(
         colander.DateTime(),
         title=_(u'Date'),
@@ -59,37 +78,65 @@ class SoftwareProjectSchema(DocumentSchema):
             min_err=_('${val} is earlier than earliest datetime ${min}')),
         widget=DateTimeInputWidget(),
         missing=deferred_date_missing,)
-    json_url = colander.SchemaNode(
+    choices = (
+        ('', '- Select -'),
+        ('use_entered', 'Used entered date'),
+        ('use_json_date', 'Use date in JSON data'),
+        ('use_now', 'Use the current date'))
+    date_handling_choice = colander.SchemaNode(
         colander.String(),
-        title=_(u'JSON URL'),
-        description=_(u'Enter unless doing a manual entry.'),
-        missing=_(''),)
-    # [TODO] Make a normal python property?
-    date_from_json = colander.SchemaNode(
-        colander.DateTime(),
-        title=_(u'Date from JSON'),
-        description=_(u'Leave blank. Will be fetched from JSON URL.'),
-        missing=_(''),)
-    home_page = colander.SchemaNode(
+        default='use_json_date',
+        title=_(u'Date Handling'),
+        widget=SelectWidget(values=choices))
+
+    home_page_url = colander.SchemaNode(
         colander.String(),
         title=_(u'Home Page URL'),
         description=_(u'Leave blank usually, and the URL will be fetched. Enter if doing a manual entry.'),
         missing=_(''),)
+    overwrite_home_page_url = colander.SchemaNode(
+        colander.Boolean(),
+        description='Overwrite home page from JSON',
+        default=True,
+        missing=True,
+        widget=CheckboxWidget(),
+        title='')
     docs_url = colander.SchemaNode(
         colander.String(),
         title=_(u'Docs URL'),
         description=_(u'Leave blank usually, and the URL will be fetched. Enter if doing a manual entry.'),
         missing=_(''),)
+    overwrite_docs_url = colander.SchemaNode(
+        colander.Boolean(),
+        description='Overwrite docs URL from JSON',
+        default=True,
+        missing=True,
+        widget=CheckboxWidget(),
+        title='')
     package_url = colander.SchemaNode(
         colander.String(),
         title=_(u'Download URL'),
         description=_(u'Leave blank usually, and the URL will be fetched. Enter if doing a manual entry.'),
         missing=_(''),)
+    overwrite_package_url = colander.SchemaNode(
+        colander.Boolean(),
+        description='Overwrite package URL from JSON',
+        default=True,
+        missing=True,
+        widget=CheckboxWidget(),
+        title='')
     bugtrack_url = colander.SchemaNode(
         colander.String(),
         title=_(u'Bugtracker URL'),
         description=_(u'Leave blank usually, and the URL will be fetched. Enter if doing a manual entry.'),
         missing=_(''),)
+    overwrite_bugtrack_url = colander.SchemaNode(
+        colander.Boolean(),
+        description='Overwrite bugtracker URL from JSON',
+        default=True,
+        missing=True,
+        widget=CheckboxWidget(),
+        title='')
 
 
 @ensure_view_selector
