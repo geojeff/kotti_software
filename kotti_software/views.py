@@ -43,15 +43,7 @@ def deferred_date_missing(node, kw):
 
 
 class SoftwareProjectSchema(DocumentSchema):
-    # [TODO] Dress up the form, to reflect ways to use (Or post this as label):
-    #
-    #            1) enter the JSON url only (normal JSON-fetched)
-    #            2) enter the date and any of: home_page_url, docs_url,
-    #               package_url, bugtrack_url (Manual entry)
-    #            3) enter the date only (bare-bones entry, with just date and
-    #               title, and whatever is in body -- useful for defunct
-    #               projects)
-    #
+
     choices = (
         ('', '- Select -'),
         ('use_entered', 'Used entered description (can be blank)'),
@@ -63,6 +55,7 @@ class SoftwareProjectSchema(DocumentSchema):
         missing='use_entered',
         title=_(u'Description Handling'),
         widget=SelectWidget(values=choices))
+
     json_url = colander.SchemaNode(
         colander.String(),
         title=_(u'JSON URL'),
@@ -101,6 +94,7 @@ class SoftwareProjectSchema(DocumentSchema):
         missing=True,
         widget=CheckboxWidget(),
         title='')
+
     docs_url = colander.SchemaNode(
         colander.String(),
         title=_(u'Docs URL'),
@@ -113,6 +107,7 @@ class SoftwareProjectSchema(DocumentSchema):
         missing=True,
         widget=CheckboxWidget(),
         title='')
+
     package_url = colander.SchemaNode(
         colander.String(),
         title=_(u'Download URL'),
@@ -125,6 +120,7 @@ class SoftwareProjectSchema(DocumentSchema):
         missing=True,
         widget=CheckboxWidget(),
         title='')
+
     bugtrack_url = colander.SchemaNode(
         colander.String(),
         title=_(u'Bugtracker URL'),
@@ -163,10 +159,7 @@ def view_softwareproject(context, request):
     # [TODO] Expensive: ? 
     context.refresh_json()
 
-    if context.date_from_json is None:
-        context.formatted_date = format_date(context.date)
-    else:
-        context.formatted_date = format_date(context.date_from_json)
+    context.formatted_date = format_date(context.date)
 
     return {}
 
@@ -177,8 +170,8 @@ def view_softwarecollection(context, request):
     session = DBSession()
     query = session.query(SoftwareProject).filter(\
                 SoftwareProject.parent_id == context.id).order_by(SoftwareProject.date.desc())
-    # [TODO] Expensive: ?
     items = query.all()
+    # [TODO] Expensive: ?
     [item.refresh_json() for item in items]
     query.order_by(SoftwareProject.date.desc())
     items = query.all()
@@ -189,10 +182,7 @@ def view_softwarecollection(context, request):
                       pagenumber=int(page))
 
     for item in items:
-        if item.date_from_json is None:
-            item.formatted_date = format_date(item.date)
-        else:
-            item.formatted_date = format_date(item.date_from_json)
+        item.formatted_date = format_date(item.date)
 
     return {
         'api': template_api(context, request),

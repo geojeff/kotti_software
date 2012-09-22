@@ -43,15 +43,14 @@ class SoftwareCollection(Document):
 class SoftwareProject(Document):
     id = Column(Integer, ForeignKey('documents.id'), primary_key=True)
 
-    json_url = Column('json_url', String())
-
     description_handling_choice = 'use_entered'
     #  others: ('use_json_summary', 'use_json_description')
+
+    json_url = Column('json_url', String())
 
     date = Column('date', UTCDateTime())
     date_handling_choice = 'use_json_date'
     #  others: ('use_entered', 'use_now')
-    date_from_json = Column('date_from_json', UTCDateTime())
 
     home_page_url = Column('home_page_url', String())
     docs_url = Column('docs_url', String())
@@ -70,8 +69,9 @@ class SoftwareProject(Document):
         addable_to=[u'SoftwareCollection'],
         )
 
-    def __init__(self, json_url='', 
+    def __init__(self,
                  description_handling_choice='use_entered',
+                 json_url='', 
                  date=None,
                  date_handling_choice='use_json_date',
                  home_page_url='',
@@ -85,6 +85,8 @@ class SoftwareProject(Document):
                  **kwargs):
         super(SoftwareProject, self).__init__(**kwargs)
 
+        self.description_handling_choice = description_handling_choice
+
         self.json_url = json_url
 
         # The choices for date_handling_choice, 'use_now' and 'use_entered'
@@ -96,7 +98,9 @@ class SoftwareProject(Document):
         # Otherwise, the date will be fetched from JSON.
         #
         self.date = date
+
         self.date_handling_choice = date_handling_choice
+
         self.home_page_url = home_page_url
         self.docs_url = docs_url
         self.package_url = package_url
@@ -124,7 +128,7 @@ class SoftwareProject(Document):
                             upload_time = \
                                 datetime.datetime.strptime(upload_time_string,
                                                            "%Y-%m-%dT%H:%M:%S")
-                            self.date_from_json = \
+                            self.date = \
                                 datetime.datetime(upload_time.year,
                                                   upload_time.month,
                                                   upload_time.day,
@@ -133,7 +137,7 @@ class SoftwareProject(Document):
                                                   upload_time.second,
                                                   upload_time.microsecond,
                                                   tzinfo=tzutc())
-                            self.formatted_date = format_date(self.date_from_json)
+                            self.formatted_date = format_date(self.date)
 
                 if 'info' in json_obj:
                     if self.overwrite_package_url:
