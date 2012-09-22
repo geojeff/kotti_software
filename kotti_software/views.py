@@ -41,18 +41,55 @@ def deferred_date_missing(node, kw):
 
 
 class SoftwareProjectSchema(DocumentSchema):
+    # [TODO] Dress up the form, to reflect ways to use (Or post this as label):
+    #
+    #            1) enter the JSON url only (normal JSON-fetched)
+    #            2) enter the date and any of: home_page, docs_url,
+    #               package_url, bugtrack_url (Manual entry)
+    #            3) enter the date only (bare-bones entry, with just date and
+    #               title, and whatever is in body -- useful for defunct
+    #               projects)
+    #
     date = colander.SchemaNode(
         colander.DateTime(),
         title=_(u'Date'),
-        description=_(u'Choose date of the software project. '\
-                      u'If you leave this empty the creation date is used.'),
+        description=_(u'Enter for a manual entry. Leave blank to use the creation date or the JSON-fetched date.'),
         validator=colander.Range(
             min=datetime.datetime(2012, 1, 1, 0, 0, tzinfo=colander.iso8601.Utc()),
             min_err=_('${val} is earlier than earliest datetime ${min}')),
         widget=DateTimeInputWidget(),
-        missing=deferred_date_missing,
-    )
-    json_url = colander.SchemaNode(colander.String())
+        missing=deferred_date_missing,)
+    json_url = colander.SchemaNode(
+        colander.String(),
+        title=_(u'JSON URL'),
+        description=_(u'Enter unless doing a manual entry.'),
+        missing=_(''),)
+    # [TODO] Make a normal python property?
+    date_from_json = colander.SchemaNode(
+        colander.DateTime(),
+        title=_(u'Date from JSON'),
+        description=_(u'Leave blank. Will be fetched from JSON URL.'),
+        missing=_(''),)
+    home_page = colander.SchemaNode(
+        colander.String(),
+        title=_(u'Home Page URL'),
+        description=_(u'Leave blank usually, and the URL will be fetched. Enter if doing a manual entry.'),
+        missing=_(''),)
+    docs_url = colander.SchemaNode(
+        colander.String(),
+        title=_(u'Docs URL'),
+        description=_(u'Leave blank usually, and the URL will be fetched. Enter if doing a manual entry.'),
+        missing=_(''),)
+    package_url = colander.SchemaNode(
+        colander.String(),
+        title=_(u'Download URL'),
+        description=_(u'Leave blank usually, and the URL will be fetched. Enter if doing a manual entry.'),
+        missing=_(''),)
+    bugtrack_url = colander.SchemaNode(
+        colander.String(),
+        title=_(u'Bugtracker URL'),
+        description=_(u'Leave blank usually, and the URL will be fetched. Enter if doing a manual entry.'),
+        missing=_(''),)
 
 
 @ensure_view_selector
@@ -76,17 +113,13 @@ def add_softwareproject(context, request):
 def view_softwareproject(context, request):
     json_obj = None
 
-    # [TODO] Expensive: ?
-    context.refresh_date()
+    # [TODO] Expensive: ? 
+    context.refresh_json()
 
-#    if context.json_url:
-#        json_raw = urllib2.urlopen(context.json_url).read()
-#        json_obj = json.loads(json_raw)
-#
-#    if json_obj:
-#        upload_time = datetime.datetime.strptime(json_obj['urls'][0]['upload_time'],
-#                                                 "%Y-%m-%dT%H:%M:%S")
-#        context.formatted_date = format_date(upload_time)
+    if context.date_from_json is None:
+        context.formatted_date = format_date(context.date)
+    else:
+        context.formatted_date = format_date(context.date_from_json)
 
     return {}
 
@@ -99,7 +132,7 @@ def view_softwarecollection(context, request):
                 SoftwareProject.parent_id == context.id).order_by(SoftwareProject.date.desc())
     # [TODO] Expensive: ?
     items = query.all()
-    [item.refresh_date() for item in items]
+    [item.refresh_json() for item in items]
     query.order_by(SoftwareProject.date.desc())
     items = query.all()
     page = request.params.get('page', 1)
@@ -109,7 +142,10 @@ def view_softwarecollection(context, request):
                       pagenumber=int(page))
 
     for item in items:
-        item.formatted_date = format_date(item.date)
+        if item.date_from_json is None:
+            item.formatted_date = format_date(item.date)
+        else:
+            item.formatted_date = format_date(item.date_from_json)
 
     return {
         'api': template_api(context, request),

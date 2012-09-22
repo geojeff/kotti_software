@@ -65,34 +65,68 @@ Using kotti_software
 Add a software collection to your site, then to that add software projects.
 For software projects, you can provide a date, which you will need to
 manually keep up to date. Or, you can provide a json_url instead of a date
-and the update date for the project will be gathered from a json source.
+and the last-updated date for the project, along with main urls, will be
+gathered from a JSON source. Here are ways to enter software projects:
 
-Out-of-the-box, kotti_software works for Python-based projects.
+    1) Enter the JSON url only (normal JSON-fetched)
 
-The examples working so far are:
+    2) Enter the date and any of: home_page, docs_url,
+       package_url, bugtrack_url (Manual entry)
+
+    3) Enter the date only (bare-bones entry, with just date and
+       title, and whatever is in body -- useful for defunct
+       projects)
+
+For the JSON data, if your project is a Python project and it has been posted
+to pypi.python.org, you can enter the JSON url for that, as described below.
+Otherwise, make your own JSON file, using the following format, and post it
+somewhere, then enter that URL.
+
+::
+
+    {
+        "info": {
+            "docs_url": "http://packages.python.org/Kotti", 
+            "package_url": "http://pypi.python.org/pypi/Kotti", 
+            "bugtrack_url": "", 
+            "home_page": "http://kotti.pylonsproject.org"
+        }, 
+        "urls": [ { "upload_time": "2012-08-30T11:59:58", } ]
+    }
+
+The urls are key/value pairs within "info", and may be empty, as shown. The
+data structure for upload_time looks unnecessarily complicated, but it is
+this way because we follow the pypi JSON structure. kotti_software is written
+for use on the Kotti website, and thus mainly presents Python projects that
+are posted on pypi. Also, kotti_software is used by Kotti developers on their
+personal websites, and they tend to have Python projects. However, any type of
+project can be posted of course, for javascript, Ruby, etc. Just follow the
+format above for creating a custom JSON data structure for each project.
+
+If you need to customize kotti_software itself, the urls are accessed as
+json_obj['info']['docs_url'], and the upload_time is accessed as
+json_obj['urls'][0]['upload_time'].
+
+**Instructions for common JSON sources:**
 
 pypi
 ----
 
-Pass json_url of the form "http://pypi.python.org/pypi/{project name}/json",
+Enter the url of the form "http://pypi.python.org/pypi/{project name}/json",
 where {project name} is the case-sensitive name of the project on pypi. For
-example, for Kotti the url would be "http://pypi.python.org/pypi/Kotti/json".
+example, for Kotti the url is "http://pypi.python.org/pypi/Kotti/json".
 
-See http://pypi.python.org/pypi/Kotti/json to see the json that is parsed.
-The date is taken from urls[0]['update_time'].
-
-[TODO] What else should be parsed for a project?
+See http://pypi.python.org/pypi/Kotti/json to see the JSON that is parsed.
 
 github
 ------
 
 As an alternative to pypi, if your project is not posted there, you may put
-a json file somewhere in your repo, and access it with the raw url, as in:
+a JSON file somewhere in your github repo, and access it with the raw url, as:
 
 json_url = "https://raw.github.com/geojeff/kotti_fruits_example/master/json"
 
-You will need to copy the json from pypi and follow that format, as it is
-used as the basis for kotti_software project data.
+As described above, you will need to follow the format of the pypi JSON data.
 
 bitbucket
 ---------
@@ -106,7 +140,7 @@ and in the kotti_software code:
 
 json_raw = urllib2.urlopen(json_url).read()
 
-... code to try for update_time in json
+... code to try for update_time in JSON
 
 if not update_time_found:
     json_obj = json.loads(json_raw)

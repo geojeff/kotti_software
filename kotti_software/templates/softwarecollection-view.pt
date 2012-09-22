@@ -23,6 +23,28 @@
             ${item.title}
           </a>
         </h2>
+        <ul class="nav nav-pills">
+            <li tal:condition="item.home_page" class="active">
+              <a href="${item.home_page}" title="${item.home_page}">
+                Home Page
+              </a>
+            </li>
+            <li tal:condition="item.docs_url" class="active">
+              <a href="${item.docs_url}" title="Docs">
+                Docs
+              </a>
+            </li>
+            <li tal:condition="item.package_url" class="active">
+              <a href="${item.package_url}" title="${item.package_url}">
+                Download
+              </a>
+            </li>
+            <li tal:condition="item.bugtrack_url" class="active">
+              <a href="${item.bugtrack_url}" title="${item.bugtrack_url}">
+                Bugtracker
+              </a>
+            </li>
+        </ul>
         <p>${structure: item.body}</p>
       </div>
     </div>
