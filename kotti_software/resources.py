@@ -89,15 +89,22 @@ class SoftwareProject(Document):
 
         self.json_url = json_url
 
-        # The choices for date_handling_choice, 'use_now' and 'use_entered'
-        # are handled as follows:
+        # The choices for date_handling_choice are:
         #
-        #   if date is None, the date view default system will make it NOW
-        #   if date is provided, it is used
+        #   use_json_date
+        #   use_entered
+        #   use_now
         #
-        # Otherwise, the date will be fetched from JSON.
+        # Logic:
         #
-        self.date = date
+        #   if use_json_date, use it, regardless of incoming date value
+        #   else set the date (the date view default system will make it NOW
+        #     if date is None)
+        #
+        if self.json_url:
+            self.refresh_json()
+        else:
+            self.date = date
 
         self.date_handling_choice = date_handling_choice
 
@@ -109,9 +116,6 @@ class SoftwareProject(Document):
         self.overwrite_docs_url = overwrite_docs_url
         self.overwrite_package_url = overwrite_package_url
         self.overwrite_bugtrack_url = overwrite_bugtrack_url
-
-        if self.json_url:
-            self.refresh_json()
 
     def refresh_json(self):
         if self.json_url:

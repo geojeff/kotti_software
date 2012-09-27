@@ -15,13 +15,13 @@ _ = TranslationStringFactory('kotti_software')
 
 library = Library("kotti_software", "static")
 kotti_software_css = Resource(library,
-    "style.css",
-    depends=[jquery_infinite_ajax_scroll_css, ],
-    bottom=True)
+                              "style.css",
+                              depends=[jquery_infinite_ajax_scroll_css, ],
+                              bottom=True)
 kotti_software_js = Resource(library,
-    "kotti_software.js",
-    depends=[jquery_infinite_ajax_scroll, ],
-    bottom=True)
+                             "kotti_software.js",
+                             depends=[jquery_infinite_ajax_scroll, ],
+                             bottom=True)
 view_needed.add(Group([kotti_software_css, kotti_software_js, ]))
 
 
