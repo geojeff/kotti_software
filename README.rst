@@ -123,33 +123,16 @@ example, for Kotti the url is "http://pypi.python.org/pypi/Kotti/json".
 
 See http://pypi.python.org/pypi/Kotti/json to see the JSON that is parsed.
 
-github
-------
+Hosting Elsewhere
+-----------------
 
 As an alternative to pypi, if your project is not posted there, you may put
-a JSON file somewhere in your github repo, and access it with the raw url, as:
+a JSON file somewhere in your github, bitbucket, or other repo, and access
+it with the raw url, as:
 
 json_url = "https://raw.github.com/geojeff/kotti_fruits_example/master/json"
 
 As described above, you will need to follow the format of the pypi JSON data.
-
-bitbucket
----------
-
-[TODO] One possibility is to get the tags via the REST API, with something
-like:
-
-json_url = https://api.bitbucket.org/1.0/repositories/pypy/pypy/tags"
-
-and in the kotti_software code:
-
-json_raw = urllib2.urlopen(json_url).read()
-
-... code to try for update_time in JSON
-
-if not update_time_found:
-    json_obj = json.loads(json_raw)
-    json_obj['tip']['utctimestamp']
 
 .. _Find out more about Kotti: http://pypi.python.org/pypi/Kotti
 .. _Kotti documentation about the asset_overrides setting: http://kotti.readthedocs.org/en/latest/configuration.html?highlight=asset#adjust-the-look-feel-kotti-asset-overrides
