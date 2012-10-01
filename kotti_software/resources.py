@@ -2,17 +2,19 @@ import datetime
 import json
 import urllib2
 from dateutil.tz import tzutc
-from sqlalchemy import (
-    Column,
-    ForeignKey,
-    Integer,
-    String,
-    Boolean,
-    types,
-)
+
+from sqlalchemy import Boolean
+from sqlalchemy import Column
+from sqlalchemy import ForeignKey
+from sqlalchemy import Integer
+from sqlalchemy import String
+from sqlalchemy import types
+
 from kotti.resources import Document
-from kotti_software import _
+
 from kotti.views.util import format_date
+
+from kotti_software import _
 
 
 class UTCDateTime(types.TypeDecorator):
