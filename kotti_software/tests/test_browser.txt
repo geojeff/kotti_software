@@ -28,14 +28,14 @@ Add a software collection
   >>> ctrl("save").click()
   >>> "Successfully added item" in browser.contents
   True
-  >>> browser.url == tests.BASE_URL + '/new-softwarecollection/'
+  >>> browser.url == tests.BASE_URL + '/new-software-collection/'
   True
 
 
 Add softwareprojects
 --------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-softwarecollection/@@add_softwareproject')
+  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "First software project"
   >>> ctrl("Body").value = "And I like to say..."
   >>> ctrl("Date").value = "2012-07-31 05:00:00"
@@ -43,7 +43,7 @@ Add softwareprojects
   >>> "Successfully added item" in browser.contents
   True
 
-  >>> browser.open(tests.BASE_URL + '/new-softwarecollection/@@add_softwareproject')
+  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "Second software project"
   >>> ctrl("Body").value = "rumoring around a bit"
   >>> ctrl("Date").value = "2012-07-31 06:00:00"
@@ -55,7 +55,7 @@ Add softwareprojects
 View software collection and software project
 ---------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-softwarecollection/')
+  >>> browser.open(tests.BASE_URL + '/new-software-collection/')
   >>> "First software project" in browser.contents
   True
   >>> "31.07.2012" in browser.contents
@@ -73,17 +73,17 @@ View software collection and software project
 Edit software collection and software project and verify the changes
 --------------------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-softwarecollection/@@edit')
+  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@edit')
   >>> ctrl("Title").value = "This is the Software Collection"
   >>> ctrl("Body").value = "Hello, I am a software collection"
   >>> ctrl("save").click()
 
   >>> browser.open(tests.BASE_URL +
-  >>> '/new-softwarecollection/first-software-collection-project/@@edit')
+  >>> '/new-software-collection/first-software-collection-project/@@edit')
   >>> ctrl("Title").value = "I was the first software project"
   >>> ctrl("save").click()
 
-  >>> browser.open(tests.BASE_URL + '/new-softwarecollection/')
+  >>> browser.open(tests.BASE_URL + '/new-software-collection/')
   >>> "Hello, I am a software collection" in browser.contents
   True
   >>> "First software project" in browser.contents

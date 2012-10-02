@@ -28,38 +28,38 @@ Add a software collection and software projects
   >>> ctrl("Body").value = "This is the new software collection"
   >>> ctrl("save").click()
 
-  >>> browser.open(tests.BASE_URL + '/new-softwarecollection/@@add_softwareproject')
+  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "First software project"
   >>> ctrl("Body").value = "And I like to say..."
   >>> ctrl("save").click()
 
-  >>> browser.open(tests.BASE_URL + '/new-softwarecollection/')
+  >>> browser.open(tests.BASE_URL + '/new-software-collection/')
   >>> 'pagination' in browser.contents
   False
   >>> 'Next' in browser.contents
   False
 
-  >>> browser.open(tests.BASE_URL + '/new-softwarecollection/@@add_softwareproject')
+  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
+  >>> ctrl("Title").value = "Second softwareproject"
+  >>> ctrl("Body").value = "rumoring around a bit"
+  >>> ctrl("save").click()
+  >>> "Successfully added item" in browser.contents
+  True
+
+  >>> browser.open(tests.BASE_URL + '/new-software-collection/')
+  >>> 'pagination' in browser.contents
+  True
+  >>> 'Next' in browser.contents
+  False
+
+  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "Second software project"
   >>> ctrl("Body").value = "rumoring around a bit"
   >>> ctrl("save").click()
   >>> "Successfully added item" in browser.contents
   True
 
-  >>> browser.open(tests.BASE_URL + '/new-softwarecollection/')
-  >>> 'pagination' in browser.contents
-  True
-  >>> 'Next' in browser.contents
-  False
-
-  >>> browser.open(tests.BASE_URL + '/new-softwarecollection/@@add_softwareproject')
-  >>> ctrl("Title").value = "Second software project"
-  >>> ctrl("Body").value = "rumoring around a bit"
-  >>> ctrl("save").click()
-  >>> "Successfully added item" in browser.contents
-  True
-
-  >>> browser.open(tests.BASE_URL + '/new-softwarecollection/')
+  >>> browser.open(tests.BASE_URL + '/new-software-collection/')
   >>> 'pagination' in browser.contents
   True
   >>> 'Next' in browser.contents

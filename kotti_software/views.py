@@ -1,11 +1,10 @@
-import urllib2
-import json
 import datetime
 from dateutil.tz import tzutc
 from plone.batching import Batch
 from pyramid.renderers import get_renderer
 
 import colander
+from colander import Invalid
 
 from deform.widget import CheckboxWidget
 from deform.widget import DateTimeInputWidget
@@ -43,6 +42,8 @@ def deferred_date_missing(node, kw):
 
 
 class AddSoftwareProjectFormView(AddFormView):
+    item_type = _(u"SoftwareProject")
+    item_class = SoftwareProject
 
     def schema_factory(self):
 
@@ -157,11 +158,39 @@ class AddSoftwareProjectFormView(AddFormView):
                 exc['json_url'] = _(u'Must not be supplied if a date is supplied')
                 raise exc
 
-        software_project_schema = SoftwareProjectSchema(
-                after_bind=set_title_missing,
-                validator=validator)
+        return SoftwareProjectSchema(validator=validator)
 
-        return software_project_schema.bind(title_missing=u'')
+    def save_success(self, appstruct):
+
+        if not appstruct['title']:
+
+            if appstruct['json_url']:
+                appstruct['title'] = appstruct['json_url']
+
+            if appstruct['date']:
+                appstruct['title'] = "software-project-{0}".format(appstruct['date'])
+
+        return super(AddSoftwareProjectFormView, self).save_success(appstruct)
+
+
+    def add(self, **appstruct):
+        return self.item_class(
+            title=appstruct['title'],
+            description=appstruct['description'],
+            tags=appstruct['tags'],
+            home_page_url=appstruct['home_page_url'],
+            docs_url=appstruct['docs_url'],
+            package_url=appstruct['package_url'],
+            bugtrack_url=appstruct['bugtrack_url'],
+            description_handling_choice=appstruct['description_handling_choice'],
+            date_handling_choice=appstruct['date_handling_choice'],
+            overwrite_home_page_url=appstruct['overwrite_home_page_url'],
+            overwrite_docs_url=appstruct['overwrite_docs_url'],
+            overwrite_package_url=appstruct['overwrite_package_url'],
+            overwrite_bugtrack_url=appstruct['overwrite_bugtrack_url'],
+            json_url=appstruct['json_url'],
+            date=appstruct['date'],
+            )
 
 
 class EditSoftwareProjectFormView(EditFormView):
@@ -297,6 +326,8 @@ class EditSoftwareProjectFormView(EditFormView):
         if appstruct['bugtrack_url']:
             self.context.bugtrack_url = appstruct['bugtrack_url']
 
+        self.context.description_handling_choice = appstruct['description_handling_choice']
+        self.context.date_handling_choice = appstruct['date_handling_choice']
         self.context.overwrite_home_page_url = appstruct['overwrite_home_page_url']
         self.context.overwrite_docs_url = appstruct['overwrite_docs_url']
         self.context.overwrite_package_url = appstruct['overwrite_package_url']
@@ -311,7 +342,7 @@ class EditSoftwareProjectFormView(EditFormView):
             # about what is there done for external_url)
             self.context.json_url = None
 
-            self.date = appstruct['date']
+            self.context.date = appstruct['date']
 
 
 @ensure_view_selector
@@ -324,9 +355,7 @@ def add_softwarecollection(context, request):
 
 
 def view_softwareproject(context, request):
-    json_obj = None
-
-    # [TODO] Expensive: ? 
+    # [TODO] Expensive: ?
     context.refresh_json()
 
     context.formatted_date = format_date(context.date)
@@ -338,7 +367,7 @@ def view_softwarecollection(context, request):
     settings = collection_settings()
     macros = get_renderer('templates/macros.pt').implementation()
     session = DBSession()
-    query = session.query(SoftwareProject).filter(\
+    query = session.query(SoftwareProject).filter(
                 SoftwareProject.parent_id == context.id).order_by(SoftwareProject.date.desc())
     items = query.all()
     # [TODO] Expensive: ?
@@ -396,6 +425,7 @@ def includeme_edit(config):
 
 
 def includeme_view(config):
+
     config.add_view(
         view_softwarecollection,
         context=SoftwareCollection,
