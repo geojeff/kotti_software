@@ -17,7 +17,9 @@
 
     <div tal:condition="items" class="softwareprojects">
       <div tal:repeat="item items" class="softwareproject" data-uri="${api.url(item)}">
-        <span class="date" tal:content="item.formatted_date" />
+        <span class="date" tal:define="format api.format_date">
+          ${format(item.date)}
+        </span>
         <h2>
           <a href="${api.url(item)}" title="${item.description}" tal:omit-tag="not: settings['link_headline_overview']">
             ${item.title}

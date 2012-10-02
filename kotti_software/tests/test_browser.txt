@@ -7,7 +7,6 @@ Setup and Login
   >>> import datetime
   >>> from dateutil.tz import tzutc
   >>> from kotti import tests
-  >>> from kotti.views.util import format_date
   >>> first_time_string = "2012-07-31 05:00:00"
   >>> first_date = datetime.datetime(2012, 7, 31, 5, 0, 0, tzinfo=tzutc())
   >>> second_time_string = "2012-07-31 06:00:00"
@@ -64,7 +63,7 @@ View software collection and software project
   >>> browser.open(tests.BASE_URL + '/new-software-collection/')
   >>> "First software project" in browser.contents
   True
-  >>> format_date(second_date) in browser.contents
+  >>> "Jul 31, 2012" in browser.contents
   True
   >>> pos = browser.contents.index
   >>> pos("Second software project") < pos("First software project")

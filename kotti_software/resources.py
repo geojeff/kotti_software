@@ -16,8 +16,6 @@ from kotti.resources import IDocument
 from kotti.resources import IDefaultWorkflow
 from kotti.resources import Document
 
-from kotti.views.util import format_date
-
 from kotti_software import _
 
 
@@ -151,7 +149,6 @@ class SoftwareProject(Document):
                                                   upload_time.second,
                                                   upload_time.microsecond,
                                                   tzinfo=tzutc())
-                            self.formatted_date = format_date(self.date)
 
                 if 'info' in json_obj:
                     if self.overwrite_home_page_url:

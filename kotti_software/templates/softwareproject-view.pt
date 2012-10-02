@@ -7,7 +7,9 @@
   <article metal:fill-slot="content" class="softwareproject-view content softwareprojects">
 
     <div class="softwareproject" data-uri="${api.url(context)}">
-      <span class="date" tal:content="context.formatted_date" />
+      <span class="date" tal:define="format api.format_date">
+        ${format(context.date)}
+      </span>
       <h1>${api.context.title}</h1>
       <p class="description">
         ${api.context.description}

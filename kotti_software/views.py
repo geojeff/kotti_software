@@ -20,7 +20,6 @@ from kotti.views.edit import generic_edit
 from kotti.views.edit import generic_add
 
 from kotti.views.util import ensure_view_selector
-from kotti.views.util import format_date
 from kotti.views.util import template_api
 
 from kotti_software.resources import SoftwareCollection
@@ -369,8 +368,6 @@ def view_softwareproject(context, request):
     # [TODO] Expensive: ?
     context.refresh_json()
 
-    context.formatted_date = format_date(context.date)
-
     return {}
 
 
@@ -390,9 +387,6 @@ def view_softwarecollection(context, request):
         items = Batch.fromPagenumber(items,
                       pagesize=settings['pagesize'],
                       pagenumber=int(page))
-
-    for item in items:
-        item.formatted_date = format_date(item.date)
 
     return {
         'api': template_api(context, request),
