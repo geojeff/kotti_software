@@ -10,6 +10,10 @@ from sqlalchemy import Integer
 from sqlalchemy import String
 from sqlalchemy import types
 
+from zope.interface import implements
+
+from kotti.resources import IDocument
+from kotti.resources import IDefaultWorkflow
 from kotti.resources import Document
 
 from kotti.views.util import format_date
@@ -32,6 +36,8 @@ class UTCDateTime(types.TypeDecorator):
 
 
 class SoftwareCollection(Document):
+    implements(IDocument, IDefaultWorkflow)
+
     id = Column('id', Integer, ForeignKey('documents.id'), primary_key=True)
 
     type_info = Document.type_info.copy(
@@ -43,6 +49,8 @@ class SoftwareCollection(Document):
 
 
 class SoftwareProject(Document):
+    implements(IDocument, IDefaultWorkflow)
+
     id = Column(Integer, ForeignKey('documents.id'), primary_key=True)
 
     description_handling_choice = 'use_entered'
