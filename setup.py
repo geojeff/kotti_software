@@ -3,28 +3,42 @@ import os
 
 version = '0.1'
 
+here = os.path.abspath(os.path.dirname(__file__))
+
+try:
+    README = open(os.path.join(here, 'README.rst')).read()
+except IOError:
+    README = ''
+try:
+    TODO = open(os.path.join(here, 'TODO.txt')).read()
+except IOError:
+    TODO = ''
+try:
+    AUTHORS = open(os.path.join(here, 'AUTHORS.txt')).read()
+except IOError:
+    AUTHORS = ''
+try:
+    CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
+except IOError:
+    CHANGES = ''
+
+development_requires = [
+    'minify',
+]
 tests_require = [
     'pytest',
     'pytest-cov',
+    'pytest-pep8',
+    'pytest-xdist',
+    'WebTest',
+    'wsgi_intercept',
+    'zope.testbrowser',
 ]
-
-here = os.path.abspath(os.path.dirname(__file__))
-README = open(os.path.join(here, 'README.rst')).read()
-AUTHORS = open(os.path.join(here, 'AUTHORS.txt')).read()
-CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
-
-long_description = (
-    README
-    + '\n' +
-    AUTHORS
-    + '\n' +
-    CHANGES
-)
 
 setup(name='kotti_software',
       version=version,
       description="Kotti software",
-      long_description=long_description,
+      long_description=README + '\n\n' + TODO + '\n\n' + AUTHORS + '\n\n' + CHANGES,
       classifiers=[],
       keywords='kotti software',
       author='geojeff',
@@ -39,6 +53,7 @@ setup(name='kotti_software',
           'plone.batching',
           'AccessControl',  # this is actually a dependency of plone.batching
           'js.jquery_infinite_ajax_scroll',
+          'js.jquery_form',
           'python-dateutil',
       ],
       project_points="""
@@ -48,6 +63,7 @@ setup(name='kotti_software',
       tests_require=tests_require,
       extras_require={
           'testing': tests_require,
+          'development': development_requires,
           },
       message_extractors={'kotti_software': [
             ('**.py', 'lingua_python', None),

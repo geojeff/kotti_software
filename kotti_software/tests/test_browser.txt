@@ -4,7 +4,14 @@ kotti_software browser tests
 Setup and Login
 ---------------
 
+  >>> import datetime
+  >>> from dateutil.tz import tzutc
   >>> from kotti import tests
+  >>> from kotti.views.util import format_date
+  >>> first_time_string = "2012-07-31 05:00:00"
+  >>> first_date = datetime.datetime(2012, 7, 31, 5, 0, 0, tzinfo=tzutc())
+  >>> second_time_string = "2012-07-31 06:00:00"
+  >>> second_date = datetime.datetime(2012, 7, 31, 6, 0, 0, tzinfo=tzutc())
   >>> tools = tests.setUpFunctional(
   ...     **{'kotti.configurators': 'kotti_software.kotti_configure'})
   >>> browser = tools['Browser']()
@@ -31,22 +38,21 @@ Add a software collection
   >>> browser.url == tests.BASE_URL + '/new-software-collection/'
   True
 
-
 Add softwareprojects
 --------------------
 
   >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "First software project"
-  >>> ctrl("Body").value = "And I like to say..."
-  >>> ctrl("Date").value = "2012-07-31 05:00:00"
+  >>> ctrl("Body").value = "This project concerns throwing dice..."
+  >>> ctrl("Date", index=0).value = first_time_string
   >>> ctrl("save").click()
   >>> "Successfully added item" in browser.contents
   True
 
   >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "Second software project"
-  >>> ctrl("Body").value = "rumoring around a bit"
-  >>> ctrl("Date").value = "2012-07-31 06:00:00"
+  >>> ctrl("Body").value = "This project is about hurricanes"
+  >>> ctrl("Date", index=0).value = second_time_string
   >>> ctrl("save").click()
   >>> "Successfully added item" in browser.contents
   True
@@ -58,15 +64,13 @@ View software collection and software project
   >>> browser.open(tests.BASE_URL + '/new-software-collection/')
   >>> "First software project" in browser.contents
   True
-  >>> "31.07.2012" in browser.contents
-  True
-  >>> "And I like to say..." in browser.contents
+  >>> format_date(second_date) in browser.contents
   True
   >>> pos = browser.contents.index
   >>> pos("Second software project") < pos("First software project")
   True
   >>> browser.getLink("Second software project").click()
-  >>> "rumoring around a bit" in browser.contents
+  >>> "This project is about hurricanes" in browser.contents
   True
 
 
@@ -78,8 +82,7 @@ Edit software collection and software project and verify the changes
   >>> ctrl("Body").value = "Hello, I am a software collection"
   >>> ctrl("save").click()
 
-  >>> browser.open(tests.BASE_URL +
-  >>> '/new-software-collection/first-software-collection-project/@@edit')
+  >>> browser.open(tests.BASE_URL + '/new-software-collection/first-software-project/@@edit')
   >>> ctrl("Title").value = "I was the first software project"
   >>> ctrl("save").click()
 
@@ -90,5 +93,5 @@ Edit software collection and software project and verify the changes
   False
   >>> "I was the first software project" in browser.contents
   True
-  >>> "And I like to say..." in browser.contents
+  >>> "This project concerns throwing dice..." in browser.contents
   True

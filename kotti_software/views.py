@@ -177,6 +177,7 @@ class AddSoftwareProjectFormView(AddFormView):
         return self.item_class(
             title=appstruct['title'],
             description=appstruct['description'],
+            body=appstruct['body'],
             tags=appstruct['tags'],
             home_page_url=appstruct['home_page_url'],
             docs_url=appstruct['docs_url'],
@@ -312,7 +313,17 @@ class EditSoftwareProjectFormView(EditFormView):
 
     def edit(self, **appstruct):
 
-        EditSoftwareProjectFormView.edit(self, **appstruct)
+        if appstruct['title']:
+            self.context.title = appstruct['title']
+
+        if appstruct['description']:
+            self.context.description = appstruct['description']
+
+        if appstruct['body']:
+            self.context.body = appstruct['body']
+
+        if appstruct['tags']:
+            self.context.tags = appstruct['tags']
 
         if appstruct['home_page_url']:
             self.context.home_page_url = appstruct['home_page_url']

@@ -128,14 +128,11 @@ class SoftwareProject(Document):
         self.overwrite_bugtrack_url = overwrite_bugtrack_url
 
     def refresh_json(self):
-        print 'refresh_json'
         if self.json_url:
             json_raw = urllib2.urlopen(self.json_url).read()
             json_obj = json.loads(json_raw)
 
-            print 'refresh_json', 'json_url', self.json_url
             if json_obj:
-                print 'refresh_json', 'json_obj', json_obj
                 if self.date_handling_choice == 'use_json_date':
                     if len(json_obj['urls']) > 0 and \
                             'upload_time' in json_obj['urls'][0]:
