@@ -38,7 +38,7 @@ class BaseView(object):
                permission='view')
 class SoftwareProjectView(BaseView):
 
-    @view_config(name='view',
+    @view_config(name='view_softwareproject',
                  renderer='kotti_software:templates/softwareproject-view.pt')
     def view(self):
 
@@ -51,7 +51,7 @@ class SoftwareProjectView(BaseView):
                permission='view')
 class SoftwareCollectionView(BaseView):
 
-    @view_config(name="view",
+    @view_config(name="view_softwarecollection",
                  renderer="kotti_software:templates/softwarecollection-view.pt")
     def view(self):
 
@@ -59,8 +59,6 @@ class SoftwareCollectionView(BaseView):
                 [c for c in self.context.children
                  if (c.type in ("SoftwareProject", ))
                  and has_permission("view", self.context, self.request)]
-
-        print 'TTTTTTTTJKAJSFDALKSDJFLAKDSFLAKDSLFKADKL', len(softwareprojects), self.context.children
 
         # [TODO] Expensive: ?
         [project.refresh_json() for project in softwareprojects]
