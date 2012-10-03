@@ -71,8 +71,8 @@ class SoftwareProject(Document):
     overwrite_bugtrack_url = Column('overwrite_bugtrack_url', Boolean())
 
     type_info = Document.type_info.copy(
-        name=u'Software project',
-        title=_(u'Software project'),
+        name=u'SoftwareProject',
+        title=_(u'SoftwareProject'),
         add_view=u'add_softwareproject',
         addable_to=[u'SoftwareCollection'],
         )

@@ -315,20 +315,20 @@ def add_softwarecollection(context, request):
 
 def includeme_edit(config):
 
-    config.add_view(
-        edit_softwarecollection,
-        context=SoftwareCollection,
-        name='edit',
-        permission='edit',
-        renderer='kotti:templates/edit/node.pt',
-        )
-
-    config.add_view(
-        add_softwarecollection,
-        name=SoftwareCollection.type_info.add_view,
-        permission='add',
-        renderer='kotti:templates/edit/node.pt',
-        )
+#    config.add_view(
+#        edit_softwarecollection,
+#        context=SoftwareCollection,
+#        name='edit',
+#        permission='edit',
+#        renderer='kotti:templates/edit/node.pt',
+#        )
+#
+#    config.add_view(
+#        add_softwarecollection,
+#        name=SoftwareCollection.type_info.add_view,
+#        permission='add',
+#        renderer='kotti:templates/edit/node.pt',
+#        )
 
     config.add_view(
         EditSoftwareProjectFormView,

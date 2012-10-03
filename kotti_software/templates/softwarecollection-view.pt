@@ -15,39 +15,39 @@
       ${structure: api.context.body}
     </p>
 
-    <div tal:condition="projects" class="softwareprojects">
-      <div tal:repeat="project projects" class="softwareproject" data-uri="${api.url(project)}">
+    <div tal:condition="items" class="softwareprojects">
+      <div tal:repeat="item items" class="softwareproject" data-uri="${api.url(item)}">
         <span class="date" tal:define="format api.format_date">
-          ${format(project.date)}
+          ${format(item.date)}
         </span>
         <h2>
-          <a href="${api.url(project)}" title="${project.description}" tal:omit-tag="not: settings['link_headline_overview']">
-            ${project.title}
+          <a href="${api.url(item)}" title="${item.description}" tal:omit-tag="not: settings['link_headline_overview']">
+            ${item.title}
           </a>
         </h2>
         <ul class="nav nav-pills">
-            <li tal:condition="project.home_page_url" class="active">
-              <a href="${project.home_page_url}" title="${project.home_page_url}">
+            <li tal:condition="item.home_page_url" class="active">
+              <a href="${item.home_page_url}" title="${item.home_page_url}">
                 Home Page
               </a>
             </li>
-            <li tal:condition="project.docs_url" class="active">
-              <a href="${project.docs_url}" title="Docs">
+            <li tal:condition="item.docs_url" class="active">
+              <a href="${item.docs_url}" title="Docs">
                 Docs
               </a>
             </li>
-            <li tal:condition="project.package_url" class="active">
-              <a href="${project.package_url}" title="${project.package_url}">
+            <li tal:condition="item.package_url" class="active">
+              <a href="${item.package_url}" title="${item.package_url}">
                 Download
               </a>
             </li>
-            <li tal:condition="project.bugtrack_url" class="active">
-              <a href="${project.bugtrack_url}" title="${project.bugtrack_url}">
+            <li tal:condition="item.bugtrack_url" class="active">
+              <a href="${item.bugtrack_url}" title="${item.bugtrack_url}">
                 Bugtracker
               </a>
             </li>
         </ul>
-        <p>${structure: project.body}</p>
+        <p>${structure: item.body}</p>
       </div>
     </div>
 

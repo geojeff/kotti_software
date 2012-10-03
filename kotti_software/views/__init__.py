@@ -47,36 +47,39 @@ class SoftwareProjectView(BaseView):
         return {}
 
 
+@view_defaults(context=SoftwareCollection,
+               permission='view')
 class SoftwareCollectionView(BaseView):
 
-    @view_config(context=Document,
-             name="softwarecollection_view",
-             permission="view",
-             renderer="kotti_software:templates/softwarecollection-view.pt")
+    @view_config(name="view",
+                 renderer="kotti_software:templates/softwarecollection-view.pt")
     def view(self):
 
-        softwareprojects = [c for c in self.context.children
-                 if (c.type in ("softwareproject", ))
+        softwareprojects = \
+                [c for c in self.context.children
+                 if (c.type in ("SoftwareProject", ))
                  and has_permission("view", self.context, self.request)]
+
+        print 'TTTTTTTTJKAJSFDALKSDJFLAKDSFLAKDSLFKADKL', len(softwareprojects), self.context.children
 
         # [TODO] Expensive: ?
         [project.refresh_json() for project in softwareprojects]
 
-        sorted_projects = sorted(softwareprojects, key=lambda x: x.date)
+        projects = sorted(softwareprojects, key=lambda x: x.date)
 
         page = self.request.params.get('page', 1)
 
         settings = collection_settings()
 
         if settings['use_batching']:
-            sorted_projects = Batch.fromPagenumber(sorted_projects,
-                          pagesize=settings['pagesize'],
-                          pagenumber=int(page))
+            projects = Batch.fromPagenumber(projects,
+                                            pagesize=settings['pagesize'],
+                                            pagenumber=int(page))
 
         return {
             'api': template_api(self.context, self.request),
             'macros': get_renderer('../templates/macros.pt').implementation(),
-            'projects': sorted_projects,
+            'items': projects,
             'settings': settings,
             }
 
