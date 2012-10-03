@@ -302,7 +302,7 @@ class BaseView(object):
                permission='view')
 class SoftwareProjectView(BaseView):
 
-    @view_config(name='view_softwareproject',
+    @view_config(name='view',
                  renderer='kotti_software:templates/softwareproject-view.pt')
     def view(self):
 
@@ -315,7 +315,7 @@ class SoftwareProjectView(BaseView):
                permission='view')
 class SoftwareCollectionView(BaseView):
 
-    @view_config(name="view_softwarecollection",
+    @view_config(name="view",
              renderer="kotti_software:templates/softwarecollection-view.pt")
     def view(self):
         settings = collection_settings()
