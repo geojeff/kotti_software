@@ -30,7 +30,7 @@ Add a software collection and software projects
 
   >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "First software project"
-  >>> ctrl("Body").value = "And I like to say..."
+  >>> ctrl("Body").value = "This project concerns throwing dice..."
   >>> ctrl("save").click()
 
   >>> browser.open(tests.BASE_URL + '/new-software-collection/')
@@ -41,7 +41,7 @@ Add a software collection and software projects
 
   >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "Second softwareproject"
-  >>> ctrl("Body").value = "rumoring around a bit"
+  >>> ctrl("Body").value = "This project is about hurricanes..."
   >>> ctrl("save").click()
   >>> "Successfully added item" in browser.contents
   True
@@ -54,7 +54,7 @@ Add a software collection and software projects
 
   >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "Second software project"
-  >>> ctrl("Body").value = "rumoring around a bit"
+  >>> ctrl("Body").value = "This project is about hurricanes..."
   >>> ctrl("save").click()
   >>> "Successfully added item" in browser.contents
   True

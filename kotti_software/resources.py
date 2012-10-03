@@ -51,7 +51,7 @@ class SoftwareProject(Document):
 
     id = Column(Integer, ForeignKey('documents.id'), primary_key=True)
 
-    description_handling_choice = 'use_entered'
+    desc_handling_choice = 'use_entered'
     #  other choices: ('use_json_summary', 'use_json_description')
 
     json_url = Column('json_url', String())
@@ -78,8 +78,8 @@ class SoftwareProject(Document):
         )
 
     def __init__(self,
-                 description_handling_choice='use_entered',
-                 json_url='', 
+                 desc_handling_choice='use_entered',
+                 json_url='',
                  date=None,
                  date_handling_choice='use_json_date',
                  home_page_url='',
@@ -93,7 +93,7 @@ class SoftwareProject(Document):
                  **kwargs):
         super(SoftwareProject, self).__init__(**kwargs)
 
-        self.description_handling_choice = description_handling_choice
+        self.desc_handling_choice = desc_handling_choice
 
         self.json_url = json_url
 
@@ -175,12 +175,12 @@ class SoftwareProject(Document):
                             if bugtrack_url:
                                 self.bugtrack_url = bugtrack_url
 
-                    if self.description_handling_choice == 'use_json_summary':
+                    if self.desc_handling_choice == 'use_json_summary':
                         if 'summary' in json_obj['info']:
                             summary = json_obj['info']['summary']
                             if summary:
                                 self.description = summary
-                    elif self.description_handling_choice == 'use_json_description':
+                    elif self.desc_handling_choice == 'use_json_description':
                         if 'description' in json_obj['info']:
                             description = json_obj['info']['description']
                             if description:

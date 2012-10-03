@@ -1,8 +1,8 @@
 from pyramid.threadlocal import get_current_registry
-from kotti.testing import (
-    FunctionalTestBase,
-    testing_db_url,
-)
+
+from kotti.testing import FunctionalTestBase
+from kotti.testing import testing_db_url
+
 from kotti_software import collection_settings
 
 
