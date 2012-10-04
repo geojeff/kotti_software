@@ -13,6 +13,7 @@
        "bugtrack_url": "http://github.com/geojeff/kotti_software/issues",
        "name": "kotti_software",
        "license": "BSD-derived (http://www.repoze.org/LICENSE.txt)",
+       "description": "kotti_software, modified from kotti_blog, presents software projects by an individual, group, or organization .",
        "summary": "kotti_software, modified from kotti_blog, presents software projects by an individual, group, or organization .",
        "home_page": "http://www.geojeff.org/software/kotti_software"
    },

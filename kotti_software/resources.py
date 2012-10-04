@@ -97,6 +97,17 @@ class SoftwareProject(Document):
 
         self.json_url = json_url
 
+        self.date_handling_choice = date_handling_choice
+
+        self.home_page_url = home_page_url
+        self.docs_url = docs_url
+        self.package_url = package_url
+        self.bugtrack_url = bugtrack_url
+        self.overwrite_home_page_url = overwrite_home_page_url
+        self.overwrite_docs_url = overwrite_docs_url
+        self.overwrite_package_url = overwrite_package_url
+        self.overwrite_bugtrack_url = overwrite_bugtrack_url
+
         # The choices for date_handling_choice are:
         #
         #   use_json_date
@@ -114,16 +125,6 @@ class SoftwareProject(Document):
         else:
             self.date = date
 
-        self.date_handling_choice = date_handling_choice
-
-        self.home_page_url = home_page_url
-        self.docs_url = docs_url
-        self.package_url = package_url
-        self.bugtrack_url = bugtrack_url
-        self.overwrite_home_page_url = overwrite_home_page_url
-        self.overwrite_docs_url = overwrite_docs_url
-        self.overwrite_package_url = overwrite_package_url
-        self.overwrite_bugtrack_url = overwrite_bugtrack_url
 
     def refresh_json(self):
         if self.json_url:
