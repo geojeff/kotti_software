@@ -45,7 +45,7 @@ class UnitTests(UnitTestBase):
 
         assert len(software_collection.values()) == 1
 
-    def test_software_project_json_overwriting(self):
+    def test_software_project_json_overwriting_github(self):
         root = get_root()
         software_collection = SoftwareCollection()
         root['software_collection'] = software_collection
@@ -65,8 +65,32 @@ class UnitTests(UnitTestBase):
         # desc_handling_choice is an either/or,
         # so also check for description overwriting
         software_project = SoftwareProject(
-                json_url="https://raw.github.com/geojeff/kotti_software/master/json",
+                json_url="https://raw.github.com/geojeff/kotti_software/develop/json",
                 desc_handling_choice='use_json_description')
+
+    def test_software_project_json_overwriting_pypi(self):
+        root = get_root()
+        software_collection = SoftwareCollection()
+        root['software_collection'] = software_collection
+
+        software_project = SoftwareProject(
+                json_url="http://pypi.python.org/pypi/Kotti/json",
+                overwrite_home_page_url=True,
+                overwrite_docs_url=True,
+                overwrite_package_url=True,
+                overwrite_bugtrack_url=True,
+                desc_handling_choice='use_json_summary')
+
+        software_collection['software_project'] = software_project
+
+        assert len(software_collection.values()) == 1
+
+        # desc_handling_choice is an either/or,
+        # so also check for description overwriting
+        software_project = SoftwareProject(
+                json_url="http://pypi.python.org/pypi/Kotti/json",
+                desc_handling_choice='use_json_description')
+
 
 class FunctionalTests(FunctionalTestBase):
 
