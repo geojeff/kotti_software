@@ -156,19 +156,19 @@ class AddSoftwareProjectFormView(AddFormView):
     def schema_factory(self):
 
         def validator(form, value):
-            if not value['json_url'] and not value['date']:
-                exc = Invalid(
-                    form,
-                    _(u'Either a date or a json URL is required')
-                )
-                exc['date'] = _(u'Required if no json URL is supplied')
-                exc['json_url'] = _(u'Required if no date is supplied')
-                raise exc
+            #if not value['json_url'] and not value['date']:
+                #exc = Invalid(
+                    #form,
+                    #_(u'Either a date or a json URL is required')
+                #)
+                #exc['date'] = _(u'Required if no json URL is supplied')
+                #exc['json_url'] = _(u'Required if no date is supplied')
+                #raise exc
 
             if value['json_url'] and value['date']:
                 exc = Invalid(
                     form,
-                    _(u'Either a date or a json URL is required, bot not both')
+                    _(u'Either a date or a json URL is required, but not both')
                 )
                 exc['date'] = _(u'Must be blank if a json URL is supplied')
                 exc['json_url'] = _(u'Must be blank if a date is supplied')
@@ -215,19 +215,19 @@ class EditSoftwareProjectFormView(EditFormView):
     def schema_factory(self):
 
         def validator(form, value):
-            if not value['json_url'] and not value['date']:
-                exc = Invalid(
-                    form,
-                    _(u'Either a date or a json URL is required')
-                )
-                exc['date'] = _(u'Required if no json URL is supplied')
-                exc['json_url'] = _(u'Required if no date is supplied')
-                raise exc
+            #if not value['json_url'] and not value['date']:
+                #exc = Invalid(
+                    #form,
+                    #_(u'Either a date or a json URL is required')
+                #)
+                #exc['date'] = _(u'Required if no json URL is supplied')
+                #exc['json_url'] = _(u'Required if no date is supplied')
+                #raise exc
 
             if value['json_url'] and value['date']:
                 exc = Invalid(
                     form,
-                    _(u'Either a date or a json URL is required, bot not both')
+                    _(u'Either a date or a json URL is required, but not both')
                 )
                 exc['date'] = _(u'Must be blank if a json URL is supplied')
                 exc['json_url'] = _(u'Must be blank if a date is supplied')

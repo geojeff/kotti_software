@@ -11,6 +11,8 @@ Setup and Login
   >>> first_date = datetime.datetime(2012, 7, 31, 5, 0, 0, tzinfo=tzutc())
   >>> second_time_string = "2012-07-31 06:00:00"
   >>> second_date = datetime.datetime(2012, 7, 31, 6, 0, 0, tzinfo=tzutc())
+  >>> third_time_string = "2012-10-04 06:00:00"
+  >>> third_date = datetime.datetime(2012, 10, 4, 6, 0, 0, tzinfo=tzutc())
   >>> tools = tests.setUpFunctional(
   ...     **{'kotti.configurators': 'kotti_software.kotti_configure'})
   >>> browser = tools['Browser']()
@@ -93,4 +95,20 @@ Edit software collection and software project and verify the changes
   >>> "I was the first software project" in browser.contents
   True
   >>> "This project concerns throwing dice..." in browser.contents
+  True
+
+Try adding a software project with date *and* json_url
+------------------------------------------------------
+
+  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
+  >>> ctrl("Title").value = "Third software project"
+  >>> ctrl("Body").value = "This project concerns lions and tigers..."
+  >>> ctrl("Date", index=0).value = third_time_string
+  >>> ctrl("JSON URL", index=0).value = "https://raw.github.com/geojeff/kotti_software/develop/json"
+  >>> ctrl("save").click()
+  >>> "Either a date or a json URL is required, but not both" in browser.contents
+  True
+  >>> "Must be blank if a json URL is supplied" in browser.contents
+  True
+  >>> "Must be blank if a date is supplied" in browser.contents
   True
