@@ -39,7 +39,7 @@ class UnitTests(UnitTestBase):
         root['software_collection'] = software_collection
 
         software_project = SoftwareProject(
-                json_url="https://raw.github.com/geojeff/kotti_software/master/json")
+                json_url="https://raw.github.com/geojeff/kotti_software/develop/json")
 
         software_collection['software_project'] = software_project
 
@@ -51,7 +51,7 @@ class UnitTests(UnitTestBase):
         root['software_collection'] = software_collection
 
         software_project = SoftwareProject(
-                json_url="https://raw.github.com/geojeff/kotti_software/master/json",
+                json_url="https://raw.github.com/geojeff/kotti_software/develop/json",
                 overwrite_home_page_url=True,
                 overwrite_docs_url=True,
                 overwrite_package_url=True,
