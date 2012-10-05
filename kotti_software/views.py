@@ -77,12 +77,12 @@ class SoftwareProjectSchema(DocumentSchema):
 
     choices = (
         ('', '- Select -'),
-        ('use_entered', 'Used entered date'),
+        ('use_entered', 'Use entered date'),
         ('use_json_date', 'Use date in JSON data'),
         ('use_now', 'Use the current date'))
     date_handling_choice = colander.SchemaNode(
         colander.String(),
-        default='use_entered',
+        default='use_json_date',
         title=_(u'Date Handling'),
         widget=SelectWidget(values=choices))
     date = colander.SchemaNode(

@@ -13,6 +13,7 @@ Setup and Login
   >>> second_date = datetime.datetime(2012, 7, 31, 6, 0, 0, tzinfo=tzutc())
   >>> third_time_string = "2012-10-04 06:00:00"
   >>> third_date = datetime.datetime(2012, 10, 4, 6, 0, 0, tzinfo=tzutc())
+  >>> def dc(content, name='/tmp/out.html'): open(name, 'w').write(content)
   >>> tools = tests.setUpFunctional(
   ...     **{'kotti.configurators': 'kotti_software.kotti_configure'})
   >>> browser = tools['Browser']()
@@ -45,6 +46,7 @@ Add softwareprojects
   >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "First software project"
   >>> ctrl("Body").value = "This project concerns throwing dice..."
+  >>> ctrl("Use entered date").selected = True
   >>> ctrl("Date", index=1).value = first_time_string
   >>> ctrl("save").click()
   >>> "Successfully added item" in browser.contents
@@ -53,6 +55,7 @@ Add softwareprojects
   >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "Second software project"
   >>> ctrl("Body").value = "This project is about hurricanes..."
+  >>> ctrl("Use entered date").selected = True
   >>> ctrl("Date", index=1).value = second_time_string
   >>> ctrl("save").click()
   >>> "Successfully added item" in browser.contents
@@ -80,7 +83,7 @@ Add a software project with use_json_date but no json_url
   >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "Third software project"
   >>> ctrl("Body").value = "This project concerns lions and tigers..."
-  >>> ctrl("Date Handling", index=0).value = ["use_json_date"]
+  >>> ctrl("Use date in JSON data").selected = True
   >>> ctrl("JSON URL").value = ""
   >>> ctrl("save").click()
   >>> "Date handling = use_json_date; json_url required" in browser.contents
@@ -100,6 +103,7 @@ Edit software collection and software project and verify the changes
   >>> ctrl("Title").value = "I was first, but now am an edited project"
   >>> ctrl("Description", index=0).value = "I am an edited software project"
   >>> ctrl("Tags").value = "dice editing"
+  >>> ctrl("Use entered date").selected = True
   >>> ctrl("Date", index=1).value = third_time_string
   >>> ctrl("Home Page URL").value = "http://kotti.pylonsproject.org"
   >>> ctrl("Docs URL").value = "http://kotti.pylonsproject.org"
@@ -114,7 +118,7 @@ Edit a software project to change the json_url, forcing date to blank
 ---------------------------------------------------------------------
 
   >>> browser.open(tests.BASE_URL + '/new-software-collection/first-software-project/@@edit')
-  >>> ctrl("Date Handling", index=0).getControl('Use date in JSON data').selected = True
+  >>> ctrl("Use date in JSON data").selected = True
   >>> ctrl("Date", index=1).value = ""
   >>> ctrl("JSON URL").value = "http://pypi.python.org/pypi/Kotti/json"
   >>> ctrl("save").click()
@@ -128,7 +132,7 @@ Edit a software project with date *and* json_url changed
 
   >>> browser.open(tests.BASE_URL + '/new-software-collection/first-software-project/@@edit')
   >>> ctrl("Title").value = "Edited software project"
-  >>> ctrl("Date Handling", index=0).value = ["use_json_date"]
+  >>> ctrl("Use date in JSON data").selected = True
   >>> ctrl("JSON URL", index=0).value = ""
   >>> ctrl("save").click()
   >>> "Date handling = use_json_date; json_url required" in browser.contents
