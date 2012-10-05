@@ -1,6 +1,14 @@
 CHANGES
 =======
 
+0.1.1
+-----
+
+ - Added missing TODO.txt
+ - Changed test urls to hit pypi/Kotti/json
+ - Prepared MANIFEST.in
+ - Updated README following pattern of kotti_media
+
 0.1
 ---
 
