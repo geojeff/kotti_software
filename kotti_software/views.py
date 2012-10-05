@@ -4,6 +4,8 @@ from dateutil.tz import tzutc
 import colander
 from colander import Invalid
 
+import logging
+
 from deform.widget import CheckboxWidget
 from deform.widget import DateTimeInputWidget
 from deform.widget import SelectWidget
@@ -17,31 +19,24 @@ from kotti.views.edit import generic_add
 
 from kotti.views.util import ensure_view_selector
 
+from kotti_software import collection_settings
 from kotti_software.resources import SoftwareCollection
 from kotti_software.resources import SoftwareProject
-
+from kotti_software.static import kotti_software_js
 from kotti_software import _
 
-import logging
-
 from kotti.security import has_permission
-from kotti_software.static import kotti_software_js
 from kotti.views.util import template_api
 
 from kotti import DBSession
 
-from pyramid.i18n import TranslationStringFactory
+from plone.batching import Batch
+
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 from pyramid.renderers import get_renderer
 
-from plone.batching import Batch
-
-from kotti_software import collection_settings
-
-_ = TranslationStringFactory('kotti_software')
 log = logging.getLogger(__name__)
-
 
 
 class SoftwareCollectionSchema(DocumentSchema):
@@ -75,19 +70,9 @@ class SoftwareProjectSchema(DocumentSchema):
         description=_(u'Enter unless doing a manual entry.'),
         missing=_(''),)
 
-    date = colander.SchemaNode(
-        colander.DateTime(),
-        title=_(u'Date'),
-        description=_(u'Leave blank to use now or to fetch from JSON.'),
-        validator=colander.Range(
-            min=datetime.datetime(2012, 1, 1, 0, 0,
-                                  tzinfo=colander.iso8601.Utc()),
-            min_err=_('${val} is too early; min date now is ${min}')),
-        widget=DateTimeInputWidget(),
-        missing=deferred_date_missing,)
     choices = (
         ('', '- Select -'),
-        ('use_entered', 'Used entered date'),
+        ('use_entered', 'Use entered date'),
         ('use_json_date', 'Use date in JSON data'),
         ('use_now', 'Use the current date'))
     date_handling_choice = colander.SchemaNode(
@@ -95,6 +80,16 @@ class SoftwareProjectSchema(DocumentSchema):
         default='use_json_date',
         title=_(u'Date Handling'),
         widget=SelectWidget(values=choices))
+    date = colander.SchemaNode(
+        colander.DateTime(),
+        title=_(u'Date'),
+        description=_(u'Enter date only if date handling = use_entered.'),
+        validator=colander.Range(
+            min=datetime.datetime(2012, 1, 1, 0, 0,
+                                  tzinfo=colander.iso8601.Utc()),
+            min_err=_('${val} is too early; min date now is ${min}')),
+        widget=DateTimeInputWidget(),
+        missing=deferred_date_missing,)
 
     home_page_url = colander.SchemaNode(
         colander.String(),
@@ -156,40 +151,20 @@ class AddSoftwareProjectFormView(AddFormView):
     def schema_factory(self):
 
         def validator(form, value):
-            if not value['json_url'] and not value['date']:
-                exc = Invalid(
-                    form,
-                    _(u'Either a date or a json URL is required')
-                )
-                exc['date'] = _(u'Required if no json URL is supplied')
-                exc['json_url'] = _(u'Required if no date is supplied')
-                raise exc
 
-            if value['json_url'] and value['date']:
+            if (value['date_handling_choice'] == 'use_json_date'
+                    and not value['json_url']):
                 exc = Invalid(
                     form,
-                    _(u'Either a date or a json URL is required, bot not both')
+                    _(u'Date handling = use_json_date; json_url required')
                 )
-                exc['date'] = _(u'Must be blank if a json URL is supplied')
-                exc['json_url'] = _(u'Must be blank if a date is supplied')
+                exc['json_url'] = _(u'Provide json url for fetching data')
                 raise exc
 
         return SoftwareProjectSchema(validator=validator)
 
-    def save_success(self, appstruct):
-
-        if not appstruct['title']:
-
-            if appstruct['json_url']:
-                appstruct['title'] = appstruct['json_url']
-
-            if appstruct['date']:
-                appstruct['title'] = \
-                        "software-project-{0}".format(appstruct['date'])
-
-        return super(AddSoftwareProjectFormView, self).save_success(appstruct)
-
     def add(self, **appstruct):
+
         return self.item_class(
             title=appstruct['title'],
             description=appstruct['description'],
@@ -215,22 +190,14 @@ class EditSoftwareProjectFormView(EditFormView):
     def schema_factory(self):
 
         def validator(form, value):
-            if not value['json_url'] and not value['date']:
-                exc = Invalid(
-                    form,
-                    _(u'Either a date or a json URL is required')
-                )
-                exc['date'] = _(u'Required if no json URL is supplied')
-                exc['json_url'] = _(u'Required if no date is supplied')
-                raise exc
 
-            if value['json_url'] and value['date']:
+            if (value['date_handling_choice'] == 'use_json_date'
+                    and not value['json_url']):
                 exc = Invalid(
                     form,
-                    _(u'Either a date or a json URL is required, bot not both')
+                    _(u'Date handling = use_json_date; json_url required')
                 )
-                exc['date'] = _(u'Must be blank if a json URL is supplied')
-                exc['json_url'] = _(u'Must be blank if a date is supplied')
+                exc['json_url'] = _(u'Provide json url for fetching data')
                 raise exc
 
         return SoftwareProjectSchema(validator=validator)
@@ -249,18 +216,6 @@ class EditSoftwareProjectFormView(EditFormView):
         if appstruct['tags']:
             self.context.tags = appstruct['tags']
 
-        if appstruct['home_page_url']:
-            self.context.home_page_url = appstruct['home_page_url']
-
-        if appstruct['docs_url']:
-            self.context.docs_url = appstruct['docs_url']
-
-        if appstruct['package_url']:
-            self.context.package_url = appstruct['package_url']
-
-        if appstruct['bugtrack_url']:
-            self.context.bugtrack_url = appstruct['bugtrack_url']
-
         self.context.desc_handling_choice = \
                 appstruct['desc_handling_choice']
         self.context.date_handling_choice = \
@@ -274,15 +229,23 @@ class EditSoftwareProjectFormView(EditFormView):
         self.context.overwrite_bugtrack_url = \
                 appstruct['overwrite_bugtrack_url']
 
-        if appstruct['json_url']:
-            self.context.json_url = appstruct['json_url']
-            self.context.refresh_json()
-        else:  # pragma: no cover
-            # can't find a way to test this, so maybe we never get here
-            # let's still leave it as a safety belt (comment in kotti_media,
-            # about what is there done for external_url)
-            self.context.json_url = None
+        if appstruct['home_page_url']:
+            self.context.home_page_url = appstruct['home_page_url']
 
+        if appstruct['docs_url']:
+            self.context.docs_url = appstruct['docs_url']
+
+        if appstruct['package_url']:
+            self.context.package_url = appstruct['package_url']
+
+        if appstruct['bugtrack_url']:
+            self.context.bugtrack_url = appstruct['bugtrack_url']
+
+        if self.context.date_handling_choice == 'use_json_date':
+            if appstruct['json_url']:
+                self.context.json_url = appstruct['json_url']
+                self.context.refresh_json()
+        else:
             self.context.date = appstruct['date']
 
 
@@ -318,6 +281,7 @@ class SoftwareCollectionView(BaseView):
     @view_config(name="view",
              renderer="kotti_software:templates/softwarecollection-view.pt")
     def view(self):
+
         settings = collection_settings()
         session = DBSession()
         query = \
@@ -334,25 +298,6 @@ class SoftwareCollectionView(BaseView):
             items = Batch.fromPagenumber(items,
                           pagesize=settings['pagesize'],
                           pagenumber=int(page))
-
-#        softwareitems = \
-#                [c for c in self.context.children
-#                 if (c.type in ("SoftwareProject", ))]
-#                 and has_permission("view", self.context, self.request)]
-#
-#        # [TODO] Expensive: ?
-#        [item.refresh_json() for item in softwareitems]
-#
-#        items = sorted(softwareitems, key=lambda x: x.date)
-#
-#        page = self.request.params.get('page', 1)
-#
-#        settings = collection_settings()
-#
-#        if settings['use_batching']:
-#            items = Batch.fromPagenumber(items,
-#                                         pagesize=settings['pagesize'],
-#                                         pagenumber=int(page))
 
         return {
             'api': template_api(self.context, self.request),

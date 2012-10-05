@@ -54,16 +54,16 @@ class SoftwareProject(Document):
     desc_handling_choice = 'use_entered'
     #  other choices: ('use_json_summary', 'use_json_description')
 
-    json_url = Column('json_url', String())
+    json_url = Column('json_url', String(1000))
 
     date = Column('date', UTCDateTime())
     date_handling_choice = 'use_json_date'
     #  other choices: ('use_entered', 'use_now')
 
-    home_page_url = Column('home_page_url', String())
-    docs_url = Column('docs_url', String())
-    package_url = Column('package_url', String())
-    bugtrack_url = Column('bugtrack_url', String())
+    home_page_url = Column('home_page_url', String(1000))
+    docs_url = Column('docs_url', String(1000))
+    package_url = Column('package_url', String(1000))
+    bugtrack_url = Column('bugtrack_url', String(1000))
 
     overwrite_home_page_url = Column('overwrite_home_page_url', Boolean())
     overwrite_docs_url = Column('overwrite_docs_url', Boolean())
@@ -97,6 +97,17 @@ class SoftwareProject(Document):
 
         self.json_url = json_url
 
+        self.date_handling_choice = date_handling_choice
+
+        self.home_page_url = home_page_url
+        self.docs_url = docs_url
+        self.package_url = package_url
+        self.bugtrack_url = bugtrack_url
+        self.overwrite_home_page_url = overwrite_home_page_url
+        self.overwrite_docs_url = overwrite_docs_url
+        self.overwrite_package_url = overwrite_package_url
+        self.overwrite_bugtrack_url = overwrite_bugtrack_url
+
         # The choices for date_handling_choice are:
         #
         #   use_json_date
@@ -109,21 +120,11 @@ class SoftwareProject(Document):
         #   else set the date (the date view default system will make it NOW
         #     if date is None)
         #
-        if self.json_url:
-            self.refresh_json()
+        if self.date_handling_choice == 'use_json_date':
+            if self.json_url:
+                self.refresh_json()
         else:
             self.date = date
-
-        self.date_handling_choice = date_handling_choice
-
-        self.home_page_url = home_page_url
-        self.docs_url = docs_url
-        self.package_url = package_url
-        self.bugtrack_url = bugtrack_url
-        self.overwrite_home_page_url = overwrite_home_page_url
-        self.overwrite_docs_url = overwrite_docs_url
-        self.overwrite_package_url = overwrite_package_url
-        self.overwrite_bugtrack_url = overwrite_bugtrack_url
 
     def refresh_json(self):
         if self.json_url:

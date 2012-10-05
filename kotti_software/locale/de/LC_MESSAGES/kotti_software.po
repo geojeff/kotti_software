@@ -22,8 +22,8 @@ msgid "SoftwareCollection"
 msgstr "SoftwareCollection"
 
 #: kotti_software/resources.py:26
-msgid "Software project"
-msgstr "TODO translate Software project"
+msgid "Software Project"
+msgstr "TODO translate Software Project"
 
 #: kotti_software/templates/softwarecollection-view.pt:17
 msgid "Software projects"

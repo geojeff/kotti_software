@@ -35,10 +35,12 @@ tests_require = [
     'zope.testbrowser',
 ]
 
+long_description = README + '\n\n' + TODO + '\n\n' + AUTHORS + '\n\n' + CHANGES
+
 setup(name='kotti_software',
       version=version,
       description="Kotti software",
-      long_description=README + '\n\n' + TODO + '\n\n' + AUTHORS + '\n\n' + CHANGES,
+      long_description=long_description,
       classifiers=[],
       keywords='kotti software',
       author='geojeff',
