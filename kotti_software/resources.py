@@ -54,16 +54,16 @@ class SoftwareProject(Document):
     desc_handling_choice = 'use_entered'
     #  other choices: ('use_json_summary', 'use_json_description')
 
-    json_url = Column('json_url', String())
+    json_url = Column('json_url', String(1000))
 
     date = Column('date', UTCDateTime())
     date_handling_choice = 'use_json_date'
     #  other choices: ('use_entered', 'use_now')
 
-    home_page_url = Column('home_page_url', String())
-    docs_url = Column('docs_url', String())
-    package_url = Column('package_url', String())
-    bugtrack_url = Column('bugtrack_url', String())
+    home_page_url = Column('home_page_url', String(1000))
+    docs_url = Column('docs_url', String(1000))
+    package_url = Column('package_url', String(1000))
+    bugtrack_url = Column('bugtrack_url', String(1000))
 
     overwrite_home_page_url = Column('overwrite_home_page_url', Boolean())
     overwrite_docs_url = Column('overwrite_docs_url', Boolean())
