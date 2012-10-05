@@ -5,3 +5,7 @@ CHANGES
 ---
 
 - Initial release.
+- Started with copy of kotti_blog.
+- During development referred to kotti_media for adding url properties,
+  for setting up view classes, and for preparation of tests and use of
+  travis-ci.org.

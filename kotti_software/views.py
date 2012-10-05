@@ -4,6 +4,8 @@ from dateutil.tz import tzutc
 import colander
 from colander import Invalid
 
+import logging
+
 from deform.widget import CheckboxWidget
 from deform.widget import DateTimeInputWidget
 from deform.widget import SelectWidget
@@ -17,31 +19,24 @@ from kotti.views.edit import generic_add
 
 from kotti.views.util import ensure_view_selector
 
+from kotti_software import collection_settings
 from kotti_software.resources import SoftwareCollection
 from kotti_software.resources import SoftwareProject
-
+from kotti_software.static import kotti_software_js
 from kotti_software import _
 
-import logging
-
 from kotti.security import has_permission
-from kotti_software.static import kotti_software_js
 from kotti.views.util import template_api
 
 from kotti import DBSession
 
-from pyramid.i18n import TranslationStringFactory
+from plone.batching import Batch
+
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 from pyramid.renderers import get_renderer
 
-from plone.batching import Batch
-
-from kotti_software import collection_settings
-
-_ = TranslationStringFactory('kotti_software')
 log = logging.getLogger(__name__)
-
 
 
 class SoftwareCollectionSchema(DocumentSchema):
@@ -157,7 +152,7 @@ class AddSoftwareProjectFormView(AddFormView):
 
         def validator(form, value):
 
-            if (value['date_handling_choice'] == 'use_json_date' \
+            if (value['date_handling_choice'] == 'use_json_date'
                     and not value['json_url']):
                 exc = Invalid(
                     form,
@@ -196,7 +191,7 @@ class EditSoftwareProjectFormView(EditFormView):
 
         def validator(form, value):
 
-            if (value['date_handling_choice'] == 'use_json_date' \
+            if (value['date_handling_choice'] == 'use_json_date'
                     and not value['json_url']):
                 exc = Invalid(
                     form,
@@ -253,6 +248,7 @@ class EditSoftwareProjectFormView(EditFormView):
         else:
             self.context.date = appstruct['date']
 
+
 @view_defaults(permission='view')
 class BaseView(object):
 
@@ -285,6 +281,7 @@ class SoftwareCollectionView(BaseView):
     @view_config(name="view",
              renderer="kotti_software:templates/softwarecollection-view.pt")
     def view(self):
+
         settings = collection_settings()
         session = DBSession()
         query = \
@@ -301,25 +298,6 @@ class SoftwareCollectionView(BaseView):
             items = Batch.fromPagenumber(items,
                           pagesize=settings['pagesize'],
                           pagenumber=int(page))
-
-#        softwareitems = \
-#                [c for c in self.context.children
-#                 if (c.type in ("SoftwareProject", ))]
-#                 and has_permission("view", self.context, self.request)]
-#
-#        # [TODO] Expensive: ?
-#        [item.refresh_json() for item in softwareitems]
-#
-#        items = sorted(softwareitems, key=lambda x: x.date)
-#
-#        page = self.request.params.get('page', 1)
-#
-#        settings = collection_settings()
-#
-#        if settings['use_batching']:
-#            items = Batch.fromPagenumber(items,
-#                                         pagesize=settings['pagesize'],
-#                                         pagenumber=int(page))
 
         return {
             'api': template_api(self.context, self.request),

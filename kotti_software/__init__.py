@@ -27,7 +27,10 @@ view_needed.add(Group([kotti_software_css, kotti_software_js, ]))
 
 def kotti_configure(settings):
     settings['pyramid.includes'] += ' kotti_software.views'
-    settings['kotti.available_types'] += ' kotti_software.resources.SoftwareCollection kotti_software.resources.SoftwareProject'
+    settings['kotti.available_types'] += \
+            ' kotti_software.resources.SoftwareCollection'
+    settings['kotti.available_types'] += \
+            ' kotti_software.resources.SoftwareProject'
 
 
 def check_true(value):
@@ -56,5 +59,6 @@ def collection_settings(name=''):
     except ValueError:
         settings['pagesize'] = 5
     settings['use_auto_batching'] = check_true(settings['use_auto_batching'])
-    settings['link_headline_overview'] = check_true(settings['link_headline_overview'])
+    settings['link_headline_overview'] = \
+            check_true(settings['link_headline_overview'])
     return settings

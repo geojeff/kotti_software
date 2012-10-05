@@ -126,7 +126,6 @@ class SoftwareProject(Document):
         else:
             self.date = date
 
-
     def refresh_json(self):
         if self.json_url:
             json_raw = urllib2.urlopen(self.json_url).read()

@@ -22,7 +22,7 @@ msgid "Software Collection"
 msgstr ""
 
 #: kotti_software/resources.py:26
-msgid "Software project"
+msgid "Software Project"
 msgstr ""
 
 #: kotti_software/templates/softwarecollection-view.pt:17
