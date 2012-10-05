@@ -120,8 +120,9 @@ class SoftwareProject(Document):
         #   else set the date (the date view default system will make it NOW
         #     if date is None)
         #
-        if self.json_url:
-            self.refresh_json()
+        if self.date_handling_choice == 'use_json_date':
+            if self.json_url:
+                self.refresh_json()
         else:
             self.date = date
 
