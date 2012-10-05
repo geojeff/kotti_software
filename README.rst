@@ -134,6 +134,40 @@ json_url = "https://raw.github.com/geojeff/kotti_fruits_example/master/json"
 
 As described above, you will need to follow the format of the pypi JSON data.
 
+Work in progress
+================
+
+``kotti_software`` is considered alpha software, not yet suitable for use in production environments.
+The current state of the project is in no way feature complete nor API stable.
+If you really want to use it in your project(s), make sure to pin the exact version in your requirements.
+Not doing so will likely break your project when future releases become available.
+
+Development
+===========
+
+Contributions to ``kotti_software`` are highly welcome.
+Just clone its `Github repository`_ and submit your contributions as pull requests.
+
+Note that all development is done on the ``develop`` branch and ``master`` is reserved for "production-ready state".
+Therefore make sure to always base your development work on the current state of the ``develop`` branch.
+
+This follows the highly recommended `A successful Git branching model`_ pattern, which is implemented by the excellent `gitflow`_ git extension.
+
+Testing
+-------
+
+|build status|_
+
+``kotti_software`` has 100% test coverage.
+Please make sure that you add tests for new features and that all tests pass before submitting pull requests.
+Running the test suite is as easy as running ``py.test`` from the source directory (you might need to run ``python setup.py dev`` to have all the test requirements installed in your virtualenv).
+
+
 .. _Find out more about Kotti: http://pypi.python.org/pypi/Kotti
 .. _Kotti documentation about the asset_overrides setting: http://kotti.readthedocs.org/en/latest/configuration.html?highlight=asset#adjust-the-look-feel-kotti-asset-overrides
+.. _Github repository: https://github.com/geojeff/kotti_software
+.. _gitflow: https://github.com/nvie/gitflow
+.. _A successful Git branching model: http://nvie.com/posts/a-successful-git-branching-model/
+.. |build status| image:: https://secure.travis-ci.org/geojeff/kotti_software.png?branch=master
+.. _build status: http://travis-ci.org/geojeff/kotti_software
 
