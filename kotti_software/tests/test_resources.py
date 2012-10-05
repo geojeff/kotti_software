@@ -39,7 +39,7 @@ class UnitTests(UnitTestBase):
         root['software_collection'] = software_collection
 
         software_project = SoftwareProject(
-                json_url="https://raw.github.com/geojeff/kotti_software/develop/json")
+                json_url="http://pypi.python.org/pypi/Kotti/json")
 
         software_collection['software_project'] = software_project
 
@@ -51,7 +51,7 @@ class UnitTests(UnitTestBase):
         root['software_collection'] = software_collection
 
         software_project = SoftwareProject(
-                json_url="https://raw.github.com/geojeff/kotti_software/develop/json",
+                json_url="http://pypi.python.org/pypi/Kotti/json",
                 overwrite_home_page_url=True,
                 overwrite_docs_url=True,
                 overwrite_package_url=True,
@@ -65,7 +65,7 @@ class UnitTests(UnitTestBase):
         # desc_handling_choice is an either/or,
         # so also check for description overwriting
         software_project = SoftwareProject(
-                json_url="https://raw.github.com/geojeff/kotti_software/develop/json",
+                json_url="http://pypi.python.org/pypi/Kotti/json",
                 desc_handling_choice='use_json_description')
 
     def test_software_project_json_overwriting_pypi(self):
