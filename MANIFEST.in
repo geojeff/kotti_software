@@ -1,3 +1,7 @@
+recursive-include *.md
 recursive-include *.rst
 recursive-include *.txt
 recursive-include kotti_software *
+recursive-exclude kotti_software/tests *
+recursive-exclude kotti_software .DS_Store
+recursive-exclude kotti_software *.pyc
