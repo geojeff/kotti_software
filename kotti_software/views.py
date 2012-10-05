@@ -45,7 +45,9 @@ class SoftwareCollectionSchema(DocumentSchema):
 
 @colander.deferred
 def deferred_date_missing(node, kw):
+
     value = datetime.datetime.now()
+
     return datetime.datetime(value.year, value.month, value.day, value.hour,
         value.minute, value.second, value.microsecond, tzinfo=tzutc())
 
@@ -282,16 +284,21 @@ class SoftwareCollectionView(BaseView):
              renderer="kotti_software:templates/softwarecollection-view.pt")
     def view(self):
 
-        settings = collection_settings()
         session = DBSession()
         query = session.query(SoftwareProject).filter(
                 SoftwareProject.parent_id == self.context.id)
         items = query.all()
+
         # [TODO] Expensive: ?
         [item.refresh_json() for item in items]
         query.order_by(SoftwareProject.date.desc())
+
         items = query.all()
+
         page = self.request.params.get('page', 1)
+
+        settings = collection_settings()
+
         if settings['use_batching']:
             items = Batch.fromPagenumber(items,
                           pagesize=settings['pagesize'],
@@ -318,39 +325,6 @@ def add_softwarecollection(context, request):
                        SoftwareCollectionSchema(),
                        SoftwareCollection,
                        u'softwarecollection')
-
-
-#def view_softwareproject(context, request):
-#    # [TODO] Expensive: ?
-#    context.refresh_json()
-#
-#    return {}
-#
-#
-#def view_softwarecollection(context, request):
-#    settings = collection_settings()
-#    macros = get_renderer('templates/macros.pt').implementation()
-#    session = DBSession()
-#    query = session.query(SoftwareProject).filter(
-#        SoftwareProject.parent_id == \
-#        context.id).order_by(SoftwareProject.date.desc())
-#    items = query.all()
-#    # [TODO] Expensive: ?
-#    [item.refresh_json() for item in items]
-#    query.order_by(SoftwareProject.date.desc())
-#    items = query.all()
-#    page = request.params.get('page', 1)
-#    if settings['use_batching']:
-#        items = Batch.fromPagenumber(items,
-#                      pagesize=settings['pagesize'],
-#                      pagenumber=int(page))
-#
-#    return {
-#        'api': template_api(context, request),
-#        'macros': macros,
-#        'items': items,
-#        'settings': settings,
-#        }
 
 
 def includeme_edit(config):
@@ -388,27 +362,13 @@ def includeme_edit(config):
 
 def includeme_view(config):
 
-#    config.add_view(
-#        view_softwarecollection,
-#        context=SoftwareCollection,
-#        name='view',
-#        permission='view',
-#        renderer='templates/softwarecollection-view.pt',
-#        )
-#
-#    config.add_view(
-#        view_softwareproject,
-#        context=SoftwareProject,
-#        name='view',
-#        permission='view',
-#        renderer='templates/softwareproject-view.pt',
-#        )
-
     config.add_static_view('static-kotti_software', 'kotti_software:static')
 
 
 def includeme(config):
+
     settings = config.get_settings()
+
     if 'kotti_software.asset_overrides' in settings:
         asset_overrides = \
                 [a.strip()
