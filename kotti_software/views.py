@@ -286,12 +286,12 @@ class SoftwareCollectionView(BaseView):
 
         session = DBSession()
         query = session.query(SoftwareProject).filter(
-                SoftwareProject.parent_id == self.context.id)
+                SoftwareProject.parent_id == self.context.id).order_by(
+                        SoftwareProject.date.desc())
         items = query.all()
 
         # [TODO] Expensive: ?
         [item.refresh_json() for item in items]
-        query.order_by(SoftwareProject.date.desc())
 
         items = query.all()
 
