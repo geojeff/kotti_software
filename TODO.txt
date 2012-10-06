@@ -8,3 +8,7 @@ TODO
   requiring manual entry on pypi or in kotti_software. See what happens when
   bugtrack_url, home_page, and download_url are added to setup.py. What is
   download_url vs. package_url? Does url in setup.py map to home_page?
+  [Home page, Download URL, and Bugtrack URL are editable on pypi. If they
+  are not available in setup.py, then if set manually on pypi, are they
+  overwritten by new release pushes to pypi?]
+- check on need for required testing dependencies copied from kotti_media
