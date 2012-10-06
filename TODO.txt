@@ -3,3 +3,8 @@ TODO
 
 - add i18n
 - add a sort_order property, ASC or DESC
+- add navpill-style list for projects; make list style selectable
+- sort out and document metadata items available in setup.py vs. those
+  requiring manual entry on pypi or in kotti_software. See what happens when
+  bugtrack_url, home_page, and download_url are added to setup.py. What is
+  download_url vs. package_url? Does url in setup.py map to home_page?
