@@ -1,0 +1,5 @@
+TODO
+====
+
+- add i18n
+- add a sort_order property, ASC or DESC

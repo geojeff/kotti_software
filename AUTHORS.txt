@@ -3,6 +3,13 @@ Authors
 
 Jeff Pittman [geojeff]
 
+kotti_software started as a copy of kotti_blog, and also follows some design
+and layout features of kotti_media.
+
+for kotti_media:
+
+Andreas Kaiser [disko]
+
 for kotti_blog:
 
 Marco Scheidhuber [j23d]

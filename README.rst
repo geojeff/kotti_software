@@ -3,9 +3,7 @@ kotti_software
 ==============
 
 This is an extension to the Kotti CMS that adds a system for presenting
-software projects on your site.
-
-kotti_software started as a copy of kotti_blog.
+a list of software projects on your site.
 
 `Find out more about Kotti`_
 
@@ -68,49 +66,52 @@ manually keep up to date. Or, you can provide a json_url instead of a date
 and the last-updated date for the project, along with main urls, will be
 gathered from a JSON source. Here are ways to enter software projects:
 
-    1) Enter the JSON url only (normal JSON-fetched)
+    1) Enter the JSON url only (for fetching from a JSON data source)
 
     2) Enter the date and any of: home_page, docs_url,
-       package_url, bugtrack_url (Manual entry)
+       package_url, bugtrack_url (manual entry)
 
     3) Enter the date only (bare-bones entry, with just date and
        title, and whatever is in body -- useful for defunct
        projects)
 
+There is a date-handling select property that should be set according to the
+action for 1), 2), or 3) above: 'Use entered date', 'Use date in JSON data',
+or 'Use the current date'.
+
+There is a similar select property for how to handle the description. Choices
+for that are: 'Used entered description (can be blank)', 'Use summary in JSON data',
+or 'Use description in JSON data'.
+
 For the JSON data, if your project is a Python project and it has been posted
 to pypi.python.org, you can enter the JSON url for that, as described below.
 Otherwise, make your own JSON file, using the following format, and post it
-somewhere, then enter that URL.
+somewhere, then enter that URL. See instructions below about 'raw' data links.
 
 ::
 
     {
         "info": {
+            "home_page": "http://kotti.pylonsproject.org",
             "docs_url": "http://packages.python.org/Kotti", 
             "package_url": "http://pypi.python.org/pypi/Kotti", 
             "bugtrack_url": "", 
-            "home_page": "http://kotti.pylonsproject.org",
+            "description": "Kotti is a high-level, 'Pythonic' framework..."
             "summary": "Kotti is a high-level, 'Pythonic' framework..."
         }, 
         "urls": [ { "upload_time": "2012-08-30T11:59:58", } ]
     }
 
-The urls are key/value pairs within "info", and may be empty, as shown. The
-data structure for upload_time looks unnecessarily complicated, but it is
-this way because we follow the pypi JSON structure. kotti_software is written
-for use on the Kotti website, and thus mainly presents Python projects that
+The home_page, docs_url, package_url, and bugtrack_url urls are key/value pairs
+within "info", not within "urls" as you might expect. Within the "urls" data
+structure is upload_time, an arrangement that might appear unnecessarily
+complicated. It is this way because we follow the pypi JSON structure. kotti_software
+is written for use on the Kotti website, which mostly presents Python projects that
 are posted on pypi. Also, kotti_software is used by Kotti developers on their
-personal websites, and they tend to have Python projects. However, any type of
-project can be posted of course, for javascript, Ruby, etc. Just follow the
+personal websites, which also tend to have Python projects. However, any type of
+project can be posted, for javascript, Ruby, etc. Just follow the data structure
 format above for creating a custom JSON data structure for each project.
 
-If you need to customize kotti_software itself, the urls are accessed as
-json_obj['info']['docs_url'], and the upload_time is accessed as
-json_obj['urls'][0]['upload_time'].
-
-If the description is entered manually, it is used, but if left blank, and the
-"summary" item in the JSON data is not empty, the summary is used as the
-description.
 
 **Instructions for common JSON sources:**
 
@@ -128,30 +129,35 @@ Hosting Elsewhere
 
 As an alternative to pypi, if your project is not posted there, you may put
 a JSON file somewhere in your github, bitbucket, or other repo, and access
-it with the raw url, as:
+it with an appropriate url. For instance, for a file in a github repo, the
+RAW url should be used, e.g.:
 
 json_url = "https://raw.github.com/geojeff/kotti_fruits_example/master/json"
 
-As described above, you will need to follow the format of the pypi JSON data.
+As described above, you will need to follow the format of the pypi JSON data
+in such a file.
 
 Work in progress
 ================
 
-``kotti_software`` is considered alpha software, not yet suitable for use in production environments.
-The current state of the project is in no way feature complete nor API stable.
-If you really want to use it in your project(s), make sure to pin the exact version in your requirements.
-Not doing so will likely break your project when future releases become available.
+``kotti_software`` is considered alpha software, not yet suitable for use in
+production environments.  The current state of the project is in no way feature
+complete nor API stable.  If you really want to use it in your project(s), make
+sure to pin the exact version in your requirements.  Not doing so will likely
+break your project when future releases become available.
 
 Development
 ===========
 
-Contributions to ``kotti_software`` are highly welcome.
+Contributions to ``kotti_software`` are very welcome.
 Just clone its `Github repository`_ and submit your contributions as pull requests.
 
-Note that all development is done on the ``develop`` branch and ``master`` is reserved for "production-ready state".
-Therefore make sure to always base your development work on the current state of the ``develop`` branch.
+Note that all development is done on the ``develop`` branch. ``master`` is reserved
+for "production-ready state".  Therefore, make sure to always base development work
+on the current state of the ``develop`` branch.
 
-This follows the highly recommended `A successful Git branching model`_ pattern, which is implemented by the excellent `gitflow`_ git extension.
+This follows the highly recommended `A successful Git branching model`_ pattern,
+which is implemented by the excellent `gitflow`_ git extension.
 
 Testing
 -------
@@ -159,8 +165,10 @@ Testing
 |build status|_
 
 ``kotti_software`` has 100% test coverage.
-Please make sure that you add tests for new features and that all tests pass before submitting pull requests.
-Running the test suite is as easy as running ``py.test`` from the source directory (you might need to run ``python setup.py dev`` to have all the test requirements installed in your virtualenv).
+Please make sure that you add tests for new features and that all tests pass before
+submitting pull requests.  Running the test suite is as easy as running ``py.test``
+from the source directory (you might need to run ``python setup.py dev`` to have all
+the test requirements installed in your virtualenv).
 
 
 .. _Find out more about Kotti: http://pypi.python.org/pypi/Kotti
@@ -170,4 +178,3 @@ Running the test suite is as easy as running ``py.test`` from the source directo
 .. _A successful Git branching model: http://nvie.com/posts/a-successful-git-branching-model/
 .. |build status| image:: https://secure.travis-ci.org/geojeff/kotti_software.png?branch=master
 .. _build status: http://travis-ci.org/geojeff/kotti_software
-

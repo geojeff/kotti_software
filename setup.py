@@ -39,11 +39,11 @@ long_description = README + '\n\n' + TODO + '\n\n' + AUTHORS + '\n\n' + CHANGES
 
 setup(name='kotti_software',
       version=version,
-      description="Kotti software",
+      description="Kotti software -- adds a software project listing to your site",
       long_description=long_description,
       classifiers=[],
       keywords='kotti software',
-      author='geojeff',
+      author='Jeff Pittman',
       author_email='geojeff@me.com',
       url='http://pypi.python.org/pypi/kotti_software',
       license=' BSD-derived (http://www.repoze.org/LICENSE.txt)',
