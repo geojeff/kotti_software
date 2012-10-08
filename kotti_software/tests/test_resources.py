@@ -33,42 +33,48 @@ class UnitTests(UnitTestBase):
 
         assert len(software_collection.values()) == 1
 
-    def test_software_project(self):
+    def test_software_project_only_json_url_provided(self):
         root = get_root()
         software_collection = SoftwareCollection()
         root['software_collection'] = software_collection
 
         software_project = SoftwareProject(
-                json_url="http://pypi.python.org/pypi/Kotti/json")
+                json_url="http://pypi.python.org/pypi/kotti_software/json")
 
         software_collection['software_project'] = software_project
 
         assert len(software_collection.values()) == 1
 
-    def test_software_project_json_overwriting_github(self):
+    def test_software_project_only_github_user_and_repo_provided(self):
         root = get_root()
         software_collection = SoftwareCollection()
         root['software_collection'] = software_collection
 
         software_project = SoftwareProject(
-                json_url="http://pypi.python.org/pypi/Kotti/json",
-                overwrite_home_page_url=True,
-                overwrite_docs_url=True,
-                overwrite_package_url=True,
-                overwrite_bugtrack_url=True,
-                desc_handling_choice='use_json_summary')
+                github_user="geojeff",
+                github_repo="kotti_software")
 
         software_collection['software_project'] = software_project
 
         assert len(software_collection.values()) == 1
 
-        # desc_handling_choice is an either/or,
-        # so also check for description overwriting
-        software_project = SoftwareProject(
-                json_url="http://pypi.python.org/pypi/Kotti/json",
-                desc_handling_choice='use_json_description')
+    def test_software_project_github_data(self):
+        root = get_root()
+        software_collection = SoftwareCollection()
+        root['software_collection'] = software_collection
 
-    def test_software_project_json_overwriting_pypi(self):
+        software_project = SoftwareProject(
+                title="kotti_software Project",
+                date_handling_choice="use_github_date",
+                desc_handling_choice="use_github_description",
+                github_user="geojeff",
+                github_repo="kotti_software")
+
+        software_collection['software_project'] = software_project
+
+        assert len(software_collection.values()) == 1
+
+    def test_software_project_json_overwriting(self):
         root = get_root()
         software_collection = SoftwareCollection()
         root['software_collection'] = software_collection

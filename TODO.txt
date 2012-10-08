@@ -19,3 +19,5 @@ TODO
   or add a "sub-collection" property if the tags route is not workable
 - change use of all-jambed-up softwarecollection to software-collection and
   software_collection; same for softwareproject
+- add better visual separation between items in default list view (the only
+  list view style available now; see above todo item)

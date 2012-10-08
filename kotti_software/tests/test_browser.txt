@@ -13,6 +13,8 @@ Setup and Login
   >>> second_date = datetime.datetime(2012, 7, 31, 6, 0, 0, tzinfo=tzutc())
   >>> third_time_string = "2012-10-04 06:00:00"
   >>> third_date = datetime.datetime(2012, 10, 4, 6, 0, 0, tzinfo=tzutc())
+  >>> sixth_time_string = "2012-10-07 06:00:00"
+  >>> sixth_date = datetime.datetime(2012, 10, 7, 6, 0, 0, tzinfo=tzutc())
   >>> def dc(content, name='/tmp/out.html'): open(name, 'w').write(content)
   >>> tools = tests.setUpFunctional(
   ...     **{'kotti.configurators': 'kotti_software.kotti_configure'})
@@ -61,6 +63,51 @@ Add softwareprojects
   >>> "Successfully added item" in browser.contents
   True
 
+Add a software project using pypi source
+----------------------------------------
+
+  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
+  >>> ctrl("Title").value = "kotti_software"
+  >>> ctrl("Body").value = "This project is about this very project..."
+  >>> ctrl("Use date in JSON data").selected = True
+  >>> ctrl("JSON URL").value = "http://pypi.python.org/pypi/kotti_software/json"
+  >>> ctrl("Github User").value = "geojeff"
+  >>> ctrl("Github Repo").value = "kotti_software"
+  >>> ctrl("save").click()
+  >>> "Successfully added item" in browser.contents
+  True
+
+Add a software project with github user but not repo
+----------------------------------------------------
+
+  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
+  >>> ctrl("Title").value = "kotti_software"
+  >>> ctrl("Body").value = "This project is about this very project..."
+  >>> ctrl("Use date in JSON data").selected = True
+  >>> ctrl("JSON URL").value = "http://pypi.python.org/pypi/kotti_software/json"
+  >>> ctrl("Github User").value = "geojeff"
+  >>> ctrl("Github Repo").value = ""
+  >>> ctrl("save").click()
+  >>> "To specifiy a github repo, both user and repo required" in browser.contents
+  True
+  >>> "Provide github repo for api call" in browser.contents
+  True
+
+Add a software project with github repo but not user
+----------------------------------------------------
+
+  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
+  >>> ctrl("Title").value = "kotti_software"
+  >>> ctrl("Body").value = "This project is about this very project..."
+  >>> ctrl("Use date in JSON data").selected = True
+  >>> ctrl("JSON URL").value = "http://pypi.python.org/pypi/kotti_software/json"
+  >>> ctrl("Github User").value = ""
+  >>> ctrl("Github Repo").value = "kotti_software"
+  >>> ctrl("save").click()
+  >>> "To specifiy a github repo, both user and repo required" in browser.contents
+  True
+  >>> "Provide github user for api call" in browser.contents
+  True
 
 View software collection and software project
 ---------------------------------------------
@@ -86,9 +133,59 @@ Add a software project with use_json_date but no json_url
   >>> ctrl("Use date in JSON data").selected = True
   >>> ctrl("JSON URL").value = ""
   >>> ctrl("save").click()
-  >>> "Date handling = use_json_date; json_url required" in browser.contents
+  >>> "For fetching date or description from JSON, JSON url required" in browser.contents
   True
-  >>> "Provide json url for fetching data" in browser.contents
+  >>> "Provide JSON url for fetching data" in browser.contents
+  True
+
+Add a software project with desc to come from json, but no json_url
+-------------------------------------------------------------------
+
+  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
+  >>> ctrl("Title").value = "Fourth software project"
+  >>> ctrl("Body").value = "This project concerns cavemen and alligators..."
+  >>> ctrl("Use description in JSON data").selected = True
+  >>> ctrl("JSON URL").value = ""
+  >>> ctrl("save").click()
+  >>> "For fetching date or description from JSON, JSON url required" in browser.contents
+  True
+  >>> "Provide JSON url for fetching data" in browser.contents
+  True
+
+Add a software project with use_github_date but no github user, repo
+--------------------------------------------------------------------
+
+  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
+  >>> ctrl("Title").value = "Fifth software project"
+  >>> ctrl("Body").value = "This project concerns aardvarks and armadillos..."
+  >>> ctrl("Use date in github data").selected = True
+  >>> ctrl("Github User").value = ""
+  >>> ctrl("Github Repo").value = ""
+  >>> ctrl("save").click()
+  >>> "For fetching date or description from github, user and repo required" in browser.contents
+  True
+  >>> "Provide github user for api call" in browser.contents
+  True
+  >>> "Provide github repo for api call" in browser.contents
+  True
+
+Add a software project with desc to come from github, but no github user, repo
+------------------------------------------------------------------------------
+
+  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
+  >>> ctrl("Title").value = "Sixth software project"
+  >>> ctrl("Body").value = "This project concerns architects and lawyers..."
+  >>> ctrl("Use entered date").selected = True
+  >>> ctrl("Date", index=1).value = sixth_time_string
+  >>> ctrl("Use description in github data").selected = True
+  >>> ctrl("Github User").value = ""
+  >>> ctrl("Github Repo").value = ""
+  >>> ctrl("save").click()
+  >>> "For fetching date or description from github, user and repo required" in browser.contents
+  True
+  >>> "Provide github user for api call" in browser.contents
+  True
+  >>> "Provide github repo for api call" in browser.contents
   True
 
 Edit software collection and software project and verify the changes
@@ -113,7 +210,6 @@ Edit software collection and software project and verify the changes
   >>> "Your changes have been saved" in browser.contents
   True
 
-
 Edit a software project to change the json_url, forcing date to blank
 ---------------------------------------------------------------------
 
@@ -135,7 +231,18 @@ Edit a software project with date *and* json_url changed
   >>> ctrl("Use date in JSON data").selected = True
   >>> ctrl("JSON URL", index=0).value = ""
   >>> ctrl("save").click()
-  >>> "Date handling = use_json_date; json_url required" in browser.contents
+  >>> "For fetching date or description from JSON, JSON url required" in browser.contents
   True
-  >>> "Provide json url for fetching data" in browser.contents
+  >>> "Provide JSON url for fetching data" in browser.contents
+  True
+
+Edit a software project with github user and repo changed
+---------------------------------------------------------
+
+  >>> browser.open(tests.BASE_URL + '/new-software-collection/kotti_software/@@edit')
+  >>> ctrl("Title").value = "kotti_media"
+  >>> ctrl("Github User").value = "geojeff"
+  >>> ctrl("Github Repo").value = "kotti_media"
+  >>> ctrl("save").click()
+  >>> "kotti_media" in browser.contents
   True

@@ -58,7 +58,8 @@ class SoftwareProjectSchema(DocumentSchema):
         ('', '- Select -'),
         ('use_entered', 'Used entered description (can be blank)'),
         ('use_json_summary', 'Use summary in JSON data'),
-        ('use_json_description', 'Use description in JSON data'))
+        ('use_json_description', 'Use description in JSON data'),
+        ('use_github_description', 'Use description in github data'))
     desc_handling_choice = colander.SchemaNode(
         colander.String(),
         default='use_entered',
@@ -76,6 +77,7 @@ class SoftwareProjectSchema(DocumentSchema):
         ('', '- Select -'),
         ('use_entered', 'Use entered date'),
         ('use_json_date', 'Use date in JSON data'),
+        ('use_github_date', 'Use date in github data'),
         ('use_now', 'Use the current date'))
     date_handling_choice = colander.SchemaNode(
         colander.String(),
@@ -145,23 +147,56 @@ class SoftwareProjectSchema(DocumentSchema):
         widget=CheckboxWidget(),
         title='')
 
+    github_user = colander.SchemaNode(
+        colander.String(),
+        title=_(u'Github User'),
+        description=_(u'Name of the user on github for the project repo.'),
+        missing=_(''),)
+
+    github_repo = colander.SchemaNode(
+        colander.String(),
+        title=_(u'Github Repo'),
+        description=_(u'Name of the repo on github for the project.'),
+        missing=_(''),)
+
+
+def validator(form, value):
+
+    if ((value['date_handling_choice'] == 'use_json_date' or
+         value['desc_handling_choice'] == 'use_json_summary' or
+         value['desc_handling_choice'] == 'use_json_description') and
+        not value['json_url']):
+        msg = u'For fetching date or description from JSON, JSON url required'
+        exc = Invalid(form, _(msg))
+        exc['json_url'] = _(u'Provide JSON url for fetching data')
+        raise exc
+
+    if ((value['date_handling_choice'] == 'use_github_date' or
+         value['desc_handling_choice'] == 'use_github_description') and
+        (not value['github_user'] or not value['github_repo'])):
+        msg = u'For fetching date or description from github, user and repo required'
+        exc = Invalid(form, _(msg))
+        exc['github_user'] = _(u'Provide github user for api call')
+        exc['github_repo'] = _(u'Provide github repo for api call')
+        raise exc
+
+    if value['github_user'] and not value['github_repo']:
+        msg = u'To specifiy a github repo, both user and repo required'
+        exc = Invalid(form, _(msg))
+        exc['github_repo'] = _(u'Provide github repo for api call')
+        raise exc
+
+    if value['github_repo'] and not value['github_user']:
+        msg = u'To specifiy a github repo, both user and repo required'
+        exc = Invalid(form, _(msg))
+        exc['github_user'] = _(u'Provide github user for api call')
+        raise exc
 
 class AddSoftwareProjectFormView(AddFormView):
     item_type = _(u"SoftwareProject")
     item_class = SoftwareProject
 
     def schema_factory(self):
-
-        def validator(form, value):
-
-            if (value['date_handling_choice'] == 'use_json_date'
-                    and not value['json_url']):
-                exc = Invalid(
-                    form,
-                    _(u'Date handling = use_json_date; json_url required')
-                )
-                exc['json_url'] = _(u'Provide json url for fetching data')
-                raise exc
 
         return SoftwareProjectSchema(validator=validator)
 
@@ -184,23 +219,14 @@ class AddSoftwareProjectFormView(AddFormView):
             overwrite_bugtrack_url=appstruct['overwrite_bugtrack_url'],
             json_url=appstruct['json_url'],
             date=appstruct['date'],
+            github_user=appstruct['github_user'],
+            github_repo=appstruct['github_repo'],
             )
 
 
 class EditSoftwareProjectFormView(EditFormView):
 
     def schema_factory(self):
-
-        def validator(form, value):
-
-            if (value['date_handling_choice'] == 'use_json_date'
-                    and not value['json_url']):
-                exc = Invalid(
-                    form,
-                    _(u'Date handling = use_json_date; json_url required')
-                )
-                exc['json_url'] = _(u'Provide json url for fetching data')
-                raise exc
 
         return SoftwareProjectSchema(validator=validator)
 
@@ -250,6 +276,12 @@ class EditSoftwareProjectFormView(EditFormView):
         else:
             self.context.date = appstruct['date']
 
+        if appstruct['github_user']:
+            self.context.github_user = appstruct['github_user']
+
+        if appstruct['github_repo']:
+            self.context.github_repo = appstruct['github_repo']
+
 
 @view_defaults(permission='view')
 class BaseView(object):
@@ -272,6 +304,7 @@ class SoftwareProjectView(BaseView):
     def view(self):
 
         self.context.refresh_json()  # [TODO] Expensive: ?
+        self.context.refresh_github()  # [TODO] Expensive: ?
 
         return {}
 
@@ -285,15 +318,16 @@ class SoftwareCollectionView(BaseView):
     def view(self):
 
         session = DBSession()
+
         query = session.query(SoftwareProject).filter(
-                SoftwareProject.parent_id == self.context.id).order_by(
-                        SoftwareProject.date.desc())
-        items = query.all()
-
-        # [TODO] Expensive: ?
-        [item.refresh_json() for item in items]
+                SoftwareProject.parent_id == self.context.id)
 
         items = query.all()
+
+        [item.refresh_json() for item in items]  # [TODO] Expensive: ?
+        [item.refresh_github() for item in items]  # [TODO] Expensive: ?
+
+        items = sorted(items, key=lambda x: x.date, reverse=True)
 
         page = self.request.params.get('page', 1)
 

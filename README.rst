@@ -61,59 +61,33 @@ Using kotti_software
 ====================
 
 Add a software collection to your site, then to that add software projects.
-For software projects, you can provide a date, which you will need to
-manually keep up to date. Or, you can provide a json_url instead of a date
-and the last-updated date for the project, along with main urls, will be
-gathered from a JSON source. Here are ways to enter software projects:
+Here are ways to enter software projects:
 
-    1) Enter the JSON url only (for fetching from a JSON data source)
+    1) Enter the pypi JSON URL only
 
-    2) Enter the date and any of: home_page, docs_url,
+    2) Enter the pypi JSON URL, along with the Github repo info for fetching
+       the Github repo information, such as most recent push date and time.
+
+    3) Enter only the Github repo info
+
+    4) Enter the title, description, date and any of: home_page, docs_url,
        package_url, bugtrack_url (manual entry)
 
-    3) Enter the date only (bare-bones entry, with just date and
-       title, and whatever is in body -- useful for defunct
+    5) Enter the date only (bare-bones entry, with just date and
+       title, description, and whatever you wish in body -- useful for defunct
        projects)
 
-There is a date-handling select property that should be set according to the
-action for 1), 2), or 3) above: 'Use entered date', 'Use date in JSON data',
-or 'Use the current date'.
+    6) Enter the JSON URL of an alternative source
 
-There is a similar select property for how to handle the description. Choices
-for that are: 'Used entered description (can be blank)', 'Use summary in JSON data',
-or 'Use description in JSON data'.
+There are date-handling and description-handling select properties to set
+according to the usage above, and whether the entered values are to be used, or
+if the values are to be fetched from pypi or Github or another JSON source.
 
-For the JSON data, if your project is a Python project and it has been posted
-to pypi.python.org, you can enter the JSON url for that, as described below.
-Otherwise, make your own JSON file, using the following format, and post it
-somewhere, then enter that URL. See instructions below about 'raw' data links.
+There are also boolean override properties for using a combination of manually
+entered values for home_page, docs_url, package_url, and bugtrack_url and the
+fetching of these values from pypi.
 
-::
-
-    {
-        "info": {
-            "home_page": "http://kotti.pylonsproject.org",
-            "docs_url": "http://packages.python.org/Kotti", 
-            "package_url": "http://pypi.python.org/pypi/Kotti", 
-            "bugtrack_url": "", 
-            "description": "Kotti is a high-level, 'Pythonic' framework..."
-            "summary": "Kotti is a high-level, 'Pythonic' framework..."
-        }, 
-        "urls": [ { "upload_time": "2012-08-30T11:59:58", } ]
-    }
-
-The home_page, docs_url, package_url, and bugtrack_url urls are key/value pairs
-within "info", not within "urls" as you might expect. Within the "urls" data
-structure is upload_time, an arrangement that might appear unnecessarily
-complicated. It is this way because we follow the pypi JSON structure. kotti_software
-is written for use on the Kotti website, which mostly presents Python projects that
-are posted on pypi. Also, kotti_software is used by Kotti developers on their
-personal websites, which also tend to have Python projects. However, any type of
-project can be posted, for javascript, Ruby, etc. Just follow the data structure
-format above for creating a custom JSON data structure for each project.
-
-
-**Instructions for common JSON sources:**
+**Instructions for JSON sources:**
 
 pypi
 ----
@@ -123,6 +97,14 @@ where {project name} is the case-sensitive name of the project on pypi. For
 example, for Kotti the url is "http://pypi.python.org/pypi/Kotti/json".
 
 See http://pypi.python.org/pypi/Kotti/json to see the JSON that is parsed.
+
+Github
+------
+
+Enter the Github user and repo, which will be used to build a Github API call
+of the form: https://api.github.com/repos/{user}/{repo}, as in
+https://api.github.com/repos/geojeff/kotti_software. You may enter this Github
+info along with the pypi URL, or use the Github info only.
 
 Hosting Elsewhere
 -----------------
@@ -134,8 +116,7 @@ RAW url should be used, e.g.:
 
 json_url = "https://raw.github.com/geojeff/kotti_fruits_example/master/json"
 
-As described above, you will need to follow the format of the pypi JSON data
-in such a file.
+You will need to follow the format of the pypi JSON data in such a file.
 
 Work in progress
 ================
