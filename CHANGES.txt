@@ -1,6 +1,15 @@
 CHANGES
 =======
 
+0.1.3
+-----
+
+ - Renamed user to owner for github and bitbucket.
+ - In property descriptions, now using PyPI, GitHub, and Bitbucket spellings.
+ - Added bitbucket as JSON source.
+ - Removed generic JSON source option, and made all references explicit for
+   PyPI.
+
 0.1.2
 -----
 
