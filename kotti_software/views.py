@@ -109,7 +109,7 @@ class SoftwareProjectSchema(DocumentSchema):
         missing=_(''),)
     overwrite_home_page_url = colander.SchemaNode(
         colander.Boolean(),
-        description='Overwrite home page from JSON',
+        description='Overwrite home page from PyPI',
         default=True,
         missing=True,
         widget=CheckboxWidget(),
@@ -122,7 +122,7 @@ class SoftwareProjectSchema(DocumentSchema):
         missing=_(''),)
     overwrite_docs_url = colander.SchemaNode(
         colander.Boolean(),
-        description='Overwrite docs URL from JSON',
+        description='Overwrite docs URL from PyPI',
         default=True,
         missing=True,
         widget=CheckboxWidget(),
@@ -135,7 +135,7 @@ class SoftwareProjectSchema(DocumentSchema):
         missing=_(''),)
     overwrite_package_url = colander.SchemaNode(
         colander.Boolean(),
-        description='Overwrite package URL from JSON',
+        description='Overwrite package URL from PyPI',
         default=True,
         missing=True,
         widget=CheckboxWidget(),
@@ -148,7 +148,7 @@ class SoftwareProjectSchema(DocumentSchema):
         missing=_(''),)
     overwrite_bugtrack_url = colander.SchemaNode(
         colander.Boolean(),
-        description='Overwrite bugtracker URL from JSON',
+        description='Overwrite bugtracker URL from PyPI',
         default=True,
         missing=True,
         widget=CheckboxWidget(),

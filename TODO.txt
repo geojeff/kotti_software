@@ -24,4 +24,3 @@ TODO
 - Are on-load refreshes from pypi and github too expensive? What are
   alternatives? Nightly cron job? More frequent cron job? Refreshing on a
   timer? Every 5 minutes? Every hour? Manual trigger by admin?
-- Add an explicit handling for a bitbucket.org JSON source
