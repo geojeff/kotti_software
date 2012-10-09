@@ -63,12 +63,12 @@ Using kotti_software
 Add a software collection to your site, then to that add software projects.
 Here are ways to enter software projects:
 
-    1) Enter the pypi JSON URL only
+    1) Enter the PyPI JSON URL only
 
-    2) Enter the pypi JSON URL, along with the Github repo info for fetching
-       the Github repo information, such as most recent push date and time.
+    2) Enter the PyPI JSON URL, along with the GitHub repo info for fetching
+       the GitHub repo information, such as most recent push date and time.
 
-    3) Enter only the Github repo info
+    3) Enter only the GitHub repo info
 
     4) Enter the title, description, date and any of: home_page, docs_url,
        package_url, bugtrack_url (manual entry)
@@ -81,42 +81,30 @@ Here are ways to enter software projects:
 
 There are date-handling and description-handling select properties to set
 according to the usage above, and whether the entered values are to be used, or
-if the values are to be fetched from pypi or Github or another JSON source.
+if the values are to be fetched from PyPI or GitHub or another JSON source.
 
 There are also boolean override properties for using a combination of manually
 entered values for home_page, docs_url, package_url, and bugtrack_url and the
-fetching of these values from pypi.
+fetching of these values from PyPI.
 
 **Instructions for JSON sources:**
 
-pypi
+PyPI
 ----
 
 Enter the url of the form "http://pypi.python.org/pypi/{project name}/json",
-where {project name} is the case-sensitive name of the project on pypi. For
+where {project name} is the case-sensitive name of the project on PyPI. For
 example, for Kotti the url is "http://pypi.python.org/pypi/Kotti/json".
 
 See http://pypi.python.org/pypi/Kotti/json to see the JSON that is parsed.
 
-Github
+GitHub
 ------
 
-Enter the Github user and repo, which will be used to build a Github API call
+Enter the GitHub user and repo, which will be used to build a GitHub API call
 of the form: https://api.github.com/repos/{user}/{repo}, as in
-https://api.github.com/repos/geojeff/kotti_software. You may enter this Github
-info along with the pypi URL, or use the Github info only.
-
-Hosting Elsewhere
------------------
-
-As an alternative to pypi, if your project is not posted there, you may put
-a JSON file somewhere in your github, bitbucket, or other repo, and access
-it with an appropriate url. For instance, for a file in a github repo, the
-RAW url should be used, e.g.:
-
-json_url = "https://raw.github.com/geojeff/kotti_fruits_example/master/json"
-
-You will need to follow the format of the pypi JSON data in such a file.
+https://api.github.com/repos/geojeff/kotti_software. You may enter this GitHub
+info along with the PyPI URL, or use the GitHub info only.
 
 Work in progress
 ================
@@ -131,7 +119,7 @@ Development
 ===========
 
 Contributions to ``kotti_software`` are very welcome.
-Just clone its `Github repository`_ and submit your contributions as pull requests.
+Just clone its `GitHub repository`_ and submit your contributions as pull requests.
 
 Note that all development is done on the ``develop`` branch. ``master`` is reserved
 for "production-ready state".  Therefore, make sure to always base development work
@@ -154,7 +142,7 @@ the test requirements installed in your virtualenv).
 
 .. _Find out more about Kotti: http://pypi.python.org/pypi/Kotti
 .. _Kotti documentation about the asset_overrides setting: http://kotti.readthedocs.org/en/latest/configuration.html?highlight=asset#adjust-the-look-feel-kotti-asset-overrides
-.. _Github repository: https://github.com/geojeff/kotti_software
+.. _GitHub repository: https://github.com/geojeff/kotti_software
 .. _gitflow: https://github.com/nvie/gitflow
 .. _A successful Git branching model: http://nvie.com/posts/a-successful-git-branching-model/
 .. |build status| image:: https://secure.travis-ci.org/geojeff/kotti_software.png?branch=master
