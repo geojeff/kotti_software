@@ -15,6 +15,8 @@ Setup and Login
   >>> third_date = datetime.datetime(2012, 10, 4, 6, 0, 0, tzinfo=tzutc())
   >>> sixth_time_string = "2012-10-07 06:00:00"
   >>> sixth_date = datetime.datetime(2012, 10, 7, 6, 0, 0, tzinfo=tzutc())
+  >>> eighth_time_string = "2012-10-07 06:00:00"
+  >>> eighth_date = datetime.datetime(2012, 10, 7, 6, 0, 0, tzinfo=tzutc())
   >>> def dc(content, name='/tmp/out.html'): open(name, 'w').write(content)
   >>> tools = tests.setUpFunctional(
   ...     **{'kotti.configurators': 'kotti_software.kotti_configure'})
@@ -71,42 +73,74 @@ Add a software project using pypi source
   >>> ctrl("Body").value = "This project is about this very project..."
   >>> ctrl("Use date in PyPI data").selected = True
   >>> ctrl("PyPI URL").value = "http://pypi.python.org/pypi/kotti_software/json"
-  >>> ctrl("GitHub User").value = "geojeff"
+  >>> ctrl("GitHub Owner").value = "geojeff"
   >>> ctrl("GitHub Repo").value = "kotti_software"
   >>> ctrl("save").click()
   >>> "Successfully added item" in browser.contents
   True
 
-Add a software project with GitHub user but not repo
-----------------------------------------------------
+Add a software project with GitHub owner but not repo
+-----------------------------------------------------
 
   >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "kotti_software"
   >>> ctrl("Body").value = "This project is about this very project..."
   >>> ctrl("Use date in PyPI data").selected = True
   >>> ctrl("PyPI URL").value = "http://pypi.python.org/pypi/kotti_software/json"
-  >>> ctrl("GitHub User").value = "geojeff"
+  >>> ctrl("GitHub Owner").value = "geojeff"
   >>> ctrl("GitHub Repo").value = ""
   >>> ctrl("save").click()
-  >>> "To specifiy a GitHub repo, both user and repo required" in browser.contents
+  >>> "To specifiy a GitHub repo, both owner and repo required" in browser.contents
   True
   >>> "Provide GitHub repo for api call" in browser.contents
   True
 
-Add a software project with GitHub repo but not user
-----------------------------------------------------
+Add a software project with GitHub repo but not owner
+-----------------------------------------------------
 
   >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "kotti_software"
   >>> ctrl("Body").value = "This project is about this very project..."
   >>> ctrl("Use date in PyPI data").selected = True
   >>> ctrl("PyPI URL").value = "http://pypi.python.org/pypi/kotti_software/json"
-  >>> ctrl("GitHub User").value = ""
+  >>> ctrl("GitHub Owner").value = ""
   >>> ctrl("GitHub Repo").value = "kotti_software"
   >>> ctrl("save").click()
-  >>> "To specifiy a GitHub repo, both user and repo required" in browser.contents
+  >>> "To specifiy a GitHub repo, both owner and repo required" in browser.contents
   True
-  >>> "Provide GitHub user for api call" in browser.contents
+  >>> "Provide GitHub owner for api call" in browser.contents
+  True
+
+Add a software project with Bitbucket owner but not repo
+--------------------------------------------------------
+
+  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
+  >>> ctrl("Title").value = "kotti_software"
+  >>> ctrl("Body").value = "This project is about this very project..."
+  >>> ctrl("Use date in PyPI data").selected = True
+  >>> ctrl("PyPI URL").value = "http://pypi.python.org/pypi/kotti_software/json"
+  >>> ctrl("Bitbucket Owner").value = "geojeff"
+  >>> ctrl("Bitbucket Repo").value = ""
+  >>> ctrl("save").click()
+  >>> "To specifiy a Bitbucket repo, both owner and repo required" in browser.contents
+  True
+  >>> "Provide Bitbucket repo for api call" in browser.contents
+  True
+
+Add a software project with Bitbucket repo but not owner
+--------------------------------------------------------
+
+  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
+  >>> ctrl("Title").value = "kotti_software"
+  >>> ctrl("Body").value = "This project is about this very project..."
+  >>> ctrl("Use date in PyPI data").selected = True
+  >>> ctrl("PyPI URL").value = "http://pypi.python.org/pypi/kotti_software/json"
+  >>> ctrl("Bitbucket Owner").value = ""
+  >>> ctrl("Bitbucket Repo").value = "kotti_software"
+  >>> ctrl("save").click()
+  >>> "To specifiy a Bitbucket repo, both owner and repo required" in browser.contents
+  True
+  >>> "Provide Bitbucket owner for api call" in browser.contents
   True
 
 View software collection and software project
@@ -152,25 +186,25 @@ Add a software project with desc to come from pypi, but no pypi_url
   >>> "Provide PyPI url for fetching data" in browser.contents
   True
 
-Add a software project with use_github_date but no GitHub user, repo
---------------------------------------------------------------------
+Add a software project with use_github_date but no GitHub owner, repo
+---------------------------------------------------------------------
 
   >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "Fifth software project"
   >>> ctrl("Body").value = "This project concerns aardvarks and armadillos..."
   >>> ctrl("Use date in GitHub data").selected = True
-  >>> ctrl("GitHub User").value = ""
+  >>> ctrl("GitHub Owner").value = ""
   >>> ctrl("GitHub Repo").value = ""
   >>> ctrl("save").click()
-  >>> "For fetching date or description from GitHub, user and repo required" in browser.contents
+  >>> "For fetching date or description from GitHub, owner and repo required" in browser.contents
   True
-  >>> "Provide GitHub user for api call" in browser.contents
+  >>> "Provide GitHub owner for api call" in browser.contents
   True
   >>> "Provide GitHub repo for api call" in browser.contents
   True
 
-Add a software project with desc to come from GitHub, but no GitHub user, repo
-------------------------------------------------------------------------------
+Add a software project with desc to come from GitHub, but no GitHub owner, repo
+-------------------------------------------------------------------------------
 
   >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "Sixth software project"
@@ -178,14 +212,50 @@ Add a software project with desc to come from GitHub, but no GitHub user, repo
   >>> ctrl("Use entered date").selected = True
   >>> ctrl("Date", index=1).value = sixth_time_string
   >>> ctrl("Use description in GitHub data").selected = True
-  >>> ctrl("GitHub User").value = ""
+  >>> ctrl("GitHub Owner").value = ""
   >>> ctrl("GitHub Repo").value = ""
   >>> ctrl("save").click()
-  >>> "For fetching date or description from GitHub, user and repo required" in browser.contents
+  >>> "For fetching date or description from GitHub, owner and repo required" in browser.contents
   True
-  >>> "Provide GitHub user for api call" in browser.contents
+  >>> "Provide GitHub owner for api call" in browser.contents
   True
   >>> "Provide GitHub repo for api call" in browser.contents
+  True
+
+Add a software project with use_bitbucket_date but no Bitbucket owner, repo
+---------------------------------------------------------------------------
+
+  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
+  >>> ctrl("Title").value = "Seventh software project"
+  >>> ctrl("Body").value = "This project concerns lizards and frogs..."
+  >>> ctrl("Use date in Bitbucket data").selected = True
+  >>> ctrl("Bitbucket Owner").value = ""
+  >>> ctrl("Bitbucket Repo").value = ""
+  >>> ctrl("save").click()
+  >>> "For fetching date or description from Bitbucket, owner and repo required" in browser.contents
+  True
+  >>> "Provide Bitbucket owner for api call" in browser.contents
+  True
+  >>> "Provide Bitbucket repo for api call" in browser.contents
+  True
+
+Add a software project with desc to come from Bitbucket, but no Bitbucket owner, repo
+-------------------------------------------------------------------------------------
+
+  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
+  >>> ctrl("Title").value = "Eighth software project"
+  >>> ctrl("Body").value = "This project concerns dogs and cats..."
+  >>> ctrl("Use entered date").selected = True
+  >>> ctrl("Date", index=1).value = eighth_time_string
+  >>> ctrl("Use description in Bitbucket data").selected = True
+  >>> ctrl("Bitbucket Owner").value = ""
+  >>> ctrl("Bitbucket Repo").value = ""
+  >>> ctrl("save").click()
+  >>> "For fetching date or description from Bitbucket, owner and repo required" in browser.contents
+  True
+  >>> "Provide Bitbucket owner for api call" in browser.contents
+  True
+  >>> "Provide Bitbucket repo for api call" in browser.contents
   True
 
 Edit software collection and software project and verify the changes
@@ -236,15 +306,26 @@ Edit a software project with date *and* pypi_url changed
   >>> "Provide PyPI url for fetching data" in browser.contents
   True
 
-Edit a software project with GitHub user and repo changed
----------------------------------------------------------
+Edit a software project with GitHub owner and repo changed
+----------------------------------------------------------
 
   >>> browser.open(tests.BASE_URL + '/new-software-collection/kotti_software/@@edit')
   >>> ctrl("Title").value = "kotti_media"
-  >>> ctrl("GitHub User").value = "geojeff"
+  >>> ctrl("GitHub Owner").value = "geojeff"
   >>> ctrl("GitHub Repo").value = "kotti_media"
   >>> ctrl("save").click()
   >>> "kotti_media" in browser.contents
+  True
+
+Edit a software project with Bitbucket owner and repo changed
+-------------------------------------------------------------
+
+  >>> browser.open(tests.BASE_URL + '/new-software-collection/kotti_software/@@edit')
+  >>> ctrl("Title").value = "sphinx"
+  >>> ctrl("Bitbucket Owner").value = "birkenfeld"
+  >>> ctrl("Bitbucket Repo").value = "sphinx"
+  >>> ctrl("save").click()
+  >>> "sphinx" in browser.contents
   True
 
 Add a software collection with sorting changed
@@ -267,7 +348,7 @@ Add GitHub software projects and one dated NOW; Test for ascending order
   >>> ctrl("Title").value = "GitHub kotti_software"
   >>> ctrl("Body").value = "This project is about this very project on GitHub..."
   >>> ctrl("Use date in GitHub data").selected = True
-  >>> ctrl("GitHub User").value = "geojeff"
+  >>> ctrl("GitHub Owner").value = "geojeff"
   >>> ctrl("GitHub Repo").value = "kotti_software"
   >>> ctrl("save").click()
   >>> "Successfully added item" in browser.contents
@@ -277,7 +358,7 @@ Add GitHub software projects and one dated NOW; Test for ascending order
   >>> ctrl("Title").value = "GitHub Kotti geojeff fork"
   >>> ctrl("Body").value = "This project is about Kotti forked on geojeff GitHub..."
   >>> ctrl("Use date in GitHub data").selected = True
-  >>> ctrl("GitHub User").value = "geojeff"
+  >>> ctrl("GitHub Owner").value = "geojeff"
   >>> ctrl("GitHub Repo").value = "Kotti"
   >>> ctrl("save").click()
   >>> "Successfully added item" in browser.contents
@@ -287,7 +368,7 @@ Add GitHub software projects and one dated NOW; Test for ascending order
   >>> ctrl("Title").value = "kotti_software dated NOW"
   >>> ctrl("Body").value = "This project is kotti_software with a date of NOW..."
   >>> ctrl("Use current date and time").selected = True
-  >>> ctrl("GitHub User").value = "geojeff"
+  >>> ctrl("GitHub Owner").value = "geojeff"
   >>> ctrl("GitHub Repo").value = "kotti_software"
   >>> ctrl("save").click()
   >>> "Successfully added item" in browser.contents

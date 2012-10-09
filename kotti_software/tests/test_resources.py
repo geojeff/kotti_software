@@ -45,13 +45,13 @@ class UnitTests(UnitTestBase):
 
         assert len(software_collection.values()) == 1
 
-    def test_software_project_only_github_user_and_repo_provided(self):
+    def test_software_project_only_github_owner_and_repo_provided(self):
         root = get_root()
         software_collection = SoftwareCollection()
         root['software_collection'] = software_collection
 
         software_project = SoftwareProject(
-                github_user="geojeff",
+                github_owner="geojeff",
                 github_repo="kotti_software")
 
         software_collection['software_project'] = software_project
@@ -67,8 +67,37 @@ class UnitTests(UnitTestBase):
                 title="kotti_software Project",
                 date_handling_choice="use_github_date",
                 desc_handling_choice="use_github_description",
-                github_user="geojeff",
+                github_owner="geojeff",
                 github_repo="kotti_software")
+
+        software_collection['software_project'] = software_project
+
+        assert len(software_collection.values()) == 1
+
+    def test_software_project_only_bitbucket_owner_and_repo_provided(self):
+        root = get_root()
+        software_collection = SoftwareCollection()
+        root['software_collection'] = software_collection
+
+        software_project = SoftwareProject(
+                bitbucket_owner="pypy",
+                bitbucket_repo="pypy")
+
+        software_collection['software_project'] = software_project
+
+        assert len(software_collection.values()) == 1
+
+    def test_software_project_bitbucket_data(self):
+        root = get_root()
+        software_collection = SoftwareCollection()
+        root['software_collection'] = software_collection
+
+        software_project = SoftwareProject(
+                title="kotti_software Project",
+                date_handling_choice="use_bitbucket_date",
+                desc_handling_choice="use_bitbucket_description",
+                bitbucket_owner="pypy",
+                bitbucket_repo="pypy")
 
         software_collection['software_project'] = software_project
 
