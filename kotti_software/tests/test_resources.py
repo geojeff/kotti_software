@@ -33,25 +33,25 @@ class UnitTests(UnitTestBase):
 
         assert len(software_collection.values()) == 1
 
-    def test_software_project_only_json_url_provided(self):
+    def test_software_project_only_pypi_url_provided(self):
         root = get_root()
         software_collection = SoftwareCollection()
         root['software_collection'] = software_collection
 
         software_project = SoftwareProject(
-                json_url="http://pypi.python.org/pypi/kotti_software/json")
+                pypi_url="http://pypi.python.org/pypi/kotti_software/json")
 
         software_collection['software_project'] = software_project
 
         assert len(software_collection.values()) == 1
 
-    def test_software_project_only_github_user_and_repo_provided(self):
+    def test_software_project_only_github_owner_and_repo_provided(self):
         root = get_root()
         software_collection = SoftwareCollection()
         root['software_collection'] = software_collection
 
         software_project = SoftwareProject(
-                github_user="geojeff",
+                github_owner="geojeff",
                 github_repo="kotti_software")
 
         software_collection['software_project'] = software_project
@@ -67,25 +67,54 @@ class UnitTests(UnitTestBase):
                 title="kotti_software Project",
                 date_handling_choice="use_github_date",
                 desc_handling_choice="use_github_description",
-                github_user="geojeff",
+                github_owner="geojeff",
                 github_repo="kotti_software")
 
         software_collection['software_project'] = software_project
 
         assert len(software_collection.values()) == 1
 
-    def test_software_project_json_overwriting(self):
+    def test_software_project_only_bitbucket_owner_and_repo_provided(self):
         root = get_root()
         software_collection = SoftwareCollection()
         root['software_collection'] = software_collection
 
         software_project = SoftwareProject(
-                json_url="http://pypi.python.org/pypi/Kotti/json",
+                bitbucket_owner="pypy",
+                bitbucket_repo="pypy")
+
+        software_collection['software_project'] = software_project
+
+        assert len(software_collection.values()) == 1
+
+    def test_software_project_bitbucket_data(self):
+        root = get_root()
+        software_collection = SoftwareCollection()
+        root['software_collection'] = software_collection
+
+        software_project = SoftwareProject(
+                title="kotti_software Project",
+                date_handling_choice="use_bitbucket_date",
+                desc_handling_choice="use_bitbucket_description",
+                bitbucket_owner="pypy",
+                bitbucket_repo="pypy")
+
+        software_collection['software_project'] = software_project
+
+        assert len(software_collection.values()) == 1
+
+    def test_software_project_pypi_overwriting(self):
+        root = get_root()
+        software_collection = SoftwareCollection()
+        root['software_collection'] = software_collection
+
+        software_project = SoftwareProject(
+                pypi_url="http://pypi.python.org/pypi/Kotti/json",
                 overwrite_home_page_url=True,
                 overwrite_docs_url=True,
                 overwrite_package_url=True,
                 overwrite_bugtrack_url=True,
-                desc_handling_choice='use_json_summary')
+                desc_handling_choice='use_pypi_summary')
 
         software_collection['software_project'] = software_project
 
@@ -94,8 +123,8 @@ class UnitTests(UnitTestBase):
         # desc_handling_choice is an either/or,
         # so also check for description overwriting
         software_project = SoftwareProject(
-                json_url="http://pypi.python.org/pypi/Kotti/json",
-                desc_handling_choice='use_json_description')
+                pypi_url="http://pypi.python.org/pypi/Kotti/json",
+                desc_handling_choice='use_pypi_description')
 
 
 class FunctionalTests(FunctionalTestBase):

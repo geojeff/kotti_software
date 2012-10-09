@@ -1,29 +1,26 @@
 TODO
 ====
 
-- add i18n?
-- add tests for sorting that work on items with dates set by the different
-  methods available
-- add navpill-style and table-style list views for projects; make list style
+- Add i18n
+- Add navpill-style and table-style list views for projects; make list style
   selectable in edit menu [Can/should this be punted to Kotti folder view?]
-- sort out and document metadata items available in setup.py vs. those
+- Sort out and document metadata items available in setup.py vs. those
   requiring manual entry on pypi or in kotti_software. See what happens when
   bugtrack_url, home_page, and download_url are added to setup.py. What is
   download_url vs. package_url? Does url in setup.py map to home_page?
   [Home page, Download URL, and Bugtrack URL are editable on pypi. If they
   are not available in setup.py, then if set manually on pypi, are they
   overwritten by new release pushes to pypi, or do they stick?]
-- check on need for required testing dependencies copied from kotti_media
-- add support for using tags to categorize by group with an example,
+- Check on need for required testing dependencies copied from kotti_media
+- Add support for using tags to categorize by group with an example,
   or add a "sub-collection" property if the tags route is not workable.
 - Presently, the view for SoftwareCollection does a site-wide search for all
   SoftwareProject items. Should this be changed to context.children? [Ties in
   with tags and/or categorization question.]
-- change use of all-jambed-up softwarecollection to software-collection and
-  software_collection; same for softwareproject
-- add better visual separation between items in default list view (the only
+- Change use of all-jambed-up softwarecollection to software-collection and
+  software_collection; same for softwareproject. Or, OK as is?
+- Add better visual separation between items in default list view (the only
   list view style available now; see above todo item)
 - Are on-load refreshes from pypi and github too expensive? What are
   alternatives? Nightly cron job? More frequent cron job? Refreshing on a
   timer? Every 5 minutes? Every hour? Manual trigger by admin?
-- Add an explicit handling for a mercurial JSON source, as for github?

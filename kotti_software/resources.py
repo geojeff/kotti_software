@@ -64,14 +64,16 @@ class SoftwareProject(Document):
     desc_handling_choice = 'use_entered'
     #  other choices: ('use_json_summary',
     #                  'use_json_description',
-    #                  'use_github_description')
+    #                  'use_github_description'
+    #                  'use_bitbucket_description')
 
     # String(1000) usage is for mysql compatibility.
-    json_url = Column('json_url', String(1000))
+    pypi_url = Column('pypi_url', String(1000))
 
     date = Column('date', UTCDateTime())
-    date_handling_choice = 'use_json_date'
+    date_handling_choice = 'use_pypi_date'
     #  other choices: ('use_github_date',
+    #                  'use_bitbucket_date',
     #                  'use_entered',
     #                  'use_now')
 
@@ -85,9 +87,13 @@ class SoftwareProject(Document):
     overwrite_package_url = Column('overwrite_package_url', Boolean())
     overwrite_bugtrack_url = Column('overwrite_bugtrack_url', Boolean())
 
-    github_user = Column('github_user', String(1000))
+    github_owner = Column('github_owner', String(1000))
     github_repo = Column('github_repo', String(1000))
     github_date = Column('github_date', UTCDateTime())
+
+    bitbucket_owner = Column('bitbucket_owner', String(1000))
+    bitbucket_repo = Column('bitbucket_repo', String(1000))
+    bitbucket_date = Column('bitbucket_date', UTCDateTime())
 
     type_info = Document.type_info.copy(
         name=u'SoftwareProject',
@@ -98,9 +104,9 @@ class SoftwareProject(Document):
 
     def __init__(self,
                  desc_handling_choice='use_entered',
-                 json_url='',
+                 pypi_url='',
                  date=None,
-                 date_handling_choice='use_json_date',
+                 date_handling_choice='use_pypi_date',
                  home_page_url='',
                  docs_url='',
                  package_url='',
@@ -109,14 +115,16 @@ class SoftwareProject(Document):
                  overwrite_docs_url=True,
                  overwrite_package_url=True,
                  overwrite_bugtrack_url=True,
-                 github_user='',
+                 github_owner='',
                  github_repo='',
+                 bitbucket_owner='',
+                 bitbucket_repo='',
                  **kwargs):
         super(SoftwareProject, self).__init__(**kwargs)
 
         self.desc_handling_choice = desc_handling_choice
 
-        self.json_url = json_url
+        self.pypi_url = pypi_url
 
         self.date_handling_choice = date_handling_choice
 
@@ -129,46 +137,75 @@ class SoftwareProject(Document):
         self.overwrite_package_url = overwrite_package_url
         self.overwrite_bugtrack_url = overwrite_bugtrack_url
 
-        self.github_user = github_user
+        self.github_owner = github_owner
         self.github_repo = github_repo
 
-        github_refreshed = False
+        self.bitbucket_owner = bitbucket_owner
+        self.bitbucket_repo = bitbucket_repo
 
-        if self.date_handling_choice.startswith('use_json'):
-            if self.json_url:
-                self.refresh_json()
+        github_refreshed = False
+        bitbucket_refreshed = False
+
+        if self.date_handling_choice.startswith('use_pypi'):
+            if self.pypi_url:
+                self.refresh_pypi()
         elif self.date_handling_choice.startswith('use_github'):
-            if self.github_user and self.github_repo:
+            if self.github_owner and self.github_repo:
                 self.refresh_github()
                 github_refreshed = True
+        elif self.date_handling_choice.startswith('use_bitbucket'):
+            if self.bitbucket_owner and self.bitbucket_repo:
+                self.refresh_bitbucket()
+                bitbucket_refreshed = True
         else:
             self.date = date
 
         if not github_refreshed:
-            if self.github_user and self.github_repo:
+            if self.github_owner and self.github_repo:
                 self.refresh_github()
+
+        if not bitbucket_refreshed:
+            if self.bitbucket_owner and self.bitbucket_repo:
+                self.refresh_bitbucket()
 
     def tz_dt(self, dt):
         return datetime.datetime(dt.year, dt.month, dt.day,
                                  dt.hour, dt.minute, dt.second,
                                  tzinfo=tzutc())
 
-    def refresh_json(self):
-        if self.json_url:
-            json_raw = urllib2.urlopen(self.json_url).read()
+    def parse_pypi_dt(self, s):
+        return datetime.datetime.strptime(s, "%Y-%m-%dT%H:%M:%S")
+
+    def parse_github_dt(self, s):
+        return datetime.datetime.strptime(s, "%Y-%m-%dT%H:%M:%SZ")
+
+    def parse_bitbucket_dt(self, s):
+        return datetime.datetime.strptime(s, "%Y-%m-%d %H:%M:%S")
+
+    def parse_dt(self, source, json_obj, key):
+        if key in json_obj and json_obj[key]:
+            dt_string = json_obj[key]
+            if dt_string:
+                if source == 'pypi':
+                    dt = self.parse_pypi_dt(dt_string)
+                elif source == 'github':
+                    dt = self.parse_github_dt(dt_string)
+                elif source == 'bitbucket':
+                    dt = self.parse_bitbucket_dt(dt_string)
+                if dt:
+                    return dt
+
+    def refresh_pypi(self):
+        if self.pypi_url:
+            json_raw = urllib2.urlopen(self.pypi_url).read()
             json_obj = json.loads(json_raw)
 
             if json_obj:
-                if self.date_handling_choice == 'use_json_date':
+                if self.date_handling_choice == 'use_pypi_date':
                     if len(json_obj['urls']) > 0 and \
                             'upload_time' in json_obj['urls'][0]:
-                        upload_dt_string = \
-                                json_obj['urls'][0]['upload_time']
-                        if upload_dt_string:
-                            upload_dt = \
-                                datetime.datetime.strptime(upload_dt_string,
-                                                           "%Y-%m-%dT%H:%M:%S")
-                            self.date = self.tz_dt(upload_dt)
+                        dt = self.parse_dt('pypi', json_obj['urls'][0], 'upload_time')
+                        self.date = self.tz_dt(dt)
 
                 if 'info' in json_obj:
                     if self.overwrite_home_page_url:
@@ -195,33 +232,22 @@ class SoftwareProject(Document):
                             if bugtrack_url:
                                 self.bugtrack_url = bugtrack_url
 
-                    if self.desc_handling_choice == 'use_json_summary':
+                    if self.desc_handling_choice == 'use_pypi_summary':
                         if 'summary' in json_obj['info']:
                             summary = json_obj['info']['summary']
                             if summary:
                                 self.description = summary
-                    elif self.desc_handling_choice == 'use_json_description':
+                    elif self.desc_handling_choice == 'use_pypi_description':
                         if 'description' in json_obj['info']:
                             description = json_obj['info']['description']
                             if description:
                                 self.description = description
 
-    def parse_github_dt(self, s):
-        return datetime.datetime.strptime(s, "%Y-%m-%dT%H:%M:%SZ")
-
-    def github_dt(self, json_obj, key):
-        if key in json_obj and json_obj[key]:
-            dt_string = json_obj[key]
-            if dt_string:
-                dt = self.parse_github_dt(dt_string)
-                if dt:
-                    return dt
-
     def refresh_github(self):
-        if self.github_user and self.github_repo:
+        if self.github_owner and self.github_repo:
             github_base_api_url = "https://api.github.com/repos"
             github_url = "{0}/{1}/{2}".format(github_base_api_url,
-                                              self.github_user,
+                                              self.github_owner,
                                               self.github_repo)
             json_raw = urllib2.urlopen(github_url).read()
             json_obj = json.loads(json_raw)
@@ -229,7 +255,7 @@ class SoftwareProject(Document):
             dt = None
 
             if json_obj:
-                dt = self.github_dt(json_obj, 'pushed_at')
+                dt = self.parse_dt('github', json_obj, 'pushed_at')
                 if self.date_handling_choice == 'use_github_date':
                     if dt:
                         self.date = self.tz_dt(dt)
@@ -237,6 +263,31 @@ class SoftwareProject(Document):
                     self.github_date = self.tz_dt(dt)
 
                 if self.desc_handling_choice == 'use_github_description':
+                    if 'description' in json_obj:
+                        description = json_obj['description']
+                        if description:
+                            self.description = description
+
+    def refresh_bitbucket(self):
+        if self.bitbucket_owner and self.bitbucket_repo:
+            bitbucket_base_api_url = "https://api.bitbucket.org/1.0/repositories"
+            bitbucket_url = "{0}/{1}/{2}".format(bitbucket_base_api_url,
+                                                 self.bitbucket_owner,
+                                                 self.bitbucket_repo)
+            json_raw = urllib2.urlopen(bitbucket_url).read()
+            json_obj = json.loads(json_raw)
+
+            dt = None
+
+            if json_obj:
+                dt = self.parse_dt('bitbucket', json_obj, 'last_updated')
+                if self.date_handling_choice == 'use_bitbucket_date':
+                    if dt:
+                        self.date = self.tz_dt(dt)
+                if dt:
+                    self.bitbucket_date = self.tz_dt(dt)
+
+                if self.desc_handling_choice == 'use_bitbucket_description':
                     if 'description' in json_obj:
                         description = json_obj['description']
                         if description:

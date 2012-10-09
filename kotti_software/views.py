@@ -62,9 +62,10 @@ class SoftwareProjectSchema(DocumentSchema):
     choices = (
         ('', '- Select -'),
         ('use_entered', 'Used entered description (can be blank)'),
-        ('use_json_summary', 'Use summary in JSON data'),
-        ('use_json_description', 'Use description in JSON data'),
-        ('use_github_description', 'Use description in github data'))
+        ('use_pypi_summary', 'Use summary in PyPI data'),
+        ('use_pypi_description', 'Use description in PyPI data'),
+        ('use_github_description', 'Use description in GitHub data'),
+        ('use_bitbucket_description', 'Use description in Bitbucket data'))
     desc_handling_choice = colander.SchemaNode(
         colander.String(),
         default='use_entered',
@@ -72,21 +73,22 @@ class SoftwareProjectSchema(DocumentSchema):
         title=_(u'Description Handling'),
         widget=SelectWidget(values=choices))
 
-    json_url = colander.SchemaNode(
+    pypi_url = colander.SchemaNode(
         colander.String(),
-        title=_(u'JSON URL'),
+        title=_(u'PyPI URL'),
         description=_(u'Enter unless doing a manual entry.'),
         missing=_(''),)
 
     choices = (
         ('', '- Select -'),
         ('use_entered', 'Use entered date'),
-        ('use_json_date', 'Use date in JSON data'),
-        ('use_github_date', 'Use date in github data'),
+        ('use_pypi_date', 'Use date in PyPI data'),
+        ('use_github_date', 'Use date in GitHub data'),
+        ('use_bitbucket_date', 'Use date in Bitbucket data'),
         ('use_now', 'Use current date and time'))
     date_handling_choice = colander.SchemaNode(
         colander.String(),
-        default='use_json_date',
+        default='use_pypi_date',
         title=_(u'Date Handling'),
         widget=SelectWidget(values=choices))
     date = colander.SchemaNode(
@@ -107,7 +109,7 @@ class SoftwareProjectSchema(DocumentSchema):
         missing=_(''),)
     overwrite_home_page_url = colander.SchemaNode(
         colander.Boolean(),
-        description='Overwrite home page from JSON',
+        description='Overwrite home page from PyPI',
         default=True,
         missing=True,
         widget=CheckboxWidget(),
@@ -120,7 +122,7 @@ class SoftwareProjectSchema(DocumentSchema):
         missing=_(''),)
     overwrite_docs_url = colander.SchemaNode(
         colander.Boolean(),
-        description='Overwrite docs URL from JSON',
+        description='Overwrite docs URL from PyPI',
         default=True,
         missing=True,
         widget=CheckboxWidget(),
@@ -133,7 +135,7 @@ class SoftwareProjectSchema(DocumentSchema):
         missing=_(''),)
     overwrite_package_url = colander.SchemaNode(
         colander.Boolean(),
-        description='Overwrite package URL from JSON',
+        description='Overwrite package URL from PyPI',
         default=True,
         missing=True,
         widget=CheckboxWidget(),
@@ -146,55 +148,88 @@ class SoftwareProjectSchema(DocumentSchema):
         missing=_(''),)
     overwrite_bugtrack_url = colander.SchemaNode(
         colander.Boolean(),
-        description='Overwrite bugtracker URL from JSON',
+        description='Overwrite bugtracker URL from PyPI',
         default=True,
         missing=True,
         widget=CheckboxWidget(),
         title='')
 
-    github_user = colander.SchemaNode(
+    github_owner = colander.SchemaNode(
         colander.String(),
-        title=_(u'Github User'),
-        description=_(u'Name of the user on github for the project repo.'),
+        title=_(u'GitHub Owner'),
+        description=_(u'Name of the owner on GitHub for the project repo.'),
         missing=_(''),)
 
     github_repo = colander.SchemaNode(
         colander.String(),
-        title=_(u'Github Repo'),
-        description=_(u'Name of the repo on github for the project.'),
+        title=_(u'GitHub Repo'),
+        description=_(u'Name of the repo on GitHub for the project.'),
+        missing=_(''),)
+
+    bitbucket_owner = colander.SchemaNode(
+        colander.String(),
+        title=_(u'Bitbucket Owner'),
+        description=_(u'Name of the owner on Bitbucket for the project repo.'),
+        missing=_(''),)
+
+    bitbucket_repo = colander.SchemaNode(
+        colander.String(),
+        title=_(u'Bitbucket Repo'),
+        description=_(u'Name of the repo on Bitbucket for the project.'),
         missing=_(''),)
 
 
 def software_project_validator(form, value):
 
-    if ((value['date_handling_choice'] == 'use_json_date' or
-         value['desc_handling_choice'] == 'use_json_summary' or
-         value['desc_handling_choice'] == 'use_json_description') and
-        not value['json_url']):
-        msg = u'For fetching date or description from JSON, JSON url required'
+    if ((value['date_handling_choice'] == 'use_pypi_date' or
+         value['desc_handling_choice'] == 'use_pypi_summary' or
+         value['desc_handling_choice'] == 'use_pypi_description') and
+        not value['pypi_url']):
+        msg = u'For fetching date or description from PyPI, PyPI url required'
         exc = Invalid(form, _(msg))
-        exc['json_url'] = _(u'Provide JSON url for fetching data')
+        exc['pypi_url'] = _(u'Provide PyPI url for fetching data')
         raise exc
 
     if ((value['date_handling_choice'] == 'use_github_date' or
          value['desc_handling_choice'] == 'use_github_description') and
-        (not value['github_user'] or not value['github_repo'])):
-        msg = u'For fetching date or description from github, user and repo required'
+        (not value['github_owner'] or not value['github_repo'])):
+        msg = u'For fetching date or description from GitHub, owner and repo required'
         exc = Invalid(form, _(msg))
-        exc['github_user'] = _(u'Provide github user for api call')
-        exc['github_repo'] = _(u'Provide github repo for api call')
+        exc['github_owner'] = _(u'Provide GitHub owner for api call')
+        exc['github_repo'] = _(u'Provide GitHub repo for api call')
         raise exc
 
-    if value['github_user'] and not value['github_repo']:
-        msg = u'To specifiy a github repo, both user and repo required'
+    if value['github_owner'] and not value['github_repo']:
+        msg = u'To specifiy a GitHub repo, both owner and repo required'
         exc = Invalid(form, _(msg))
-        exc['github_repo'] = _(u'Provide github repo for api call')
+        exc['github_repo'] = _(u'Provide GitHub repo for api call')
         raise exc
 
-    if value['github_repo'] and not value['github_user']:
-        msg = u'To specifiy a github repo, both user and repo required'
+    if value['github_repo'] and not value['github_owner']:
+        msg = u'To specifiy a GitHub repo, both owner and repo required'
         exc = Invalid(form, _(msg))
-        exc['github_user'] = _(u'Provide github user for api call')
+        exc['github_owner'] = _(u'Provide GitHub owner for api call')
+        raise exc
+
+    if ((value['date_handling_choice'] == 'use_bitbucket_date' or
+         value['desc_handling_choice'] == 'use_bitbucket_description') and
+        (not value['bitbucket_owner'] or not value['bitbucket_repo'])):
+        msg = u'For fetching date or description from Bitbucket, owner and repo required'
+        exc = Invalid(form, _(msg))
+        exc['bitbucket_owner'] = _(u'Provide Bitbucket owner for api call')
+        exc['bitbucket_repo'] = _(u'Provide Bitbucket repo for api call')
+        raise exc
+
+    if value['bitbucket_owner'] and not value['bitbucket_repo']:
+        msg = u'To specifiy a Bitbucket repo, both owner and repo required'
+        exc = Invalid(form, _(msg))
+        exc['bitbucket_repo'] = _(u'Provide Bitbucket repo for api call')
+        raise exc
+
+    if value['bitbucket_repo'] and not value['bitbucket_owner']:
+        msg = u'To specifiy a Bitbucket repo, both owner and repo required'
+        exc = Invalid(form, _(msg))
+        exc['bitbucket_owner'] = _(u'Provide Bitbucket owner for api call')
         raise exc
 
 
@@ -223,10 +258,12 @@ class AddSoftwareProjectFormView(AddFormView):
             overwrite_docs_url=appstruct['overwrite_docs_url'],
             overwrite_package_url=appstruct['overwrite_package_url'],
             overwrite_bugtrack_url=appstruct['overwrite_bugtrack_url'],
-            json_url=appstruct['json_url'],
+            pypi_url=appstruct['pypi_url'],
             date=appstruct['date'],
-            github_user=appstruct['github_user'],
+            github_owner=appstruct['github_owner'],
             github_repo=appstruct['github_repo'],
+            bitbucket_owner=appstruct['bitbucket_owner'],
+            bitbucket_repo=appstruct['bitbucket_repo'],
             )
 
 
@@ -237,6 +274,10 @@ class EditSoftwareProjectFormView(EditFormView):
         return SoftwareProjectSchema(validator=software_project_validator)
 
     def edit(self, **appstruct):
+
+        pypi_info_changed = False
+        github_info_changed = False
+        bitbucket_info_changed = False
 
         if appstruct['title']:
             self.context.title = appstruct['title']
@@ -275,18 +316,37 @@ class EditSoftwareProjectFormView(EditFormView):
         if appstruct['bugtrack_url']:
             self.context.bugtrack_url = appstruct['bugtrack_url']
 
-        if self.context.date_handling_choice == 'use_json_date':
-            if appstruct['json_url']:
-                self.context.json_url = appstruct['json_url']
-                self.context.refresh_json()
+        if self.context.date_handling_choice == 'use_pypi_date':
+            if appstruct['pypi_url']:
+                self.context.pypi_url = appstruct['pypi_url']
+                pypi_info_changed = True
         else:
             self.context.date = appstruct['date']
 
-        if appstruct['github_user']:
-            self.context.github_user = appstruct['github_user']
+        if appstruct['github_owner']:
+            self.context.github_owner = appstruct['github_owner']
+            github_info_changed = True
 
         if appstruct['github_repo']:
             self.context.github_repo = appstruct['github_repo']
+            github_info_changed = True
+
+        if appstruct['bitbucket_owner']:
+            self.context.bitbucket_owner = appstruct['bitbucket_owner']
+            bitbucket_info_changed = True
+
+        if appstruct['bitbucket_repo']:
+            self.context.bitbucket_repo = appstruct['bitbucket_repo']
+            bitbucket_info_changed = True
+
+        if pypi_info_changed:
+            self.context.refresh_pypi()
+
+        if github_info_changed:
+            self.context.refresh_github()
+
+        if bitbucket_info_changed:
+            self.context.refresh_bitbucket()
 
 
 class AddSoftwareCollectionFormView(AddFormView):
@@ -357,8 +417,10 @@ class SoftwareProjectView(BaseView):
     @view_config(renderer='kotti_software:templates/softwareproject-view.pt')
     def view(self):
 
-        self.context.refresh_json()  # [TODO] Expensive: ?
-        self.context.refresh_github()  # [TODO] Expensive: ?
+        # [TODO] Are these calls too expensive?
+        self.context.refresh_pypi()
+        self.context.refresh_github()
+        self.context.refresh_bitbucket()
 
         return {}
 
@@ -378,8 +440,10 @@ class SoftwareCollectionView(BaseView):
 
         items = query.all()
 
-        [item.refresh_json() for item in items]  # [TODO] Expensive: ?
-        [item.refresh_github() for item in items]  # [TODO] Expensive: ?
+        # [TODO] Are these calls too expensive?
+        [item.refresh_pypi() for item in items]
+        [item.refresh_github() for item in items]
+        [item.refresh_bitbucket() for item in items]
 
         if self.context.sort_order_is_ascending:
             items = sorted(items, key=lambda x: x.date)

@@ -21,7 +21,10 @@
           ${format(item.date)}
         </span>
         <span class="date" tal:condition="item.github_date" tal:define="format api.format_date">
-          &nbsp;/ Last push: ${format(item.github_date)}
+          &nbsp;/ Last GitHub push: ${format(item.github_date)}
+        </span>
+        <span class="date" tal:condition="item.bitbucket_date" tal:define="format api.format_date">
+          &nbsp;/ Last Bitbucket push: ${format(item.bitbucket_date)}
         </span>
         <h2>
           <a href="${api.url(item)}" title="${item.description}" tal:omit-tag="not: settings['link_headline_overview']">
