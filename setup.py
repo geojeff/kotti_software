@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '0.1.1'
+version = '0.1.2'
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -39,13 +39,21 @@ long_description = README + '\n\n' + TODO + '\n\n' + AUTHORS + '\n\n' + CHANGES
 
 setup(name='kotti_software',
       version=version,
-      description="Kotti software",
+      description="Kotti software -- adds a software project listing to your site",
       long_description=long_description,
-      classifiers=[],
+      classifiers=[
+        'Development Status :: 3 - Alpha',
+        'Environment :: Web Environment',
+        'Intended Audience :: Developers',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Framework :: Pyramid',
+      ],
       keywords='kotti software',
-      author='geojeff',
+      author='Jeff Pittman',
       author_email='geojeff@me.com',
-      url='http://pypi.python.org/pypi/kotti_software',
+      url='http://github.com/geojeff/kotti_software',
+      bugtrack_url='https://github.com/geojeff/kotti_software/issues',
       license=' BSD-derived (http://www.repoze.org/LICENSE.txt)',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,

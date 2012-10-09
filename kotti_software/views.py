@@ -9,15 +9,12 @@ import logging
 from deform.widget import CheckboxWidget
 from deform.widget import DateTimeInputWidget
 from deform.widget import SelectWidget
+from deform.widget import RadioChoiceWidget
 
 from kotti.views.form import AddFormView
 from kotti.views.form import EditFormView
 
 from kotti.views.edit import DocumentSchema
-from kotti.views.edit import generic_edit
-from kotti.views.edit import generic_add
-
-from kotti.views.util import ensure_view_selector
 
 from kotti_software import collection_settings
 from kotti_software.resources import SoftwareCollection
@@ -40,12 +37,22 @@ log = logging.getLogger(__name__)
 
 
 class SoftwareCollectionSchema(DocumentSchema):
-    pass
+
+    choices = (
+        ('ascending', 'Ascending'),
+        ('descending', 'Descending'))
+    sort_order_choice = colander.SchemaNode(colander.String(),
+            title=_(u'Sort Order'),
+            default='descending',
+            widget=RadioChoiceWidget(values=choices),
+            validator=colander.OneOf(('ascending', 'descending')))
 
 
 @colander.deferred
 def deferred_date_missing(node, kw):
+
     value = datetime.datetime.now()
+
     return datetime.datetime(value.year, value.month, value.day, value.hour,
         value.minute, value.second, value.microsecond, tzinfo=tzutc())
 
@@ -56,7 +63,8 @@ class SoftwareProjectSchema(DocumentSchema):
         ('', '- Select -'),
         ('use_entered', 'Used entered description (can be blank)'),
         ('use_json_summary', 'Use summary in JSON data'),
-        ('use_json_description', 'Use description in JSON data'))
+        ('use_json_description', 'Use description in JSON data'),
+        ('use_github_description', 'Use description in github data'))
     desc_handling_choice = colander.SchemaNode(
         colander.String(),
         default='use_entered',
@@ -74,7 +82,8 @@ class SoftwareProjectSchema(DocumentSchema):
         ('', '- Select -'),
         ('use_entered', 'Use entered date'),
         ('use_json_date', 'Use date in JSON data'),
-        ('use_now', 'Use the current date'))
+        ('use_github_date', 'Use date in github data'),
+        ('use_now', 'Use current date and time'))
     date_handling_choice = colander.SchemaNode(
         colander.String(),
         default='use_json_date',
@@ -143,6 +152,51 @@ class SoftwareProjectSchema(DocumentSchema):
         widget=CheckboxWidget(),
         title='')
 
+    github_user = colander.SchemaNode(
+        colander.String(),
+        title=_(u'Github User'),
+        description=_(u'Name of the user on github for the project repo.'),
+        missing=_(''),)
+
+    github_repo = colander.SchemaNode(
+        colander.String(),
+        title=_(u'Github Repo'),
+        description=_(u'Name of the repo on github for the project.'),
+        missing=_(''),)
+
+
+def software_project_validator(form, value):
+
+    if ((value['date_handling_choice'] == 'use_json_date' or
+         value['desc_handling_choice'] == 'use_json_summary' or
+         value['desc_handling_choice'] == 'use_json_description') and
+        not value['json_url']):
+        msg = u'For fetching date or description from JSON, JSON url required'
+        exc = Invalid(form, _(msg))
+        exc['json_url'] = _(u'Provide JSON url for fetching data')
+        raise exc
+
+    if ((value['date_handling_choice'] == 'use_github_date' or
+         value['desc_handling_choice'] == 'use_github_description') and
+        (not value['github_user'] or not value['github_repo'])):
+        msg = u'For fetching date or description from github, user and repo required'
+        exc = Invalid(form, _(msg))
+        exc['github_user'] = _(u'Provide github user for api call')
+        exc['github_repo'] = _(u'Provide github repo for api call')
+        raise exc
+
+    if value['github_user'] and not value['github_repo']:
+        msg = u'To specifiy a github repo, both user and repo required'
+        exc = Invalid(form, _(msg))
+        exc['github_repo'] = _(u'Provide github repo for api call')
+        raise exc
+
+    if value['github_repo'] and not value['github_user']:
+        msg = u'To specifiy a github repo, both user and repo required'
+        exc = Invalid(form, _(msg))
+        exc['github_user'] = _(u'Provide github user for api call')
+        raise exc
+
 
 class AddSoftwareProjectFormView(AddFormView):
     item_type = _(u"SoftwareProject")
@@ -150,18 +204,7 @@ class AddSoftwareProjectFormView(AddFormView):
 
     def schema_factory(self):
 
-        def validator(form, value):
-
-            if (value['date_handling_choice'] == 'use_json_date'
-                    and not value['json_url']):
-                exc = Invalid(
-                    form,
-                    _(u'Date handling = use_json_date; json_url required')
-                )
-                exc['json_url'] = _(u'Provide json url for fetching data')
-                raise exc
-
-        return SoftwareProjectSchema(validator=validator)
+        return SoftwareProjectSchema(validator=software_project_validator)
 
     def add(self, **appstruct):
 
@@ -182,6 +225,8 @@ class AddSoftwareProjectFormView(AddFormView):
             overwrite_bugtrack_url=appstruct['overwrite_bugtrack_url'],
             json_url=appstruct['json_url'],
             date=appstruct['date'],
+            github_user=appstruct['github_user'],
+            github_repo=appstruct['github_repo'],
             )
 
 
@@ -189,18 +234,7 @@ class EditSoftwareProjectFormView(EditFormView):
 
     def schema_factory(self):
 
-        def validator(form, value):
-
-            if (value['date_handling_choice'] == 'use_json_date'
-                    and not value['json_url']):
-                exc = Invalid(
-                    form,
-                    _(u'Date handling = use_json_date; json_url required')
-                )
-                exc['json_url'] = _(u'Provide json url for fetching data')
-                raise exc
-
-        return SoftwareProjectSchema(validator=validator)
+        return SoftwareProjectSchema(validator=software_project_validator)
 
     def edit(self, **appstruct):
 
@@ -248,6 +282,61 @@ class EditSoftwareProjectFormView(EditFormView):
         else:
             self.context.date = appstruct['date']
 
+        if appstruct['github_user']:
+            self.context.github_user = appstruct['github_user']
+
+        if appstruct['github_repo']:
+            self.context.github_repo = appstruct['github_repo']
+
+
+class AddSoftwareCollectionFormView(AddFormView):
+    item_type = _(u"SoftwareCollection")
+    item_class = SoftwareCollection
+
+    def schema_factory(self):
+
+        return SoftwareCollectionSchema()
+
+    def add(self, **appstruct):
+        sort_order_is_ascending = False
+
+        if appstruct['sort_order_choice'] == 'ascending':
+            sort_order_is_ascending = True
+
+        return self.item_class(
+            title=appstruct['title'],
+            description=appstruct['description'],
+            body=appstruct['body'],
+            tags=appstruct['tags'],
+            sort_order_is_ascending=sort_order_is_ascending,
+            )
+
+
+class EditSoftwareCollectionFormView(EditFormView):
+
+    def schema_factory(self):
+
+        return SoftwareCollectionSchema()
+
+    def edit(self, **appstruct):
+
+        if appstruct['title']:
+            self.context.title = appstruct['title']
+
+        if appstruct['description']:
+            self.context.description = appstruct['description']
+
+        if appstruct['body']:
+            self.context.body = appstruct['body']
+
+        if appstruct['tags']:
+            self.context.tags = appstruct['tags']
+
+        if appstruct['sort_order_choice'] == 'ascending':
+            self.sort_order_is_ascending = True
+        else:
+            self.sort_order_is_ascending = False
+
 
 @view_defaults(permission='view')
 class BaseView(object):
@@ -265,11 +354,11 @@ class BaseView(object):
                permission='view')
 class SoftwareProjectView(BaseView):
 
-    @view_config(name='view',
-                 renderer='kotti_software:templates/softwareproject-view.pt')
+    @view_config(renderer='kotti_software:templates/softwareproject-view.pt')
     def view(self):
 
         self.context.refresh_json()  # [TODO] Expensive: ?
+        self.context.refresh_github()  # [TODO] Expensive: ?
 
         return {}
 
@@ -278,22 +367,29 @@ class SoftwareProjectView(BaseView):
                permission='view')
 class SoftwareCollectionView(BaseView):
 
-    @view_config(name="view",
+    @view_config(
              renderer="kotti_software:templates/softwarecollection-view.pt")
     def view(self):
 
-        settings = collection_settings()
         session = DBSession()
-        query = \
-            session.query(SoftwareProject).filter(
-                    SoftwareProject.parent_id == self.context.id).order_by(
-                            SoftwareProject.date.desc())
+
+        query = session.query(SoftwareProject).filter(
+                SoftwareProject.parent_id == self.context.id)
+
         items = query.all()
-        # [TODO] Expensive: ?
-        [item.refresh_json() for item in items]
-        query.order_by(SoftwareProject.date.desc())
-        items = query.all()
+
+        [item.refresh_json() for item in items]  # [TODO] Expensive: ?
+        [item.refresh_github() for item in items]  # [TODO] Expensive: ?
+
+        if self.context.sort_order_is_ascending:
+            items = sorted(items, key=lambda x: x.date)
+        else:
+            items = sorted(items, key=lambda x: x.date, reverse=True)
+
         page = self.request.params.get('page', 1)
+
+        settings = collection_settings()
+
         if settings['use_batching']:
             items = Batch.fromPagenumber(items,
                           pagesize=settings['pagesize'],
@@ -307,58 +403,10 @@ class SoftwareCollectionView(BaseView):
             }
 
 
-@ensure_view_selector
-def edit_softwarecollection(context, request):
-    return generic_edit(context,
-                        request,
-                        SoftwareCollectionSchema())
-
-
-def add_softwarecollection(context, request):
-    return generic_add(context,
-                       request,
-                       SoftwareCollectionSchema(),
-                       SoftwareCollection,
-                       u'softwarecollection')
-
-
-#def view_softwareproject(context, request):
-#    # [TODO] Expensive: ?
-#    context.refresh_json()
-#
-#    return {}
-#
-#
-#def view_softwarecollection(context, request):
-#    settings = collection_settings()
-#    macros = get_renderer('templates/macros.pt').implementation()
-#    session = DBSession()
-#    query = session.query(SoftwareProject).filter(
-#        SoftwareProject.parent_id == \
-#        context.id).order_by(SoftwareProject.date.desc())
-#    items = query.all()
-#    # [TODO] Expensive: ?
-#    [item.refresh_json() for item in items]
-#    query.order_by(SoftwareProject.date.desc())
-#    items = query.all()
-#    page = request.params.get('page', 1)
-#    if settings['use_batching']:
-#        items = Batch.fromPagenumber(items,
-#                      pagesize=settings['pagesize'],
-#                      pagenumber=int(page))
-#
-#    return {
-#        'api': template_api(context, request),
-#        'macros': macros,
-#        'items': items,
-#        'settings': settings,
-#        }
-
-
 def includeme_edit(config):
 
     config.add_view(
-        edit_softwarecollection,
+        EditSoftwareCollectionFormView,
         context=SoftwareCollection,
         name='edit',
         permission='edit',
@@ -366,7 +414,7 @@ def includeme_edit(config):
         )
 
     config.add_view(
-        add_softwarecollection,
+        AddSoftwareCollectionFormView,
         name=SoftwareCollection.type_info.add_view,
         permission='add',
         renderer='kotti:templates/edit/node.pt',
@@ -390,27 +438,13 @@ def includeme_edit(config):
 
 def includeme_view(config):
 
-#    config.add_view(
-#        view_softwarecollection,
-#        context=SoftwareCollection,
-#        name='view',
-#        permission='view',
-#        renderer='templates/softwarecollection-view.pt',
-#        )
-#
-#    config.add_view(
-#        view_softwareproject,
-#        context=SoftwareProject,
-#        name='view',
-#        permission='view',
-#        renderer='templates/softwareproject-view.pt',
-#        )
-
     config.add_static_view('static-kotti_software', 'kotti_software:static')
 
 
 def includeme(config):
+
     settings = config.get_settings()
+
     if 'kotti_software.asset_overrides' in settings:
         asset_overrides = \
                 [a.strip()
