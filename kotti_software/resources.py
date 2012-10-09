@@ -67,10 +67,10 @@ class SoftwareProject(Document):
     #                  'use_github_description')
 
     # String(1000) usage is for mysql compatibility.
-    json_url = Column('json_url', String(1000))
+    pypi_url = Column('pypi_url', String(1000))
 
     date = Column('date', UTCDateTime())
-    date_handling_choice = 'use_json_date'
+    date_handling_choice = 'use_pypi_date'
     #  other choices: ('use_github_date',
     #                  'use_entered',
     #                  'use_now')
@@ -98,9 +98,9 @@ class SoftwareProject(Document):
 
     def __init__(self,
                  desc_handling_choice='use_entered',
-                 json_url='',
+                 pypi_url='',
                  date=None,
-                 date_handling_choice='use_json_date',
+                 date_handling_choice='use_pypi_date',
                  home_page_url='',
                  docs_url='',
                  package_url='',
@@ -116,7 +116,7 @@ class SoftwareProject(Document):
 
         self.desc_handling_choice = desc_handling_choice
 
-        self.json_url = json_url
+        self.pypi_url = pypi_url
 
         self.date_handling_choice = date_handling_choice
 
@@ -134,9 +134,9 @@ class SoftwareProject(Document):
 
         github_refreshed = False
 
-        if self.date_handling_choice.startswith('use_json'):
-            if self.json_url:
-                self.refresh_json()
+        if self.date_handling_choice.startswith('use_pypi'):
+            if self.pypi_url:
+                self.refresh_pypi()
         elif self.date_handling_choice.startswith('use_github'):
             if self.github_user and self.github_repo:
                 self.refresh_github()
@@ -153,13 +153,13 @@ class SoftwareProject(Document):
                                  dt.hour, dt.minute, dt.second,
                                  tzinfo=tzutc())
 
-    def refresh_json(self):
-        if self.json_url:
-            json_raw = urllib2.urlopen(self.json_url).read()
+    def refresh_pypi(self):
+        if self.pypi_url:
+            json_raw = urllib2.urlopen(self.pypi_url).read()
             json_obj = json.loads(json_raw)
 
             if json_obj:
-                if self.date_handling_choice == 'use_json_date':
+                if self.date_handling_choice == 'use_pypi_date':
                     if len(json_obj['urls']) > 0 and \
                             'upload_time' in json_obj['urls'][0]:
                         upload_dt_string = \
@@ -195,12 +195,12 @@ class SoftwareProject(Document):
                             if bugtrack_url:
                                 self.bugtrack_url = bugtrack_url
 
-                    if self.desc_handling_choice == 'use_json_summary':
+                    if self.desc_handling_choice == 'use_pypi_summary':
                         if 'summary' in json_obj['info']:
                             summary = json_obj['info']['summary']
                             if summary:
                                 self.description = summary
-                    elif self.desc_handling_choice == 'use_json_description':
+                    elif self.desc_handling_choice == 'use_pypi_description':
                         if 'description' in json_obj['info']:
                             description = json_obj['info']['description']
                             if description:

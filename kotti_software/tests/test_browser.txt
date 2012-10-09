@@ -69,44 +69,44 @@ Add a software project using pypi source
   >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "kotti_software"
   >>> ctrl("Body").value = "This project is about this very project..."
-  >>> ctrl("Use date in JSON data").selected = True
-  >>> ctrl("JSON URL").value = "http://pypi.python.org/pypi/kotti_software/json"
-  >>> ctrl("Github User").value = "geojeff"
-  >>> ctrl("Github Repo").value = "kotti_software"
+  >>> ctrl("Use date in PyPI data").selected = True
+  >>> ctrl("PyPI URL").value = "http://pypi.python.org/pypi/kotti_software/json"
+  >>> ctrl("GitHub User").value = "geojeff"
+  >>> ctrl("GitHub Repo").value = "kotti_software"
   >>> ctrl("save").click()
   >>> "Successfully added item" in browser.contents
   True
 
-Add a software project with github user but not repo
+Add a software project with GitHub user but not repo
 ----------------------------------------------------
 
   >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "kotti_software"
   >>> ctrl("Body").value = "This project is about this very project..."
-  >>> ctrl("Use date in JSON data").selected = True
-  >>> ctrl("JSON URL").value = "http://pypi.python.org/pypi/kotti_software/json"
-  >>> ctrl("Github User").value = "geojeff"
-  >>> ctrl("Github Repo").value = ""
+  >>> ctrl("Use date in PyPI data").selected = True
+  >>> ctrl("PyPI URL").value = "http://pypi.python.org/pypi/kotti_software/json"
+  >>> ctrl("GitHub User").value = "geojeff"
+  >>> ctrl("GitHub Repo").value = ""
   >>> ctrl("save").click()
-  >>> "To specifiy a github repo, both user and repo required" in browser.contents
+  >>> "To specifiy a GitHub repo, both user and repo required" in browser.contents
   True
-  >>> "Provide github repo for api call" in browser.contents
+  >>> "Provide GitHub repo for api call" in browser.contents
   True
 
-Add a software project with github repo but not user
+Add a software project with GitHub repo but not user
 ----------------------------------------------------
 
   >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "kotti_software"
   >>> ctrl("Body").value = "This project is about this very project..."
-  >>> ctrl("Use date in JSON data").selected = True
-  >>> ctrl("JSON URL").value = "http://pypi.python.org/pypi/kotti_software/json"
-  >>> ctrl("Github User").value = ""
-  >>> ctrl("Github Repo").value = "kotti_software"
+  >>> ctrl("Use date in PyPI data").selected = True
+  >>> ctrl("PyPI URL").value = "http://pypi.python.org/pypi/kotti_software/json"
+  >>> ctrl("GitHub User").value = ""
+  >>> ctrl("GitHub Repo").value = "kotti_software"
   >>> ctrl("save").click()
-  >>> "To specifiy a github repo, both user and repo required" in browser.contents
+  >>> "To specifiy a GitHub repo, both user and repo required" in browser.contents
   True
-  >>> "Provide github user for api call" in browser.contents
+  >>> "Provide GitHub user for api call" in browser.contents
   True
 
 View software collection and software project
@@ -124,52 +124,52 @@ View software collection and software project
   >>> "This project is about hurricanes" in browser.contents
   True
 
-Add a software project with use_json_date but no json_url
+Add a software project with use_pypi_date but no pypi_url
 ---------------------------------------------------------
 
   >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "Third software project"
   >>> ctrl("Body").value = "This project concerns lions and tigers..."
-  >>> ctrl("Use date in JSON data").selected = True
-  >>> ctrl("JSON URL").value = ""
+  >>> ctrl("Use date in PyPI data").selected = True
+  >>> ctrl("PyPI URL").value = ""
   >>> ctrl("save").click()
-  >>> "For fetching date or description from JSON, JSON url required" in browser.contents
+  >>> "For fetching date or description from PyPI, PyPI url required" in browser.contents
   True
-  >>> "Provide JSON url for fetching data" in browser.contents
+  >>> "Provide PyPI url for fetching data" in browser.contents
   True
 
-Add a software project with desc to come from json, but no json_url
+Add a software project with desc to come from pypi, but no pypi_url
 -------------------------------------------------------------------
 
   >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "Fourth software project"
   >>> ctrl("Body").value = "This project concerns cavemen and alligators..."
-  >>> ctrl("Use description in JSON data").selected = True
-  >>> ctrl("JSON URL").value = ""
+  >>> ctrl("Use description in PyPI data").selected = True
+  >>> ctrl("PyPI URL").value = ""
   >>> ctrl("save").click()
-  >>> "For fetching date or description from JSON, JSON url required" in browser.contents
+  >>> "For fetching date or description from PyPI, PyPI url required" in browser.contents
   True
-  >>> "Provide JSON url for fetching data" in browser.contents
+  >>> "Provide PyPI url for fetching data" in browser.contents
   True
 
-Add a software project with use_github_date but no github user, repo
+Add a software project with use_github_date but no GitHub user, repo
 --------------------------------------------------------------------
 
   >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "Fifth software project"
   >>> ctrl("Body").value = "This project concerns aardvarks and armadillos..."
-  >>> ctrl("Use date in github data").selected = True
-  >>> ctrl("Github User").value = ""
-  >>> ctrl("Github Repo").value = ""
+  >>> ctrl("Use date in GitHub data").selected = True
+  >>> ctrl("GitHub User").value = ""
+  >>> ctrl("GitHub Repo").value = ""
   >>> ctrl("save").click()
-  >>> "For fetching date or description from github, user and repo required" in browser.contents
+  >>> "For fetching date or description from GitHub, user and repo required" in browser.contents
   True
-  >>> "Provide github user for api call" in browser.contents
+  >>> "Provide GitHub user for api call" in browser.contents
   True
-  >>> "Provide github repo for api call" in browser.contents
+  >>> "Provide GitHub repo for api call" in browser.contents
   True
 
-Add a software project with desc to come from github, but no github user, repo
+Add a software project with desc to come from GitHub, but no GitHub user, repo
 ------------------------------------------------------------------------------
 
   >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
@@ -177,15 +177,15 @@ Add a software project with desc to come from github, but no github user, repo
   >>> ctrl("Body").value = "This project concerns architects and lawyers..."
   >>> ctrl("Use entered date").selected = True
   >>> ctrl("Date", index=1).value = sixth_time_string
-  >>> ctrl("Use description in github data").selected = True
-  >>> ctrl("Github User").value = ""
-  >>> ctrl("Github Repo").value = ""
+  >>> ctrl("Use description in GitHub data").selected = True
+  >>> ctrl("GitHub User").value = ""
+  >>> ctrl("GitHub Repo").value = ""
   >>> ctrl("save").click()
-  >>> "For fetching date or description from github, user and repo required" in browser.contents
+  >>> "For fetching date or description from GitHub, user and repo required" in browser.contents
   True
-  >>> "Provide github user for api call" in browser.contents
+  >>> "Provide GitHub user for api call" in browser.contents
   True
-  >>> "Provide github repo for api call" in browser.contents
+  >>> "Provide GitHub repo for api call" in browser.contents
   True
 
 Edit software collection and software project and verify the changes
@@ -210,39 +210,39 @@ Edit software collection and software project and verify the changes
   >>> "Your changes have been saved" in browser.contents
   True
 
-Edit a software project to change the json_url, forcing date to blank
+Edit a software project to change the pypi_url, forcing date to blank
 ---------------------------------------------------------------------
 
   >>> browser.open(tests.BASE_URL + '/new-software-collection/first-software-project/@@edit')
-  >>> ctrl("Use date in JSON data").selected = True
+  >>> ctrl("Use date in PyPI data").selected = True
   >>> ctrl("Date", index=1).value = ""
-  >>> ctrl("JSON URL").value = "http://pypi.python.org/pypi/Kotti/json"
+  >>> ctrl("PyPI URL").value = "http://pypi.python.org/pypi/Kotti/json"
   >>> ctrl("save").click()
 
   >>> browser.open(tests.BASE_URL + '/new-software-collection/')
   >>> "Kotti" in browser.contents
   True
 
-Edit a software project with date *and* json_url changed
+Edit a software project with date *and* pypi_url changed
 --------------------------------------------------------
 
   >>> browser.open(tests.BASE_URL + '/new-software-collection/first-software-project/@@edit')
   >>> ctrl("Title").value = "Edited software project"
-  >>> ctrl("Use date in JSON data").selected = True
-  >>> ctrl("JSON URL", index=0).value = ""
+  >>> ctrl("Use date in PyPI data").selected = True
+  >>> ctrl("PyPI URL", index=0).value = ""
   >>> ctrl("save").click()
-  >>> "For fetching date or description from JSON, JSON url required" in browser.contents
+  >>> "For fetching date or description from PyPI, PyPI url required" in browser.contents
   True
-  >>> "Provide JSON url for fetching data" in browser.contents
+  >>> "Provide PyPI url for fetching data" in browser.contents
   True
 
-Edit a software project with github user and repo changed
+Edit a software project with GitHub user and repo changed
 ---------------------------------------------------------
 
   >>> browser.open(tests.BASE_URL + '/new-software-collection/kotti_software/@@edit')
   >>> ctrl("Title").value = "kotti_media"
-  >>> ctrl("Github User").value = "geojeff"
-  >>> ctrl("Github Repo").value = "kotti_media"
+  >>> ctrl("GitHub User").value = "geojeff"
+  >>> ctrl("GitHub Repo").value = "kotti_media"
   >>> ctrl("save").click()
   >>> "kotti_media" in browser.contents
   True
@@ -251,8 +251,8 @@ Add a software collection with sorting changed
 ----------------------------------------------
 
   >>> browser.open(tests.BASE_URL + '/@@add_softwarecollection')
-  >>> ctrl("Title").value = "Ordered Github Software Collection"
-  >>> ctrl("Body").value = "This software collection is Github only, ascending sorted"
+  >>> ctrl("Title").value = "Ordered GitHub Software Collection"
+  >>> ctrl("Body").value = "This software collection is GitHub only, ascending sorted"
   >>> ctrl("Ascending").selected = True
   >>> ctrl("save").click()
   >>> "Successfully added item" in browser.contents
@@ -260,25 +260,25 @@ Add a software collection with sorting changed
   >>> browser.url == tests.BASE_URL + '/ordered-github-software-collection/'
   True
 
-Add Github software projects and one dated NOW; Test for ascending order
+Add GitHub software projects and one dated NOW; Test for ascending order
 ------------------------------------------------------------------------
 
   >>> browser.open(tests.BASE_URL + '/ordered-github-software-collection/@@add_softwareproject')
-  >>> ctrl("Title").value = "Github kotti_software"
-  >>> ctrl("Body").value = "This project is about this very project on Github..."
-  >>> ctrl("Use date in github data").selected = True
-  >>> ctrl("Github User").value = "geojeff"
-  >>> ctrl("Github Repo").value = "kotti_software"
+  >>> ctrl("Title").value = "GitHub kotti_software"
+  >>> ctrl("Body").value = "This project is about this very project on GitHub..."
+  >>> ctrl("Use date in GitHub data").selected = True
+  >>> ctrl("GitHub User").value = "geojeff"
+  >>> ctrl("GitHub Repo").value = "kotti_software"
   >>> ctrl("save").click()
   >>> "Successfully added item" in browser.contents
   True
 
   >>> browser.open(tests.BASE_URL + '/ordered-github-software-collection/@@add_softwareproject')
-  >>> ctrl("Title").value = "Github Kotti geojeff fork"
-  >>> ctrl("Body").value = "This project is about Kotti forked on geojeff Github..."
-  >>> ctrl("Use date in github data").selected = True
-  >>> ctrl("Github User").value = "geojeff"
-  >>> ctrl("Github Repo").value = "Kotti"
+  >>> ctrl("Title").value = "GitHub Kotti geojeff fork"
+  >>> ctrl("Body").value = "This project is about Kotti forked on geojeff GitHub..."
+  >>> ctrl("Use date in GitHub data").selected = True
+  >>> ctrl("GitHub User").value = "geojeff"
+  >>> ctrl("GitHub Repo").value = "Kotti"
   >>> ctrl("save").click()
   >>> "Successfully added item" in browser.contents
   True
@@ -287,21 +287,21 @@ Add Github software projects and one dated NOW; Test for ascending order
   >>> ctrl("Title").value = "kotti_software dated NOW"
   >>> ctrl("Body").value = "This project is kotti_software with a date of NOW..."
   >>> ctrl("Use current date and time").selected = True
-  >>> ctrl("Github User").value = "geojeff"
-  >>> ctrl("Github Repo").value = "kotti_software"
+  >>> ctrl("GitHub User").value = "geojeff"
+  >>> ctrl("GitHub Repo").value = "kotti_software"
   >>> ctrl("save").click()
   >>> "Successfully added item" in browser.contents
   True
 
   >>> browser.open(tests.BASE_URL + '/ordered-github-software-collection/')
-  >>> "Github Kotti geojeff fork" in browser.contents
+  >>> "GitHub Kotti geojeff fork" in browser.contents
   True
-  >>> "Github kotti_software" in browser.contents
+  >>> "GitHub kotti_software" in browser.contents
   True
   >>> pos = browser.contents.index
-  >>> pos("kotti_software dated NOW") > pos("Github kotti_software")
+  >>> pos("kotti_software dated NOW") > pos("GitHub kotti_software")
   True
-  >>> pos("kotti_software dated NOW") > pos("Github Kotti geojeff fork")
+  >>> pos("kotti_software dated NOW") > pos("GitHub Kotti geojeff fork")
   True
 
 Edit the ordered software collection to reverse sorting
@@ -317,7 +317,7 @@ Edit the ordered software collection to reverse sorting
   >>> "I was descending, but now am ascending" in browser.contents
   True
   >>> pos = browser.contents.index
-  >>> pos("kotti_software dated NOW") > pos("Github kotti_software")
+  >>> pos("kotti_software dated NOW") > pos("GitHub kotti_software")
   True
-  >>> pos("kotti_software dated NOW") > pos("Github Kotti geojeff fork")
+  >>> pos("kotti_software dated NOW") > pos("GitHub Kotti geojeff fork")
   True

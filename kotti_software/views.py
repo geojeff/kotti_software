@@ -62,9 +62,9 @@ class SoftwareProjectSchema(DocumentSchema):
     choices = (
         ('', '- Select -'),
         ('use_entered', 'Used entered description (can be blank)'),
-        ('use_json_summary', 'Use summary in JSON data'),
-        ('use_json_description', 'Use description in JSON data'),
-        ('use_github_description', 'Use description in github data'))
+        ('use_pypi_summary', 'Use summary in PyPI data'),
+        ('use_pypi_description', 'Use description in PyPI data'),
+        ('use_github_description', 'Use description in GitHub data'))
     desc_handling_choice = colander.SchemaNode(
         colander.String(),
         default='use_entered',
@@ -72,21 +72,21 @@ class SoftwareProjectSchema(DocumentSchema):
         title=_(u'Description Handling'),
         widget=SelectWidget(values=choices))
 
-    json_url = colander.SchemaNode(
+    pypi_url = colander.SchemaNode(
         colander.String(),
-        title=_(u'JSON URL'),
+        title=_(u'PyPI URL'),
         description=_(u'Enter unless doing a manual entry.'),
         missing=_(''),)
 
     choices = (
         ('', '- Select -'),
         ('use_entered', 'Use entered date'),
-        ('use_json_date', 'Use date in JSON data'),
-        ('use_github_date', 'Use date in github data'),
+        ('use_pypi_date', 'Use date in PyPI data'),
+        ('use_github_date', 'Use date in GitHub data'),
         ('use_now', 'Use current date and time'))
     date_handling_choice = colander.SchemaNode(
         colander.String(),
-        default='use_json_date',
+        default='use_pypi_date',
         title=_(u'Date Handling'),
         widget=SelectWidget(values=choices))
     date = colander.SchemaNode(
@@ -154,47 +154,47 @@ class SoftwareProjectSchema(DocumentSchema):
 
     github_user = colander.SchemaNode(
         colander.String(),
-        title=_(u'Github User'),
-        description=_(u'Name of the user on github for the project repo.'),
+        title=_(u'GitHub User'),
+        description=_(u'Name of the user on GitHub for the project repo.'),
         missing=_(''),)
 
     github_repo = colander.SchemaNode(
         colander.String(),
-        title=_(u'Github Repo'),
-        description=_(u'Name of the repo on github for the project.'),
+        title=_(u'GitHub Repo'),
+        description=_(u'Name of the repo on GitHub for the project.'),
         missing=_(''),)
 
 
 def software_project_validator(form, value):
 
-    if ((value['date_handling_choice'] == 'use_json_date' or
-         value['desc_handling_choice'] == 'use_json_summary' or
-         value['desc_handling_choice'] == 'use_json_description') and
-        not value['json_url']):
-        msg = u'For fetching date or description from JSON, JSON url required'
+    if ((value['date_handling_choice'] == 'use_pypi_date' or
+         value['desc_handling_choice'] == 'use_pypi_summary' or
+         value['desc_handling_choice'] == 'use_pypi_description') and
+        not value['pypi_url']):
+        msg = u'For fetching date or description from PyPI, PyPI url required'
         exc = Invalid(form, _(msg))
-        exc['json_url'] = _(u'Provide JSON url for fetching data')
+        exc['pypi_url'] = _(u'Provide PyPI url for fetching data')
         raise exc
 
     if ((value['date_handling_choice'] == 'use_github_date' or
          value['desc_handling_choice'] == 'use_github_description') and
         (not value['github_user'] or not value['github_repo'])):
-        msg = u'For fetching date or description from github, user and repo required'
+        msg = u'For fetching date or description from GitHub, user and repo required'
         exc = Invalid(form, _(msg))
-        exc['github_user'] = _(u'Provide github user for api call')
-        exc['github_repo'] = _(u'Provide github repo for api call')
+        exc['github_user'] = _(u'Provide GitHub user for api call')
+        exc['github_repo'] = _(u'Provide GitHub repo for api call')
         raise exc
 
     if value['github_user'] and not value['github_repo']:
-        msg = u'To specifiy a github repo, both user and repo required'
+        msg = u'To specifiy a GitHub repo, both user and repo required'
         exc = Invalid(form, _(msg))
-        exc['github_repo'] = _(u'Provide github repo for api call')
+        exc['github_repo'] = _(u'Provide GitHub repo for api call')
         raise exc
 
     if value['github_repo'] and not value['github_user']:
-        msg = u'To specifiy a github repo, both user and repo required'
+        msg = u'To specifiy a GitHub repo, both user and repo required'
         exc = Invalid(form, _(msg))
-        exc['github_user'] = _(u'Provide github user for api call')
+        exc['github_user'] = _(u'Provide GitHub user for api call')
         raise exc
 
 
@@ -223,7 +223,7 @@ class AddSoftwareProjectFormView(AddFormView):
             overwrite_docs_url=appstruct['overwrite_docs_url'],
             overwrite_package_url=appstruct['overwrite_package_url'],
             overwrite_bugtrack_url=appstruct['overwrite_bugtrack_url'],
-            json_url=appstruct['json_url'],
+            pypi_url=appstruct['pypi_url'],
             date=appstruct['date'],
             github_user=appstruct['github_user'],
             github_repo=appstruct['github_repo'],
@@ -275,10 +275,10 @@ class EditSoftwareProjectFormView(EditFormView):
         if appstruct['bugtrack_url']:
             self.context.bugtrack_url = appstruct['bugtrack_url']
 
-        if self.context.date_handling_choice == 'use_json_date':
-            if appstruct['json_url']:
-                self.context.json_url = appstruct['json_url']
-                self.context.refresh_json()
+        if self.context.date_handling_choice == 'use_pypi_date':
+            if appstruct['pypi_url']:
+                self.context.pypi_url = appstruct['pypi_url']
+                self.context.refresh_pypi()
         else:
             self.context.date = appstruct['date']
 
@@ -357,7 +357,7 @@ class SoftwareProjectView(BaseView):
     @view_config(renderer='kotti_software:templates/softwareproject-view.pt')
     def view(self):
 
-        self.context.refresh_json()  # [TODO] Expensive: ?
+        self.context.refresh_pypi()  # [TODO] Expensive: ?
         self.context.refresh_github()  # [TODO] Expensive: ?
 
         return {}
@@ -378,7 +378,7 @@ class SoftwareCollectionView(BaseView):
 
         items = query.all()
 
-        [item.refresh_json() for item in items]  # [TODO] Expensive: ?
+        [item.refresh_pypi() for item in items]  # [TODO] Expensive: ?
         [item.refresh_github() for item in items]  # [TODO] Expensive: ?
 
         if self.context.sort_order_is_ascending:
