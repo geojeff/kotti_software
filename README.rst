@@ -66,22 +66,24 @@ Here are ways to enter software projects:
     1) Enter the PyPI JSON URL only
 
     2) Enter the PyPI JSON URL, along with the GitHub repo info for fetching
-       the GitHub repo information, such as most recent push date and time.
+       the GitHub repo information, such as most recent push date and time, or
+       do the same for a Bitbucket repo (You could do both, for a project with
+       both GitHub and Bitbucket repos.
 
-    3) Enter only the GitHub repo info
+    3) Enter only the GitHub repo info, or the Bitbucket info, for a repo-only
+       software project.
 
     4) Enter the title, description, date and any of: home_page, docs_url,
-       package_url, bugtrack_url (manual entry)
+       package_url, bugtrack_url (manual entry), and specify that these values
+       are not to be overwritten from values on PyPI, if they exist.
 
     5) Enter the date only (bare-bones entry, with just date and
        title, description, and whatever you wish in body -- useful for defunct
-       projects)
+       projects). Set the date-handling choice to use the entered value.
 
-    6) Enter the JSON URL of an alternative source
-
-There are date-handling and description-handling select properties to set
+The date-handling and description-handling select properties should be set
 according to the usage above, and whether the entered values are to be used, or
-if the values are to be fetched from PyPI or GitHub or another JSON source.
+if values are to be fetched from PyPI or GitHub or Bitbucket.
 
 There are also boolean override properties for using a combination of manually
 entered values for home_page, docs_url, package_url, and bugtrack_url and the
@@ -101,10 +103,16 @@ See http://pypi.python.org/pypi/Kotti/json to see the JSON that is parsed.
 GitHub
 ------
 
-Enter the GitHub user and repo, which will be used to build a GitHub API call
-of the form: https://api.github.com/repos/{user}/{repo}, as in
+Enter the GitHub owner and repo, which will be used to build a GitHub API call
+of the form: https://api.github.com/repos/{owner}/{repo}, as in
 https://api.github.com/repos/geojeff/kotti_software. You may enter this GitHub
 info along with the PyPI URL, or use the GitHub info only.
+
+Bitbucket
+---------
+
+Enter the Bitbucket owner and repo, which will be used to build a Bitbucket API
+call of the form: https://api.bitbucket.org/repostories/{owner}/{repo}.
 
 Work in progress
 ================

@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+0.1.4
+-----
+
+ - Updated readme for revised usage instructions.
+
 0.1.3
 -----
 
