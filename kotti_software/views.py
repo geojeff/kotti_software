@@ -9,15 +9,12 @@ import logging
 from deform.widget import CheckboxWidget
 from deform.widget import DateTimeInputWidget
 from deform.widget import SelectWidget
+from deform.widget import RadioChoiceWidget
 
 from kotti.views.form import AddFormView
 from kotti.views.form import EditFormView
 
 from kotti.views.edit import DocumentSchema
-from kotti.views.edit import generic_edit
-from kotti.views.edit import generic_add
-
-from kotti.views.util import ensure_view_selector
 
 from kotti_software import collection_settings
 from kotti_software.resources import SoftwareCollection
@@ -40,7 +37,15 @@ log = logging.getLogger(__name__)
 
 
 class SoftwareCollectionSchema(DocumentSchema):
-    pass
+
+    choices = (
+        ('ascending', 'Ascending'),
+        ('descending', 'Descending'))
+    sort_order_choice = colander.SchemaNode(colander.String(),
+            title=_(u'Sort Order'),
+            default='descending',
+            widget=RadioChoiceWidget(values=choices),
+            validator=colander.OneOf(('ascending', 'descending')))
 
 
 @colander.deferred
@@ -78,7 +83,7 @@ class SoftwareProjectSchema(DocumentSchema):
         ('use_entered', 'Use entered date'),
         ('use_json_date', 'Use date in JSON data'),
         ('use_github_date', 'Use date in github data'),
-        ('use_now', 'Use the current date'))
+        ('use_now', 'Use current date and time'))
     date_handling_choice = colander.SchemaNode(
         colander.String(),
         default='use_json_date',
@@ -160,7 +165,7 @@ class SoftwareProjectSchema(DocumentSchema):
         missing=_(''),)
 
 
-def validator(form, value):
+def software_project_validator(form, value):
 
     if ((value['date_handling_choice'] == 'use_json_date' or
          value['desc_handling_choice'] == 'use_json_summary' or
@@ -192,13 +197,14 @@ def validator(form, value):
         exc['github_user'] = _(u'Provide github user for api call')
         raise exc
 
+
 class AddSoftwareProjectFormView(AddFormView):
     item_type = _(u"SoftwareProject")
     item_class = SoftwareProject
 
     def schema_factory(self):
 
-        return SoftwareProjectSchema(validator=validator)
+        return SoftwareProjectSchema(validator=software_project_validator)
 
     def add(self, **appstruct):
 
@@ -228,7 +234,7 @@ class EditSoftwareProjectFormView(EditFormView):
 
     def schema_factory(self):
 
-        return SoftwareProjectSchema(validator=validator)
+        return SoftwareProjectSchema(validator=software_project_validator)
 
     def edit(self, **appstruct):
 
@@ -283,6 +289,55 @@ class EditSoftwareProjectFormView(EditFormView):
             self.context.github_repo = appstruct['github_repo']
 
 
+class AddSoftwareCollectionFormView(AddFormView):
+    item_type = _(u"SoftwareCollection")
+    item_class = SoftwareCollection
+
+    def schema_factory(self):
+
+        return SoftwareCollectionSchema()
+
+    def add(self, **appstruct):
+        sort_order_is_ascending = False
+
+        if appstruct['sort_order_choice'] == 'ascending':
+            sort_order_is_ascending = True
+
+        return self.item_class(
+            title=appstruct['title'],
+            description=appstruct['description'],
+            body=appstruct['body'],
+            tags=appstruct['tags'],
+            sort_order_is_ascending=sort_order_is_ascending,
+            )
+
+
+class EditSoftwareCollectionFormView(EditFormView):
+
+    def schema_factory(self):
+
+        return SoftwareCollectionSchema()
+
+    def edit(self, **appstruct):
+
+        if appstruct['title']:
+            self.context.title = appstruct['title']
+
+        if appstruct['description']:
+            self.context.description = appstruct['description']
+
+        if appstruct['body']:
+            self.context.body = appstruct['body']
+
+        if appstruct['tags']:
+            self.context.tags = appstruct['tags']
+
+        if appstruct['sort_order_choice'] == 'ascending':
+            self.sort_order_is_ascending = True
+        else:
+            self.sort_order_is_ascending = False
+
+
 @view_defaults(permission='view')
 class BaseView(object):
 
@@ -299,8 +354,7 @@ class BaseView(object):
                permission='view')
 class SoftwareProjectView(BaseView):
 
-    @view_config(name='view',
-                 renderer='kotti_software:templates/softwareproject-view.pt')
+    @view_config(renderer='kotti_software:templates/softwareproject-view.pt')
     def view(self):
 
         self.context.refresh_json()  # [TODO] Expensive: ?
@@ -313,7 +367,7 @@ class SoftwareProjectView(BaseView):
                permission='view')
 class SoftwareCollectionView(BaseView):
 
-    @view_config(name="view",
+    @view_config(
              renderer="kotti_software:templates/softwarecollection-view.pt")
     def view(self):
 
@@ -327,7 +381,10 @@ class SoftwareCollectionView(BaseView):
         [item.refresh_json() for item in items]  # [TODO] Expensive: ?
         [item.refresh_github() for item in items]  # [TODO] Expensive: ?
 
-        items = sorted(items, key=lambda x: x.date, reverse=True)
+        if self.context.sort_order_is_ascending:
+            items = sorted(items, key=lambda x: x.date)
+        else:
+            items = sorted(items, key=lambda x: x.date, reverse=True)
 
         page = self.request.params.get('page', 1)
 
@@ -346,25 +403,10 @@ class SoftwareCollectionView(BaseView):
             }
 
 
-@ensure_view_selector
-def edit_softwarecollection(context, request):
-    return generic_edit(context,
-                        request,
-                        SoftwareCollectionSchema())
-
-
-def add_softwarecollection(context, request):
-    return generic_add(context,
-                       request,
-                       SoftwareCollectionSchema(),
-                       SoftwareCollection,
-                       u'softwarecollection')
-
-
 def includeme_edit(config):
 
     config.add_view(
-        edit_softwarecollection,
+        EditSoftwareCollectionFormView,
         context=SoftwareCollection,
         name='edit',
         permission='edit',
@@ -372,7 +414,7 @@ def includeme_edit(config):
         )
 
     config.add_view(
-        add_softwarecollection,
+        AddSoftwareCollectionFormView,
         name=SoftwareCollection.type_info.add_view,
         permission='add',
         renderer='kotti:templates/edit/node.pt',

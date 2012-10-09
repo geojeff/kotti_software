@@ -5,6 +5,7 @@ from dateutil.tz import tzutc
 
 from sqlalchemy import Boolean
 from sqlalchemy import Column
+from sqlalchemy import Enum
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import String
@@ -38,12 +39,21 @@ class SoftwareCollection(Document):
 
     id = Column('id', Integer, ForeignKey('documents.id'), primary_key=True)
 
+    sort_order_is_ascending = Column('sort_order_is_ascending', Boolean())
+
     type_info = Document.type_info.copy(
         name=u'SoftwareCollection',
         title=_(u'SoftwareCollection'),
         add_view=u'add_softwarecollection',
         addable_to=[u'Document'],
         )
+
+    def __init__(self,
+                 sort_order_is_ascending=False,
+                 **kwargs):
+        super(SoftwareCollection, self).__init__(**kwargs)
+
+        self.sort_order_is_ascending = sort_order_is_ascending
 
 
 class SoftwareProject(Document):

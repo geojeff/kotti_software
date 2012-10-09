@@ -16,8 +16,15 @@ TODO
   overwritten by new release pushes to pypi, or do they stick?]
 - check on need for required testing dependencies copied from kotti_media
 - add support for using tags to categorize by group with an example,
-  or add a "sub-collection" property if the tags route is not workable
+  or add a "sub-collection" property if the tags route is not workable.
+- Presently, the view for SoftwareCollection does a site-wide search for all
+  SoftwareProject items. Should this be changed to context.children? [Ties in
+  with tags and/or categorization question.]
 - change use of all-jambed-up softwarecollection to software-collection and
   software_collection; same for softwareproject
 - add better visual separation between items in default list view (the only
   list view style available now; see above todo item)
+- Are on-load refreshes from pypi and github too expensive? What are
+  alternatives? Nightly cron job? More frequent cron job? Refreshing on a
+  timer? Every 5 minutes? Every hour? Manual trigger by admin?
+- Add an explicit handling for a mercurial JSON source, as for github?

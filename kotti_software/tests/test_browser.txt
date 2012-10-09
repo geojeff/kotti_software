@@ -246,3 +246,78 @@ Edit a software project with github user and repo changed
   >>> ctrl("save").click()
   >>> "kotti_media" in browser.contents
   True
+
+Add a software collection with sorting changed
+----------------------------------------------
+
+  >>> browser.open(tests.BASE_URL + '/@@add_softwarecollection')
+  >>> ctrl("Title").value = "Ordered Github Software Collection"
+  >>> ctrl("Body").value = "This software collection is Github only, ascending sorted"
+  >>> ctrl("Ascending").selected = True
+  >>> ctrl("save").click()
+  >>> "Successfully added item" in browser.contents
+  True
+  >>> browser.url == tests.BASE_URL + '/ordered-github-software-collection/'
+  True
+
+Add Github software projects and one dated NOW; Test for ascending order
+------------------------------------------------------------------------
+
+  >>> browser.open(tests.BASE_URL + '/ordered-github-software-collection/@@add_softwareproject')
+  >>> ctrl("Title").value = "Github kotti_software"
+  >>> ctrl("Body").value = "This project is about this very project on Github..."
+  >>> ctrl("Use date in github data").selected = True
+  >>> ctrl("Github User").value = "geojeff"
+  >>> ctrl("Github Repo").value = "kotti_software"
+  >>> ctrl("save").click()
+  >>> "Successfully added item" in browser.contents
+  True
+
+  >>> browser.open(tests.BASE_URL + '/ordered-github-software-collection/@@add_softwareproject')
+  >>> ctrl("Title").value = "Github Kotti geojeff fork"
+  >>> ctrl("Body").value = "This project is about Kotti forked on geojeff Github..."
+  >>> ctrl("Use date in github data").selected = True
+  >>> ctrl("Github User").value = "geojeff"
+  >>> ctrl("Github Repo").value = "Kotti"
+  >>> ctrl("save").click()
+  >>> "Successfully added item" in browser.contents
+  True
+
+  >>> browser.open(tests.BASE_URL + '/ordered-github-software-collection/@@add_softwareproject')
+  >>> ctrl("Title").value = "kotti_software dated NOW"
+  >>> ctrl("Body").value = "This project is kotti_software with a date of NOW..."
+  >>> ctrl("Use current date and time").selected = True
+  >>> ctrl("Github User").value = "geojeff"
+  >>> ctrl("Github Repo").value = "kotti_software"
+  >>> ctrl("save").click()
+  >>> "Successfully added item" in browser.contents
+  True
+
+  >>> browser.open(tests.BASE_URL + '/ordered-github-software-collection/')
+  >>> "Github Kotti geojeff fork" in browser.contents
+  True
+  >>> "Github kotti_software" in browser.contents
+  True
+  >>> pos = browser.contents.index
+  >>> pos("kotti_software dated NOW") > pos("Github kotti_software")
+  True
+  >>> pos("kotti_software dated NOW") > pos("Github Kotti geojeff fork")
+  True
+
+Edit the ordered software collection to reverse sorting
+-------------------------------------------------------
+
+  >>> browser.open(tests.BASE_URL + '/ordered-github-software-collection/@@edit')
+  >>> ctrl("Title").value = "I was descending, but now am ascending"
+  >>> ctrl("Description").value = "I was descending, but now am ascending"
+  >>> ctrl("Tags").value = "sorting order lists"
+  >>> ctrl("Ascending").selected = True
+  >>> ctrl("Descending").selected = False
+  >>> ctrl("save").click()
+  >>> "I was descending, but now am ascending" in browser.contents
+  True
+  >>> pos = browser.contents.index
+  >>> pos("kotti_software dated NOW") > pos("Github kotti_software")
+  True
+  >>> pos("kotti_software dated NOW") > pos("Github Kotti geojeff fork")
+  True

@@ -2,6 +2,7 @@
 
 import os
 import kotti
+import plone
 from kotti.resources import get_root
 from kotti.testing import DummyRequest
 from kotti.testing import UnitTestBase
@@ -24,17 +25,23 @@ class ViewsTests(UnitTestBase):
 
         assert view is not None
 
-    def test_softwarecollection_view(self):
+    def test_softwarecollection_view_adding_project(self):
 
         root = get_root()
-        softwareproject = root['softwareproject'] = SoftwareProject()
-        view = SoftwareCollectionView(root, DummyRequest()).view()
+        softwarecollection = root['softwarecollection'] = SoftwareCollection()
+        view = SoftwareCollectionView(root['softwarecollection'],
+                                      DummyRequest()).view()
+        softwareproject = softwarecollection['softwareproject'] = SoftwareProject()
 
         assert softwareproject is not None
 
         assert view is not None
 
-        assert ('items' in view) and (len(view['items']) == 1)
+        assert ('items' in view)
+        
+        batch = view['items']
+
+        assert type(batch) is plone.batching.batch.BaseBatch
 
         assert ('api' in view) \
                 and (type(view['api']) is kotti.views.util.TemplateAPI)
@@ -52,6 +59,9 @@ class ViewsTests(UnitTestBase):
                 and ('link_headline_overview' in view['settings']) \
                 and (view['settings']['link_headline_overview'] is True)
 
+    def test_softwarecollection_view_no_project(self):
+
+        root = get_root()
         softwarecollection = root['softwarecollection'] = SoftwareCollection()
         view = SoftwareCollectionView(root['softwarecollection'],
                                       DummyRequest()).view()
