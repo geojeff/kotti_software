@@ -393,9 +393,9 @@ class EditSoftwareCollectionFormView(EditFormView):
             self.context.tags = appstruct['tags']
 
         if appstruct['sort_order_choice'] == 'ascending':
-            self.sort_order_is_ascending = True
+            self.context.sort_order_is_ascending = True
         else:
-            self.sort_order_is_ascending = False
+            self.context.sort_order_is_ascending = False
 
 
 @view_defaults(permission='view')
