@@ -32,6 +32,9 @@ from plone.batching import Batch
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 from pyramid.renderers import get_renderer
+from pyramid.i18n import TranslationStringFactory
+
+_ = TranslationStringFactory('kotti_software')
 
 log = logging.getLogger(__name__)
 
@@ -56,190 +59,197 @@ def deferred_date_missing(node, kw):
     return datetime.datetime(value.year, value.month, value.day, value.hour,
         value.minute, value.second, value.microsecond, tzinfo=tzutc())
 
+def SoftwareProjectSchema(title_missing=None):
+    class SoftwareProjectSchema(DocumentSchema):
 
-class SoftwareProjectSchema(DocumentSchema):
+        choices = (
+            ('', '- Select -'),
+            ('use_entered', 'Used entered description (can be blank)'),
+            ('use_pypi_summary', 'Use summary in PyPI data'),
+            ('use_pypi_description', 'Use description in PyPI data'),
+            ('use_github_description', 'Use description in GitHub data'),
+            ('use_bitbucket_description', 'Use description in Bitbucket data'))
+        desc_handling_choice = colander.SchemaNode(
+            colander.String(),
+            default='use_entered',
+            missing='use_entered',
+            title=_(u'Description Handling'),
+            widget=SelectWidget(values=choices))
 
-    choices = (
-        ('', '- Select -'),
-        ('use_entered', 'Used entered description (can be blank)'),
-        ('use_pypi_summary', 'Use summary in PyPI data'),
-        ('use_pypi_description', 'Use description in PyPI data'),
-        ('use_github_description', 'Use description in GitHub data'),
-        ('use_bitbucket_description', 'Use description in Bitbucket data'))
-    desc_handling_choice = colander.SchemaNode(
-        colander.String(),
-        default='use_entered',
-        missing='use_entered',
-        title=_(u'Description Handling'),
-        widget=SelectWidget(values=choices))
+        pypi_url = colander.SchemaNode(
+            colander.String(),
+            title=_(u'PyPI URL'),
+            description=_(u'Enter unless doing a manual entry.'),
+            missing=_(''),)
 
-    pypi_url = colander.SchemaNode(
-        colander.String(),
-        title=_(u'PyPI URL'),
-        description=_(u'Enter unless doing a manual entry.'),
-        missing=_(''),)
+        choices = (
+            ('', '- Select -'),
+            ('use_entered', 'Use entered date'),
+            ('use_pypi_date', 'Use date in PyPI data'),
+            ('use_github_date', 'Use date in GitHub data'),
+            ('use_bitbucket_date', 'Use date in Bitbucket data'),
+            ('use_now', 'Use current date and time'))
+        date_handling_choice = colander.SchemaNode(
+            colander.String(),
+            default='use_pypi_date',
+            title=_(u'Date Handling'),
+            widget=SelectWidget(values=choices))
+        date = colander.SchemaNode(
+            colander.DateTime(),
+            title=_(u'Date'),
+            description=_(u'Enter date only if date handling = use_entered.'),
+            validator=colander.Range(
+                min=datetime.datetime(2012, 1, 1, 0, 0,
+                                      tzinfo=colander.iso8601.Utc()),
+                min_err=_('${val} is too early; min date now is ${min}')),
+            widget=DateTimeInputWidget(),
+            missing=deferred_date_missing,)
 
-    choices = (
-        ('', '- Select -'),
-        ('use_entered', 'Use entered date'),
-        ('use_pypi_date', 'Use date in PyPI data'),
-        ('use_github_date', 'Use date in GitHub data'),
-        ('use_bitbucket_date', 'Use date in Bitbucket data'),
-        ('use_now', 'Use current date and time'))
-    date_handling_choice = colander.SchemaNode(
-        colander.String(),
-        default='use_pypi_date',
-        title=_(u'Date Handling'),
-        widget=SelectWidget(values=choices))
-    date = colander.SchemaNode(
-        colander.DateTime(),
-        title=_(u'Date'),
-        description=_(u'Enter date only if date handling = use_entered.'),
-        validator=colander.Range(
-            min=datetime.datetime(2012, 1, 1, 0, 0,
-                                  tzinfo=colander.iso8601.Utc()),
-            min_err=_('${val} is too early; min date now is ${min}')),
-        widget=DateTimeInputWidget(),
-        missing=deferred_date_missing,)
+        home_page_url = colander.SchemaNode(
+            colander.String(),
+            title=_(u'Home Page URL'),
+            description=_(u'Leave blank usually, and the URL will be fetched.'),
+            missing=_(''),)
+        overwrite_home_page_url = colander.SchemaNode(
+            colander.Boolean(),
+            description='Overwrite home page from PyPI',
+            default=True,
+            missing=True,
+            widget=CheckboxWidget(),
+            title='')
 
-    home_page_url = colander.SchemaNode(
-        colander.String(),
-        title=_(u'Home Page URL'),
-        description=_(u'Leave blank usually, and the URL will be fetched.'),
-        missing=_(''),)
-    overwrite_home_page_url = colander.SchemaNode(
-        colander.Boolean(),
-        description='Overwrite home page from PyPI',
-        default=True,
-        missing=True,
-        widget=CheckboxWidget(),
-        title='')
+        docs_url = colander.SchemaNode(
+            colander.String(),
+            title=_(u'Docs URL'),
+            description=_(u'Leave blank usually, and the URL will be fetched.'),
+            missing=_(''),)
+        overwrite_docs_url = colander.SchemaNode(
+            colander.Boolean(),
+            description='Overwrite docs URL from PyPI',
+            default=True,
+            missing=True,
+            widget=CheckboxWidget(),
+            title='')
 
-    docs_url = colander.SchemaNode(
-        colander.String(),
-        title=_(u'Docs URL'),
-        description=_(u'Leave blank usually, and the URL will be fetched.'),
-        missing=_(''),)
-    overwrite_docs_url = colander.SchemaNode(
-        colander.Boolean(),
-        description='Overwrite docs URL from PyPI',
-        default=True,
-        missing=True,
-        widget=CheckboxWidget(),
-        title='')
+        package_url = colander.SchemaNode(
+            colander.String(),
+            title=_(u'Download URL'),
+            description=_(u'Leave blank usually, and the URL will be fetched.'),
+            missing=_(''),)
+        overwrite_package_url = colander.SchemaNode(
+            colander.Boolean(),
+            description='Overwrite package URL from PyPI',
+            default=True,
+            missing=True,
+            widget=CheckboxWidget(),
+            title='')
 
-    package_url = colander.SchemaNode(
-        colander.String(),
-        title=_(u'Download URL'),
-        description=_(u'Leave blank usually, and the URL will be fetched.'),
-        missing=_(''),)
-    overwrite_package_url = colander.SchemaNode(
-        colander.Boolean(),
-        description='Overwrite package URL from PyPI',
-        default=True,
-        missing=True,
-        widget=CheckboxWidget(),
-        title='')
+        bugtrack_url = colander.SchemaNode(
+            colander.String(),
+            title=_(u'Bugtracker URL'),
+            description=_(u'Leave blank usually, and the URL will be fetched.'),
+            missing=_(''),)
+        overwrite_bugtrack_url = colander.SchemaNode(
+            colander.Boolean(),
+            description='Overwrite bugtracker URL from PyPI',
+            default=True,
+            missing=True,
+            widget=CheckboxWidget(),
+            title='')
 
-    bugtrack_url = colander.SchemaNode(
-        colander.String(),
-        title=_(u'Bugtracker URL'),
-        description=_(u'Leave blank usually, and the URL will be fetched.'),
-        missing=_(''),)
-    overwrite_bugtrack_url = colander.SchemaNode(
-        colander.Boolean(),
-        description='Overwrite bugtracker URL from PyPI',
-        default=True,
-        missing=True,
-        widget=CheckboxWidget(),
-        title='')
+        github_owner = colander.SchemaNode(
+            colander.String(),
+            title=_(u'GitHub Owner'),
+            description=_(u'Name of the owner on GitHub for the project repo.'),
+            missing=_(''),)
 
-    github_owner = colander.SchemaNode(
-        colander.String(),
-        title=_(u'GitHub Owner'),
-        description=_(u'Name of the owner on GitHub for the project repo.'),
-        missing=_(''),)
+        github_repo = colander.SchemaNode(
+            colander.String(),
+            title=_(u'GitHub Repo'),
+            description=_(u'Name of the repo on GitHub for the project.'),
+            missing=_(''),)
 
-    github_repo = colander.SchemaNode(
-        colander.String(),
-        title=_(u'GitHub Repo'),
-        description=_(u'Name of the repo on GitHub for the project.'),
-        missing=_(''),)
+        bitbucket_owner = colander.SchemaNode(
+            colander.String(),
+            title=_(u'Bitbucket Owner'),
+            description=_(u'Name of the owner on Bitbucket for the project repo.'),
+            missing=_(''),)
 
-    bitbucket_owner = colander.SchemaNode(
-        colander.String(),
-        title=_(u'Bitbucket Owner'),
-        description=_(u'Name of the owner on Bitbucket for the project repo.'),
-        missing=_(''),)
+        bitbucket_repo = colander.SchemaNode(
+            colander.String(),
+            title=_(u'Bitbucket Repo'),
+            description=_(u'Name of the repo on Bitbucket for the project.'),
+            missing=_(''),)
 
-    bitbucket_repo = colander.SchemaNode(
-        colander.String(),
-        title=_(u'Bitbucket Repo'),
-        description=_(u'Name of the repo on Bitbucket for the project.'),
-        missing=_(''),)
+    def set_title_missing(node, kw):
+        if title_missing is not None:
+            node['title'].missing = title_missing
 
+    def validator(form, value):
 
-def software_project_validator(form, value):
+        if ((value['date_handling_choice'] == 'use_pypi_date' or
+             value['desc_handling_choice'] == 'use_pypi_summary' or
+             value['desc_handling_choice'] == 'use_pypi_description') and
+            not value['pypi_url']):
+            msg = u'For fetching date or description from PyPI, PyPI url required'
+            exc = Invalid(form, _(msg))
+            exc['pypi_url'] = _(u'Provide PyPI url for fetching data')
+            raise exc
 
-    if ((value['date_handling_choice'] == 'use_pypi_date' or
-         value['desc_handling_choice'] == 'use_pypi_summary' or
-         value['desc_handling_choice'] == 'use_pypi_description') and
-        not value['pypi_url']):
-        msg = u'For fetching date or description from PyPI, PyPI url required'
-        exc = Invalid(form, _(msg))
-        exc['pypi_url'] = _(u'Provide PyPI url for fetching data')
-        raise exc
+        if ((value['date_handling_choice'] == 'use_github_date' or
+             value['desc_handling_choice'] == 'use_github_description') and
+            (not value['github_owner'] or not value['github_repo'])):
+            msg = u'For fetching date or description from GitHub, owner and repo required'
+            exc = Invalid(form, _(msg))
+            exc['github_owner'] = _(u'Provide GitHub owner for api call')
+            exc['github_repo'] = _(u'Provide GitHub repo for api call')
+            raise exc
 
-    if ((value['date_handling_choice'] == 'use_github_date' or
-         value['desc_handling_choice'] == 'use_github_description') and
-        (not value['github_owner'] or not value['github_repo'])):
-        msg = u'For fetching date or description from GitHub, owner and repo required'
-        exc = Invalid(form, _(msg))
-        exc['github_owner'] = _(u'Provide GitHub owner for api call')
-        exc['github_repo'] = _(u'Provide GitHub repo for api call')
-        raise exc
+        if value['github_owner'] and not value['github_repo']:
+            msg = u'To specifiy a GitHub repo, both owner and repo required'
+            exc = Invalid(form, _(msg))
+            exc['github_repo'] = _(u'Provide GitHub repo for api call')
+            raise exc
 
-    if value['github_owner'] and not value['github_repo']:
-        msg = u'To specifiy a GitHub repo, both owner and repo required'
-        exc = Invalid(form, _(msg))
-        exc['github_repo'] = _(u'Provide GitHub repo for api call')
-        raise exc
+        if value['github_repo'] and not value['github_owner']:
+            msg = u'To specifiy a GitHub repo, both owner and repo required'
+            exc = Invalid(form, _(msg))
+            exc['github_owner'] = _(u'Provide GitHub owner for api call')
+            raise exc
 
-    if value['github_repo'] and not value['github_owner']:
-        msg = u'To specifiy a GitHub repo, both owner and repo required'
-        exc = Invalid(form, _(msg))
-        exc['github_owner'] = _(u'Provide GitHub owner for api call')
-        raise exc
+        if ((value['date_handling_choice'] == 'use_bitbucket_date' or
+             value['desc_handling_choice'] == 'use_bitbucket_description') and
+            (not value['bitbucket_owner'] or not value['bitbucket_repo'])):
+            msg = u'For fetching date or description from Bitbucket, owner and repo required'
+            exc = Invalid(form, _(msg))
+            exc['bitbucket_owner'] = _(u'Provide Bitbucket owner for api call')
+            exc['bitbucket_repo'] = _(u'Provide Bitbucket repo for api call')
+            raise exc
 
-    if ((value['date_handling_choice'] == 'use_bitbucket_date' or
-         value['desc_handling_choice'] == 'use_bitbucket_description') and
-        (not value['bitbucket_owner'] or not value['bitbucket_repo'])):
-        msg = u'For fetching date or description from Bitbucket, owner and repo required'
-        exc = Invalid(form, _(msg))
-        exc['bitbucket_owner'] = _(u'Provide Bitbucket owner for api call')
-        exc['bitbucket_repo'] = _(u'Provide Bitbucket repo for api call')
-        raise exc
+        if value['bitbucket_owner'] and not value['bitbucket_repo']:
+            msg = u'To specifiy a Bitbucket repo, both owner and repo required'
+            exc = Invalid(form, _(msg))
+            exc['bitbucket_repo'] = _(u'Provide Bitbucket repo for api call')
+            raise exc
 
-    if value['bitbucket_owner'] and not value['bitbucket_repo']:
-        msg = u'To specifiy a Bitbucket repo, both owner and repo required'
-        exc = Invalid(form, _(msg))
-        exc['bitbucket_repo'] = _(u'Provide Bitbucket repo for api call')
-        raise exc
+        if value['bitbucket_repo'] and not value['bitbucket_owner']:
+            msg = u'To specifiy a Bitbucket repo, both owner and repo required'
+            exc = Invalid(form, _(msg))
+            exc['bitbucket_owner'] = _(u'Provide Bitbucket owner for api call')
+            raise exc
 
-    if value['bitbucket_repo'] and not value['bitbucket_owner']:
-        msg = u'To specifiy a Bitbucket repo, both owner and repo required'
-        exc = Invalid(form, _(msg))
-        exc['bitbucket_owner'] = _(u'Provide Bitbucket owner for api call')
-        raise exc
+    return SoftwareProjectSchema(after_bind=set_title_missing, validator=validator)
 
-
+@view_config(name=SoftwareProject.type_info.add_view,
+             permission='add',
+             renderer='kotti:templates/edit/node.pt',)
 class SoftwareProjectAddFormView(AddFormView):
     item_type = _(u"SoftwareProject")
     item_class = SoftwareProject
 
     def schema_factory(self):
 
-        return SoftwareProjectSchema(validator=software_project_validator)
+        return SoftwareProjectSchema()
 
     def add(self, **appstruct):
 
@@ -267,11 +277,14 @@ class SoftwareProjectAddFormView(AddFormView):
             )
 
 
+@view_config(name='edit',
+             context=SoftwareProject, permission='edit',
+             renderer='kotti:templates/edit/node.pt')
 class SoftwareProjectEditFormView(EditFormView):
 
     def schema_factory(self):
 
-        return SoftwareProjectSchema(validator=software_project_validator)
+        return SoftwareProjectSchema()
 
     def edit(self, **appstruct):
 
@@ -349,6 +362,9 @@ class SoftwareProjectEditFormView(EditFormView):
             self.context.refresh_bitbucket()
 
 
+@view_config(name=SoftwareCollection.type_info.add_view,
+             permission='add',
+             renderer='kotti:templates/edit/node.pt',)
 class SoftwareCollectionAddFormView(AddFormView):
     item_type = _(u"SoftwareCollection")
     item_class = SoftwareCollection
@@ -372,6 +388,9 @@ class SoftwareCollectionAddFormView(AddFormView):
             )
 
 
+@view_config(name='edit',
+             context=SoftwareCollection, permission='edit',
+             renderer='kotti:templates/edit/node.pt')
 class SoftwareCollectionEditFormView(EditFormView):
 
     def schema_factory(self):
@@ -465,39 +484,6 @@ class SoftwareCollectionView(BaseView):
             'items': items,
             'settings': settings,
             }
-
-
-def includeme_edit(config):
-
-    config.add_view(
-        SoftwareCollectionEditFormView,
-        context=SoftwareCollection,
-        name='edit',
-        permission='edit',
-        renderer='kotti:templates/edit/node.pt',
-        )
-
-    config.add_view(
-        SoftwareCollectionAddFormView,
-        name=SoftwareCollection.type_info.add_view,
-        permission='add',
-        renderer='kotti:templates/edit/node.pt',
-        )
-
-    config.add_view(
-        SoftwareProjectEditFormView,
-        context=SoftwareProject,
-        name='edit',
-        permission='edit',
-        renderer='kotti:templates/edit/node.pt',
-        )
-
-    config.add_view(
-        SoftwareProjectAddFormView,
-        name=SoftwareProject.type_info.add_view,
-        permission='add',
-        renderer='kotti:templates/edit/node.pt',
-        )
 
 
 def includeme(config):

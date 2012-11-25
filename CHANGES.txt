@@ -7,6 +7,8 @@ CHANGES
  - Changes for compatibility with Kotti>=0.8. These changes
    are not backward compatible. If you want to use kotti_software
    with Kotti<=0.7.x then pin kotti_software to 0.4
+ - Moved fanstatic code in init to fanstatic.py.
+ - Added minified CSS and JavaScript.
 
 0.1.4
 -----
