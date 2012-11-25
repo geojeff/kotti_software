@@ -71,10 +71,7 @@ setup(name='kotti_software',
       kotti_software = kotti_software:library
       """,
       tests_require=tests_require,
-      extras_require={
-          'testing': tests_require,
-          'development': development_requires,
-          },
+      extras_require={},
       message_extractors={'kotti_software': [
             ('**.py', 'lingua_python', None),
             ('**.zcml', 'lingua_xml', None),
