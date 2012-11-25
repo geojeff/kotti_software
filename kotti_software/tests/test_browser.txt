@@ -6,7 +6,7 @@ Setup and Login
 
   >>> import datetime
   >>> from dateutil.tz import tzutc
-  >>> from kotti import tests
+  >>> from kotti import testing
   >>> first_time_string = "2012-07-31 05:00:00"
   >>> first_date = datetime.datetime(2012, 7, 31, 5, 0, 0, tzinfo=tzutc())
   >>> second_time_string = "2012-07-31 06:00:00"
@@ -18,12 +18,12 @@ Setup and Login
   >>> eighth_time_string = "2012-10-07 06:00:00"
   >>> eighth_date = datetime.datetime(2012, 10, 7, 6, 0, 0, tzinfo=tzutc())
   >>> def dc(content, name='/tmp/out.html'): open(name, 'w').write(content)
-  >>> tools = tests.setUpFunctional(
+  >>> tools = testing.setUpFunctional(
   ...     **{'kotti.configurators': 'kotti_software.kotti_configure'})
   >>> browser = tools['Browser']()
   >>> ctrl = browser.getControl
 
-  >>> browser.open(tests.BASE_URL + '/@@login')
+  >>> browser.open(testing.BASE_URL + '/@@login')
   >>> "Log in" in browser.contents
   True
   >>> ctrl("Username or email").value = "admin"
@@ -35,19 +35,19 @@ Setup and Login
 Add a software collection 
 -------------------------
 
-  >>> browser.open(tests.BASE_URL + '/@@add_softwarecollection')
+  >>> browser.open(testing.BASE_URL + '/@@add_softwarecollection')
   >>> ctrl("Title").value = "New Software Collection"
   >>> ctrl("Body").value = "This is the new software collection"
   >>> ctrl("save").click()
   >>> "Successfully added item" in browser.contents
   True
-  >>> browser.url == tests.BASE_URL + '/new-software-collection/'
+  >>> browser.url == testing.BASE_URL + '/new-software-collection/'
   True
 
 Add softwareprojects
 --------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
+  >>> browser.open(testing.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "First software project"
   >>> ctrl("Body").value = "This project concerns throwing dice..."
   >>> ctrl("Use entered date").selected = True
@@ -56,7 +56,7 @@ Add softwareprojects
   >>> "Successfully added item" in browser.contents
   True
 
-  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
+  >>> browser.open(testing.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "Second software project"
   >>> ctrl("Body").value = "This project is about hurricanes..."
   >>> ctrl("Use entered date").selected = True
@@ -68,7 +68,7 @@ Add softwareprojects
 Add a software project using pypi source
 ----------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
+  >>> browser.open(testing.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "kotti_software"
   >>> ctrl("Body").value = "This project is about this very project..."
   >>> ctrl("Use date in PyPI data").selected = True
@@ -82,7 +82,7 @@ Add a software project using pypi source
 Add a software project with GitHub owner but not repo
 -----------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
+  >>> browser.open(testing.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "kotti_software"
   >>> ctrl("Body").value = "This project is about this very project..."
   >>> ctrl("Use date in PyPI data").selected = True
@@ -98,7 +98,7 @@ Add a software project with GitHub owner but not repo
 Add a software project with GitHub repo but not owner
 -----------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
+  >>> browser.open(testing.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "kotti_software"
   >>> ctrl("Body").value = "This project is about this very project..."
   >>> ctrl("Use date in PyPI data").selected = True
@@ -114,7 +114,7 @@ Add a software project with GitHub repo but not owner
 Add a software project with Bitbucket owner but not repo
 --------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
+  >>> browser.open(testing.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "kotti_software"
   >>> ctrl("Body").value = "This project is about this very project..."
   >>> ctrl("Use date in PyPI data").selected = True
@@ -130,7 +130,7 @@ Add a software project with Bitbucket owner but not repo
 Add a software project with Bitbucket repo but not owner
 --------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
+  >>> browser.open(testing.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "kotti_software"
   >>> ctrl("Body").value = "This project is about this very project..."
   >>> ctrl("Use date in PyPI data").selected = True
@@ -146,7 +146,7 @@ Add a software project with Bitbucket repo but not owner
 View software collection and software project
 ---------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-software-collection/')
+  >>> browser.open(testing.BASE_URL + '/new-software-collection/')
   >>> "First software project" in browser.contents
   True
   >>> "Jul 31, 2012" in browser.contents
@@ -161,7 +161,7 @@ View software collection and software project
 Add a software project with use_pypi_date but no pypi_url
 ---------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
+  >>> browser.open(testing.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "Third software project"
   >>> ctrl("Body").value = "This project concerns lions and tigers..."
   >>> ctrl("Use date in PyPI data").selected = True
@@ -175,7 +175,7 @@ Add a software project with use_pypi_date but no pypi_url
 Add a software project with desc to come from pypi, but no pypi_url
 -------------------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
+  >>> browser.open(testing.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "Fourth software project"
   >>> ctrl("Body").value = "This project concerns cavemen and alligators..."
   >>> ctrl("Use description in PyPI data").selected = True
@@ -189,7 +189,7 @@ Add a software project with desc to come from pypi, but no pypi_url
 Add a software project with use_github_date but no GitHub owner, repo
 ---------------------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
+  >>> browser.open(testing.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "Fifth software project"
   >>> ctrl("Body").value = "This project concerns aardvarks and armadillos..."
   >>> ctrl("Use date in GitHub data").selected = True
@@ -206,7 +206,7 @@ Add a software project with use_github_date but no GitHub owner, repo
 Add a software project with desc to come from GitHub, but no GitHub owner, repo
 -------------------------------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
+  >>> browser.open(testing.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "Sixth software project"
   >>> ctrl("Body").value = "This project concerns architects and lawyers..."
   >>> ctrl("Use entered date").selected = True
@@ -225,7 +225,7 @@ Add a software project with desc to come from GitHub, but no GitHub owner, repo
 Add a software project with use_bitbucket_date but no Bitbucket owner, repo
 ---------------------------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
+  >>> browser.open(testing.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "Seventh software project"
   >>> ctrl("Body").value = "This project concerns lizards and frogs..."
   >>> ctrl("Use date in Bitbucket data").selected = True
@@ -242,7 +242,7 @@ Add a software project with use_bitbucket_date but no Bitbucket owner, repo
 Add a software project with desc to come from Bitbucket, but no Bitbucket owner, repo
 -------------------------------------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@add_softwareproject')
+  >>> browser.open(testing.BASE_URL + '/new-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "Eighth software project"
   >>> ctrl("Body").value = "This project concerns dogs and cats..."
   >>> ctrl("Use entered date").selected = True
@@ -261,12 +261,12 @@ Add a software project with desc to come from Bitbucket, but no Bitbucket owner,
 Edit software collection and software project and verify the changes
 --------------------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-software-collection/@@edit')
+  >>> browser.open(testing.BASE_URL + '/new-software-collection/@@edit')
   >>> ctrl("Title").value = "This is the Software Collection"
   >>> ctrl("Body").value = "Hello, I am a software collection"
   >>> ctrl("save").click()
 
-  >>> browser.open(tests.BASE_URL + '/new-software-collection/first-software-project/@@edit')
+  >>> browser.open(testing.BASE_URL + '/new-software-collection/first-software-project/@@edit')
   >>> ctrl("Title").value = "I was first, but now am an edited project"
   >>> ctrl("Description", index=0).value = "I am an edited software project"
   >>> ctrl("Tags").value = "dice editing"
@@ -283,20 +283,20 @@ Edit software collection and software project and verify the changes
 Edit a software project to change the pypi_url, forcing date to blank
 ---------------------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-software-collection/first-software-project/@@edit')
+  >>> browser.open(testing.BASE_URL + '/new-software-collection/first-software-project/@@edit')
   >>> ctrl("Use date in PyPI data").selected = True
   >>> ctrl("Date", index=1).value = ""
   >>> ctrl("PyPI URL").value = "http://pypi.python.org/pypi/Kotti/json"
   >>> ctrl("save").click()
 
-  >>> browser.open(tests.BASE_URL + '/new-software-collection/')
+  >>> browser.open(testing.BASE_URL + '/new-software-collection/')
   >>> "Kotti" in browser.contents
   True
 
 Edit a software project with date *and* pypi_url changed
 --------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-software-collection/first-software-project/@@edit')
+  >>> browser.open(testing.BASE_URL + '/new-software-collection/first-software-project/@@edit')
   >>> ctrl("Title").value = "Edited software project"
   >>> ctrl("Use date in PyPI data").selected = True
   >>> ctrl("PyPI URL", index=0).value = ""
@@ -309,7 +309,7 @@ Edit a software project with date *and* pypi_url changed
 Edit a software project with GitHub owner and repo changed
 ----------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-software-collection/kotti_software/@@edit')
+  >>> browser.open(testing.BASE_URL + '/new-software-collection/kotti_software/@@edit')
   >>> ctrl("Title").value = "kotti_media"
   >>> ctrl("GitHub Owner").value = "geojeff"
   >>> ctrl("GitHub Repo").value = "kotti_media"
@@ -320,7 +320,7 @@ Edit a software project with GitHub owner and repo changed
 Edit a software project with Bitbucket owner and repo changed
 -------------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/new-software-collection/kotti_software/@@edit')
+  >>> browser.open(testing.BASE_URL + '/new-software-collection/kotti_software/@@edit')
   >>> ctrl("Title").value = "sphinx"
   >>> ctrl("Bitbucket Owner").value = "birkenfeld"
   >>> ctrl("Bitbucket Repo").value = "sphinx"
@@ -331,20 +331,20 @@ Edit a software project with Bitbucket owner and repo changed
 Add a software collection with sorting changed
 ----------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/@@add_softwarecollection')
+  >>> browser.open(testing.BASE_URL + '/@@add_softwarecollection')
   >>> ctrl("Title").value = "Ordered GitHub Software Collection"
   >>> ctrl("Body").value = "This software collection is GitHub only, ascending sorted"
   >>> ctrl("Ascending").selected = True
   >>> ctrl("save").click()
   >>> "Successfully added item" in browser.contents
   True
-  >>> browser.url == tests.BASE_URL + '/ordered-github-software-collection/'
+  >>> browser.url == testing.BASE_URL + '/ordered-github-software-collection/'
   True
 
 Add GitHub software projects and one dated NOW; Test for ascending order
 ------------------------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/ordered-github-software-collection/@@add_softwareproject')
+  >>> browser.open(testing.BASE_URL + '/ordered-github-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "GitHub kotti_software"
   >>> ctrl("Body").value = "This project is about this very project on GitHub..."
   >>> ctrl("Use date in GitHub data").selected = True
@@ -354,7 +354,7 @@ Add GitHub software projects and one dated NOW; Test for ascending order
   >>> "Successfully added item" in browser.contents
   True
 
-  >>> browser.open(tests.BASE_URL + '/ordered-github-software-collection/@@add_softwareproject')
+  >>> browser.open(testing.BASE_URL + '/ordered-github-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "GitHub Kotti geojeff fork"
   >>> ctrl("Body").value = "This project is about Kotti forked on geojeff GitHub..."
   >>> ctrl("Use date in GitHub data").selected = True
@@ -364,7 +364,7 @@ Add GitHub software projects and one dated NOW; Test for ascending order
   >>> "Successfully added item" in browser.contents
   True
 
-  >>> browser.open(tests.BASE_URL + '/ordered-github-software-collection/@@add_softwareproject')
+  >>> browser.open(testing.BASE_URL + '/ordered-github-software-collection/@@add_softwareproject')
   >>> ctrl("Title").value = "kotti_software dated NOW"
   >>> ctrl("Body").value = "This project is kotti_software with a date of NOW..."
   >>> ctrl("Use current date and time").selected = True
@@ -374,7 +374,7 @@ Add GitHub software projects and one dated NOW; Test for ascending order
   >>> "Successfully added item" in browser.contents
   True
 
-  >>> browser.open(tests.BASE_URL + '/ordered-github-software-collection/')
+  >>> browser.open(testing.BASE_URL + '/ordered-github-software-collection/')
   >>> "GitHub Kotti geojeff fork" in browser.contents
   True
   >>> "GitHub kotti_software" in browser.contents
@@ -388,7 +388,7 @@ Add GitHub software projects and one dated NOW; Test for ascending order
 Edit the ordered software collection to reverse sorting
 -------------------------------------------------------
 
-  >>> browser.open(tests.BASE_URL + '/ordered-github-software-collection/@@edit')
+  >>> browser.open(testing.BASE_URL + '/ordered-github-software-collection/@@edit')
   >>> ctrl("Title").value = "I was descending, but now am ascending"
   >>> ctrl("Description").value = "I was descending, but now am ascending"
   >>> ctrl("Tags").value = "sorting order lists"

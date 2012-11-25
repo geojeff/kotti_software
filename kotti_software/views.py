@@ -233,7 +233,7 @@ def software_project_validator(form, value):
         raise exc
 
 
-class AddSoftwareProjectFormView(AddFormView):
+class SoftwareProjectAddFormView(AddFormView):
     item_type = _(u"SoftwareProject")
     item_class = SoftwareProject
 
@@ -267,7 +267,7 @@ class AddSoftwareProjectFormView(AddFormView):
             )
 
 
-class EditSoftwareProjectFormView(EditFormView):
+class SoftwareProjectEditFormView(EditFormView):
 
     def schema_factory(self):
 
@@ -349,7 +349,7 @@ class EditSoftwareProjectFormView(EditFormView):
             self.context.refresh_bitbucket()
 
 
-class AddSoftwareCollectionFormView(AddFormView):
+class SoftwareCollectionAddFormView(AddFormView):
     item_type = _(u"SoftwareCollection")
     item_class = SoftwareCollection
 
@@ -372,7 +372,7 @@ class AddSoftwareCollectionFormView(AddFormView):
             )
 
 
-class EditSoftwareCollectionFormView(EditFormView):
+class SoftwareCollectionEditFormView(EditFormView):
 
     def schema_factory(self):
 
@@ -470,7 +470,7 @@ class SoftwareCollectionView(BaseView):
 def includeme_edit(config):
 
     config.add_view(
-        EditSoftwareCollectionFormView,
+        SoftwareCollectionEditFormView,
         context=SoftwareCollection,
         name='edit',
         permission='edit',
@@ -478,14 +478,14 @@ def includeme_edit(config):
         )
 
     config.add_view(
-        AddSoftwareCollectionFormView,
+        SoftwareCollectionAddFormView,
         name=SoftwareCollection.type_info.add_view,
         permission='add',
         renderer='kotti:templates/edit/node.pt',
         )
 
     config.add_view(
-        EditSoftwareProjectFormView,
+        SoftwareProjectEditFormView,
         context=SoftwareProject,
         name='edit',
         permission='edit',
@@ -493,7 +493,7 @@ def includeme_edit(config):
         )
 
     config.add_view(
-        AddSoftwareProjectFormView,
+        SoftwareProjectAddFormView,
         name=SoftwareProject.type_info.add_view,
         permission='add',
         renderer='kotti:templates/edit/node.pt',
