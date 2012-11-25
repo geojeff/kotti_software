@@ -500,11 +500,6 @@ def includeme_edit(config):
         )
 
 
-def includeme_view(config):
-
-    config.add_static_view('static-kotti_software', 'kotti_software:static')
-
-
 def includeme(config):
 
     settings = config.get_settings()
@@ -518,7 +513,6 @@ def includeme(config):
             config.override_asset(to_override='kotti_software',
                                   override_with=override)
 
-    config.scan("kotti_software")
-
     includeme_edit(config)
-    includeme_view(config)
+    config.add_static_view('static-kotti_software', 'kotti_software:static')
+    config.scan("kotti_software")
