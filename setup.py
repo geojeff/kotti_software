@@ -25,15 +25,6 @@ except IOError:
 development_requires = [
     'minify',
 ]
-tests_require = [
-    'pytest',
-    'pytest-cov',
-    'pytest-pep8',
-    'pytest-xdist',
-    'WebTest',
-    'wsgi_intercept',
-    'zope.testbrowser',
-]
 
 long_description = README + '\n\n' + TODO + '\n\n' + AUTHORS + '\n\n' + CHANGES
 
@@ -70,7 +61,6 @@ setup(name='kotti_software',
       [fanstatic.libraries]
       kotti_software = kotti_software:library
       """,
-      tests_require=tests_require,
       extras_require={},
       message_extractors={'kotti_software': [
             ('**.py', 'lingua_python', None),
