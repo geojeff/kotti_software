@@ -9,6 +9,8 @@ from kotti.testing import UnitTestBase
 from kotti.testing import FunctionalTestBase
 from kotti.testing import testing_db_url
 
+from kotti import testing
+
 from kotti_software import collection_settings
 from kotti_software.resources import SoftwareCollection
 from kotti_software.resources import SoftwareProject
