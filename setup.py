@@ -65,7 +65,7 @@ setup(name='kotti_software',
       ],
       project_points="""
       [fanstatic.libraries]
-      kotti_software = kotti_software:library
+      kotti_software = kotti_software.fanstatic:library
       """,
       extras_require={},
       message_extractors={'kotti_software': [
