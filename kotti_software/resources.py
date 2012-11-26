@@ -61,10 +61,13 @@ class SoftwareProject(Document):
 
     id = Column(Integer, ForeignKey('documents.id'), primary_key=True)
 
+    desc_handling_choice = Column('desc_handling_choice', String(1000))
+
     # String(1000) usage is for mysql compatibility.
     pypi_url = Column('pypi_url', String(1000))
 
     date = Column('date', UTCDateTime())
+    date_handling_choice = Column('date_handling_choice', String(1000))
 
     home_page_url = Column('home_page_url', String(1000))
     docs_url = Column('docs_url', String(1000))
