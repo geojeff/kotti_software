@@ -364,25 +364,13 @@ Add GitHub software projects and one dated NOW; Test for ascending order
   >>> "Successfully added item" in browser.contents
   True
 
-  >>> browser.open(testing.BASE_URL + '/ordered-github-software-collection/@@add_softwareproject')
-  >>> ctrl("Title").value = "kotti_software dated NOW"
-  >>> ctrl("Body").value = "This project is kotti_software with a date of NOW..."
-  >>> ctrl("Use current date and time").selected = True
-  >>> ctrl("GitHub Owner").value = "geojeff"
-  >>> ctrl("GitHub Repo").value = "kotti_software"
-  >>> ctrl("save").click()
-  >>> "Successfully added item" in browser.contents
-  True
-
   >>> browser.open(testing.BASE_URL + '/ordered-github-software-collection/')
   >>> "GitHub Kotti geojeff fork" in browser.contents
   True
   >>> "GitHub kotti_software" in browser.contents
   True
   >>> pos = browser.contents.index
-  >>> pos("kotti_software dated NOW") > pos("GitHub kotti_software")
-  True
-  >>> pos("kotti_software dated NOW") > pos("GitHub Kotti geojeff fork")
+  >>> pos("GitHub Kotti geojeff fork") > pos("GitHub kotti_software")
   True
 
 Edit the ordered software collection to reverse sorting

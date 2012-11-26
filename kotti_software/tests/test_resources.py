@@ -139,12 +139,10 @@ class FunctionalTests(FunctionalTestBase):
                          'kotti_software.collection_settings.pagesize': '5'}
         super(FunctionalTests, self).setUp(**self.settings)
 
-
     def test_asset_overrides(self):
         from kotti import main
         self.settings['kotti_software.asset_overrides'] = 'kotti_software:hello_world/'
         main({}, **self.settings)
-
 
     def test_softwarecollection_default_settings(self):
         b_settings = collection_settings()
@@ -152,7 +150,6 @@ class FunctionalTests(FunctionalTestBase):
         assert b_settings['pagesize'] == 5
         assert b_settings['use_auto_batching'] is True
         assert b_settings['link_headline_overview'] is True
-
 
     def test_softwarecollection_change_settings(self):
         settings = get_current_registry().settings
@@ -166,7 +163,6 @@ class FunctionalTests(FunctionalTestBase):
         assert b_settings['pagesize'] == 2
         assert b_settings['use_auto_batching'] is False
         assert b_settings['link_headline_overview'] is False
-
 
     def test_softwarecollection_wrong_settings(self):
         settings = get_current_registry().settings

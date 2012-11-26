@@ -81,6 +81,6 @@ def test_softwarecollection_view_no_project(db_session):
     assert ('settings' in view) \
         and ('link_headline_overview' in view['settings']) \
         and (view['settings']['link_headline_overview'] is True)
-    assert (('settings' in view) \
-        and ('use_batching' in view['settings']) \
+    assert (('settings' in view)
+        and ('use_batching' in view['settings'])
         and (view['settings']['use_batching'] is True))
