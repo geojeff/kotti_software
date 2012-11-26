@@ -370,7 +370,7 @@ Add GitHub software projects and one dated NOW; Test for ascending order
   >>> "GitHub kotti_software" in browser.contents
   True
   >>> pos = browser.contents.index
-  >>> pos("GitHub Kotti geojeff fork") > pos("GitHub kotti_software")
+  >>> pos("GitHub Kotti geojeff fork") < pos("GitHub kotti_software")
   True
 
 Edit the ordered software collection to reverse sorting
