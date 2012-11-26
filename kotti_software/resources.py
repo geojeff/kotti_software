@@ -61,21 +61,10 @@ class SoftwareProject(Document):
 
     id = Column(Integer, ForeignKey('documents.id'), primary_key=True)
 
-    desc_handling_choice = 'use_entered'
-    #  other choices: ('use_json_summary',
-    #                  'use_json_description',
-    #                  'use_github_description'
-    #                  'use_bitbucket_description')
-
     # String(1000) usage is for mysql compatibility.
     pypi_url = Column('pypi_url', String(1000))
 
     date = Column('date', UTCDateTime())
-    date_handling_choice = 'use_pypi_date'
-    #  other choices: ('use_github_date',
-    #                  'use_bitbucket_date',
-    #                  'use_entered',
-    #                  'use_now')
 
     home_page_url = Column('home_page_url', String(1000))
     docs_url = Column('docs_url', String(1000))
@@ -123,10 +112,20 @@ class SoftwareProject(Document):
         super(SoftwareProject, self).__init__(**kwargs)
 
         self.desc_handling_choice = desc_handling_choice
+        # desc_handling_choice values: 'use_entered' (default)
+        #                              'use_json_summary'
+        #                              'use_json_description'
+        #                              'use_github_description'
+        #                              'use_bitbucket_description'
 
         self.pypi_url = pypi_url
 
         self.date_handling_choice = date_handling_choice
+        # date_handling_choice values: 'use_pypi_date' (default)
+        #                              'use_github_date'
+        #                              'use_bitbucket_date'
+        #                              'use_entered'
+        #                              'use_now'
 
         self.home_page_url = home_page_url
         self.docs_url = docs_url
