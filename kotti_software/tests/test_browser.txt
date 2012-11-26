@@ -386,7 +386,21 @@ Edit the ordered software collection to reverse sorting
   >>> "I was descending, but now am ascending" in browser.contents
   True
   >>> pos = browser.contents.index
-  >>> pos("kotti_software dated NOW") > pos("GitHub kotti_software")
+  >>> pos("GitHub Kotti geojeff fork") < pos("GitHub kotti_software")
   True
-  >>> pos("kotti_software dated NOW") > pos("GitHub Kotti geojeff fork")
+
+Edit the ordered software collection to reverse sorting
+-------------------------------------------------------
+
+  >>> browser.open(testing.BASE_URL + '/ordered-github-software-collection/@@edit')
+  >>> ctrl("Title").value = "I was descending, but now am ascending"
+  >>> ctrl("Description").value = "I was ascending, but now am descending"
+  >>> ctrl("Tags").value = "sorting order lists"
+  >>> ctrl("Ascending").selected = False
+  >>> ctrl("Descending").selected = True
+  >>> ctrl("save").click()
+  >>> "I was ascending, but now am descending" in browser.contents
   True
+  >>> pos = browser.contents.index
+  >>> pos("GitHub Kotti geojeff fork") > pos("GitHub kotti_software")
+  True 
