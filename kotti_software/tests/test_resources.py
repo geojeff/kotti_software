@@ -30,17 +30,19 @@ def test_software_collection(db_session):
 
     assert len(software_collection.values()) == 1
 
+
 def test_software_project_only_pypi_url_provided(db_session):
     root = get_root()
     software_collection = SoftwareCollection()
     root['software_collection'] = software_collection
 
     software_project = SoftwareProject(
-            pypi_url="http://pypi.python.org/pypi/kotti_software/json")
+        pypi_url="http://pypi.python.org/pypi/kotti_software/json")
 
     software_collection['software_project'] = software_project
 
     assert len(software_collection.values()) == 1
+
 
 def test_software_project_only_github_owner_and_repo_provided(db_session):
     root = get_root()
@@ -48,12 +50,13 @@ def test_software_project_only_github_owner_and_repo_provided(db_session):
     root['software_collection'] = software_collection
 
     software_project = SoftwareProject(
-            github_owner="geojeff",
-            github_repo="kotti_software")
+        github_owner="geojeff",
+        github_repo="kotti_software")
 
     software_collection['software_project'] = software_project
 
     assert len(software_collection.values()) == 1
+
 
 def test_software_project_github_data(db_session):
     root = get_root()
@@ -61,15 +64,16 @@ def test_software_project_github_data(db_session):
     root['software_collection'] = software_collection
 
     software_project = SoftwareProject(
-            title="kotti_software Project",
-            date_handling_choice="use_github_date",
-            desc_handling_choice="use_github_description",
-            github_owner="geojeff",
-            github_repo="kotti_software")
+        title="kotti_software Project",
+        date_handling_choice="use_github_date",
+        desc_handling_choice="use_github_description",
+        github_owner="geojeff",
+        github_repo="kotti_software")
 
     software_collection['software_project'] = software_project
 
     assert len(software_collection.values()) == 1
+
 
 def test_software_project_only_bitbucket_owner_and_repo_provided(db_session):
     root = get_root()
@@ -77,12 +81,13 @@ def test_software_project_only_bitbucket_owner_and_repo_provided(db_session):
     root['software_collection'] = software_collection
 
     software_project = SoftwareProject(
-            bitbucket_owner="pypy",
-            bitbucket_repo="pypy")
+        bitbucket_owner="pypy",
+        bitbucket_repo="pypy")
 
     software_collection['software_project'] = software_project
 
     assert len(software_collection.values()) == 1
+
 
 def test_software_project_bitbucket_data(db_session):
     root = get_root()
@@ -90,15 +95,16 @@ def test_software_project_bitbucket_data(db_session):
     root['software_collection'] = software_collection
 
     software_project = SoftwareProject(
-            title="kotti_software Project",
-            date_handling_choice="use_bitbucket_date",
-            desc_handling_choice="use_bitbucket_description",
-            bitbucket_owner="pypy",
-            bitbucket_repo="pypy")
+        title="kotti_software Project",
+        date_handling_choice="use_bitbucket_date",
+        desc_handling_choice="use_bitbucket_description",
+        bitbucket_owner="pypy",
+        bitbucket_repo="pypy")
 
     software_collection['software_project'] = software_project
 
     assert len(software_collection.values()) == 1
+
 
 def test_software_project_pypi_overwriting(db_session):
     root = get_root()
@@ -106,12 +112,12 @@ def test_software_project_pypi_overwriting(db_session):
     root['software_collection'] = software_collection
 
     software_project = SoftwareProject(
-            pypi_url="http://pypi.python.org/pypi/Kotti/json",
-            overwrite_home_page_url=True,
-            overwrite_docs_url=True,
-            overwrite_package_url=True,
-            overwrite_bugtrack_url=True,
-            desc_handling_choice='use_pypi_summary')
+        pypi_url="http://pypi.python.org/pypi/Kotti/json",
+        overwrite_home_page_url=True,
+        overwrite_docs_url=True,
+        overwrite_package_url=True,
+        overwrite_bugtrack_url=True,
+        desc_handling_choice='use_pypi_summary')
 
     software_collection['software_project'] = software_project
 
@@ -120,8 +126,8 @@ def test_software_project_pypi_overwriting(db_session):
     # desc_handling_choice is an either/or,
     # so also check for description overwriting
     software_project = SoftwareProject(
-            pypi_url="http://pypi.python.org/pypi/Kotti/json",
-            desc_handling_choice='use_pypi_description')
+        pypi_url="http://pypi.python.org/pypi/Kotti/json",
+        desc_handling_choice='use_pypi_description')
 
 
 class FunctionalTests(FunctionalTestBase):
@@ -133,17 +139,20 @@ class FunctionalTests(FunctionalTestBase):
                          'kotti_software.collection_settings.pagesize': '5'}
         super(FunctionalTests, self).setUp(**self.settings)
 
+
     def test_asset_overrides(self):
         from kotti import main
         self.settings['kotti_software.asset_overrides'] = 'kotti_software:hello_world/'
         main({}, **self.settings)
 
+
     def test_softwarecollection_default_settings(self):
         b_settings = collection_settings()
-        assert b_settings['use_batching'] == True
+        assert b_settings['use_batching'] is True
         assert b_settings['pagesize'] == 5
-        assert b_settings['use_auto_batching'] == True
-        assert b_settings['link_headline_overview'] == True
+        assert b_settings['use_auto_batching'] is True
+        assert b_settings['link_headline_overview'] is True
+
 
     def test_softwarecollection_change_settings(self):
         settings = get_current_registry().settings
@@ -153,10 +162,11 @@ class FunctionalTests(FunctionalTestBase):
         settings['kotti_software.collection_settings.link_headline_overview'] = u'false'
 
         b_settings = collection_settings()
-        assert b_settings['use_batching'] == False
+        assert b_settings['use_batching'] is False
         assert b_settings['pagesize'] == 2
-        assert b_settings['use_auto_batching'] == False
-        assert b_settings['link_headline_overview'] == False
+        assert b_settings['use_auto_batching'] is False
+        assert b_settings['link_headline_overview'] is False
+
 
     def test_softwarecollection_wrong_settings(self):
         settings = get_current_registry().settings
@@ -166,7 +176,7 @@ class FunctionalTests(FunctionalTestBase):
         settings['kotti_software.collection_settings.link_headline_overview'] = u'blobs'
 
         b_settings = collection_settings()
-        assert b_settings['use_batching'] == False
+        assert b_settings['use_batching'] is False
         assert b_settings['pagesize'] == 5
-        assert b_settings['use_auto_batching'] == False
-        assert b_settings['link_headline_overview'] == False
+        assert b_settings['use_auto_batching'] is False
+        assert b_settings['link_headline_overview'] is False

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-def test_settings(self):
+
+def test_settings(db_session):
 
     settings = {
         'kotti.includes': '',

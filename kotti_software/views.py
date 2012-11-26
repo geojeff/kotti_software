@@ -45,10 +45,10 @@ class SoftwareCollectionSchema(DocumentSchema):
         ('ascending', 'Ascending'),
         ('descending', 'Descending'))
     sort_order_choice = colander.SchemaNode(colander.String(),
-            title=_(u'Sort Order'),
-            default='descending',
-            widget=RadioChoiceWidget(values=choices),
-            validator=colander.OneOf(('ascending', 'descending')))
+        title=_(u'Sort Order'),
+        default='descending',
+        widget=RadioChoiceWidget(values=choices),
+        validator=colander.OneOf(('ascending', 'descending')))
 
 
 @colander.deferred
@@ -58,6 +58,7 @@ def deferred_date_missing(node, kw):
 
     return datetime.datetime(value.year, value.month, value.day, value.hour,
         value.minute, value.second, value.microsecond, tzinfo=tzutc())
+
 
 def SoftwareProjectSchema(title_missing=None):
     class SoftwareProjectSchema(DocumentSchema):
@@ -240,6 +241,7 @@ def SoftwareProjectSchema(title_missing=None):
 
     return SoftwareProjectSchema(after_bind=set_title_missing, validator=validator)
 
+
 @view_config(name=SoftwareProject.type_info.add_view,
              permission='add',
              renderer='kotti:templates/edit/node.pt',)
@@ -305,17 +307,17 @@ class SoftwareProjectEditFormView(EditFormView):
             self.context.tags = appstruct['tags']
 
         self.context.desc_handling_choice = \
-                appstruct['desc_handling_choice']
+            appstruct['desc_handling_choice']
         self.context.date_handling_choice = \
-                appstruct['date_handling_choice']
+            appstruct['date_handling_choice']
         self.context.overwrite_home_page_url = \
-                appstruct['overwrite_home_page_url']
+            appstruct['overwrite_home_page_url']
         self.context.overwrite_docs_url = \
-                appstruct['overwrite_docs_url']
+            appstruct['overwrite_docs_url']
         self.context.overwrite_package_url = \
-                appstruct['overwrite_package_url']
+            appstruct['overwrite_package_url']
         self.context.overwrite_bugtrack_url = \
-                appstruct['overwrite_bugtrack_url']
+            appstruct['overwrite_bugtrack_url']
 
         if appstruct['home_page_url']:
             self.context.home_page_url = appstruct['home_page_url']
@@ -449,13 +451,13 @@ class SoftwareProjectView(BaseView):
 class SoftwareCollectionView(BaseView):
 
     @view_config(
-             renderer="kotti_software:templates/softwarecollection-view.pt")
+        renderer="kotti_software:templates/softwarecollection-view.pt")
     def view(self):
 
         session = DBSession()
 
         query = session.query(SoftwareProject).filter(
-                SoftwareProject.parent_id == self.context.id)
+            SoftwareProject.parent_id == self.context.id)
 
         items = query.all()
 
@@ -492,13 +494,12 @@ def includeme(config):
 
     if 'kotti_software.asset_overrides' in settings:
         asset_overrides = \
-                [a.strip()
-                 for a in settings['kotti_software.asset_overrides'].split()
-                 if a.strip()]
+            [a.strip()
+             for a in settings['kotti_software.asset_overrides'].split()
+             if a.strip()]
         for override in asset_overrides:
             config.override_asset(to_override='kotti_software',
                                   override_with=override)
 
-    includeme_edit(config)
     config.add_static_view('static-kotti_software', 'kotti_software:static')
     config.scan("kotti_software")

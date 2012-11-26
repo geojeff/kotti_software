@@ -12,6 +12,7 @@ from kotti_software.views import SoftwareCollectionView
 
 here = os.path.abspath(os.path.dirname(__file__))
 
+
 def test_softwareproject_view(db_session):
 
     root = get_root()
@@ -20,6 +21,7 @@ def test_softwareproject_view(db_session):
     view = SoftwareProjectView(softwareproject, DummyRequest()).view()
 
     assert view is not None
+
 
 def test_softwarecollection_view_adding_project(db_session):
 
@@ -34,26 +36,27 @@ def test_softwarecollection_view_adding_project(db_session):
     assert view is not None
 
     assert ('items' in view)
-    
+
     batch = view['items']
 
     assert type(batch) is plone.batching.batch.BaseBatch
 
     assert ('api' in view) \
-            and (type(view['api']) is kotti.views.util.TemplateAPI)
+        and (type(view['api']) is kotti.views.util.TemplateAPI)
 
     assert ('settings' in view) \
-             and ('use_batching' in view['settings']) \
-             and (view['settings']['use_batching'] is True)
+        and ('use_batching' in view['settings']) \
+        and (view['settings']['use_batching'] is True)
     assert ('settings' in view) \
-            and ('pagesize' in view['settings']) \
-            and (view['settings']['pagesize'] == 5)
+        and ('pagesize' in view['settings']) \
+        and (view['settings']['pagesize'] == 5)
     assert ('settings' in view) \
-            and ('use_auto_batching' in view['settings']) \
-            and (view['settings']['use_auto_batching'] is True)
+        and ('use_auto_batching' in view['settings']) \
+        and (view['settings']['use_auto_batching'] is True)
     assert ('settings' in view) \
-            and ('link_headline_overview' in view['settings']) \
-            and (view['settings']['link_headline_overview'] is True)
+        and ('link_headline_overview' in view['settings']) \
+        and (view['settings']['link_headline_overview'] is True)
+
 
 def test_softwarecollection_view_no_project(db_session):
 
@@ -67,17 +70,17 @@ def test_softwarecollection_view_no_project(db_session):
     assert ('items' in view) and (len(view['items']) == 0)
 
     assert ('settings' in view) \
-             and ('use_batching' in view['settings']) \
-             and (view['settings']['use_batching'] is True)
+        and ('use_batching' in view['settings']) \
+        and (view['settings']['use_batching'] is True)
     assert ('settings' in view) \
-            and ('pagesize' in view['settings']) \
-            and (view['settings']['pagesize'] == 5)
+        and ('pagesize' in view['settings']) \
+        and (view['settings']['pagesize'] == 5)
     assert ('settings' in view) \
-            and ('use_auto_batching' in view['settings']) \
-            and (view['settings']['use_auto_batching'] is True)
+        and ('use_auto_batching' in view['settings']) \
+        and (view['settings']['use_auto_batching'] is True)
     assert ('settings' in view) \
-            and ('link_headline_overview' in view['settings']) \
-            and (view['settings']['link_headline_overview'] is True)
+        and ('link_headline_overview' in view['settings']) \
+        and (view['settings']['link_headline_overview'] is True)
     assert (('settings' in view) \
-             and ('use_batching' in view['settings']) \
-             and (view['settings']['use_batching'] is True))
+        and ('use_batching' in view['settings']) \
+        and (view['settings']['use_batching'] is True))
