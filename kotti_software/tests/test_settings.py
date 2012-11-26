@@ -1,25 +1,20 @@
 # -*- coding: utf-8 -*-
 
-from kotti.testing import UnitTestBase
+def test_settings(self):
 
+    settings = {
+        'kotti.includes': '',
+        'kotti.available_types': '',
+        'pyramid.includes': '',
+    }
 
-class SettingsTest(UnitTestBase):
+    import kotti_software
 
-    def test(self):
+    kotti_software.kotti_configure(settings)
 
-        settings = {
-            'kotti.includes': '',
-            'kotti.available_types': '',
-            'pyramid.includes': '',
-        }
+    # make sure all the types are available
+    assert settings['kotti.available_types'].find('kotti_software.resources.SoftwareCollection') > 0
+    assert settings['kotti.available_types'].find('kotti_software.resources.SoftwareProject') > 0
 
-        import kotti_software
-
-        kotti_software.kotti_configure(settings)
-
-        # make sure all the types are available
-        assert settings['kotti.available_types'].find('kotti_software.resources.SoftwareCollection') > 0
-        assert settings['kotti.available_types'].find('kotti_software.resources.SoftwareProject') > 0
-
-        # make sure all inccludes are available
-        assert settings['pyramid.includes'].find('kotti_software.views') > 0
+    # make sure all inccludes are available
+    assert settings['pyramid.includes'].find('kotti_software.views') > 0

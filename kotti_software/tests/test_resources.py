@@ -5,128 +5,123 @@ from pyramid.threadlocal import get_current_registry
 from kotti.resources import get_root
 
 from kotti.testing import DummyRequest
-from kotti.testing import UnitTestBase
 from kotti.testing import FunctionalTestBase
 from kotti.testing import testing_db_url
-
-from kotti import testing
 
 from kotti_software import collection_settings
 from kotti_software.resources import SoftwareCollection
 from kotti_software.resources import SoftwareProject
 
 
-class UnitTests(UnitTestBase):
+def test_software_collection(db_session):
+    root = get_root()
+    software_collection = SoftwareCollection()
+    assert software_collection.type_info.addable(root, DummyRequest()) is True
+    root['software_collection'] = software_collection
 
-    def test_software_collection(self):
-        root = get_root()
-        software_collection = SoftwareCollection()
-        assert software_collection.type_info.addable(root, DummyRequest()) is True
-        root['software_collection'] = software_collection
+    software_project = SoftwareProject()
 
-        software_project = SoftwareProject()
+    assert len(software_collection.values()) == 0
 
-        assert len(software_collection.values()) == 0
+    # there are no children of type SoftwareProject yet, the UI should present the add link
+    assert software_project.type_info.addable(software_collection, DummyRequest()) is True
 
-        # there are no children of type SoftwareProject yet, the UI should present the add link
-        assert software_project.type_info.addable(software_collection, DummyRequest()) is True
+    software_collection['software_project'] = software_project
 
-        software_collection['software_project'] = software_project
+    assert len(software_collection.values()) == 1
 
-        assert len(software_collection.values()) == 1
+def test_software_project_only_pypi_url_provided(db_session):
+    root = get_root()
+    software_collection = SoftwareCollection()
+    root['software_collection'] = software_collection
 
-    def test_software_project_only_pypi_url_provided(self):
-        root = get_root()
-        software_collection = SoftwareCollection()
-        root['software_collection'] = software_collection
+    software_project = SoftwareProject(
+            pypi_url="http://pypi.python.org/pypi/kotti_software/json")
 
-        software_project = SoftwareProject(
-                pypi_url="http://pypi.python.org/pypi/kotti_software/json")
+    software_collection['software_project'] = software_project
 
-        software_collection['software_project'] = software_project
+    assert len(software_collection.values()) == 1
 
-        assert len(software_collection.values()) == 1
+def test_software_project_only_github_owner_and_repo_provided(db_session):
+    root = get_root()
+    software_collection = SoftwareCollection()
+    root['software_collection'] = software_collection
 
-    def test_software_project_only_github_owner_and_repo_provided(self):
-        root = get_root()
-        software_collection = SoftwareCollection()
-        root['software_collection'] = software_collection
+    software_project = SoftwareProject(
+            github_owner="geojeff",
+            github_repo="kotti_software")
 
-        software_project = SoftwareProject(
-                github_owner="geojeff",
-                github_repo="kotti_software")
+    software_collection['software_project'] = software_project
 
-        software_collection['software_project'] = software_project
+    assert len(software_collection.values()) == 1
 
-        assert len(software_collection.values()) == 1
+def test_software_project_github_data(db_session):
+    root = get_root()
+    software_collection = SoftwareCollection()
+    root['software_collection'] = software_collection
 
-    def test_software_project_github_data(self):
-        root = get_root()
-        software_collection = SoftwareCollection()
-        root['software_collection'] = software_collection
+    software_project = SoftwareProject(
+            title="kotti_software Project",
+            date_handling_choice="use_github_date",
+            desc_handling_choice="use_github_description",
+            github_owner="geojeff",
+            github_repo="kotti_software")
 
-        software_project = SoftwareProject(
-                title="kotti_software Project",
-                date_handling_choice="use_github_date",
-                desc_handling_choice="use_github_description",
-                github_owner="geojeff",
-                github_repo="kotti_software")
+    software_collection['software_project'] = software_project
 
-        software_collection['software_project'] = software_project
+    assert len(software_collection.values()) == 1
 
-        assert len(software_collection.values()) == 1
+def test_software_project_only_bitbucket_owner_and_repo_provided(db_session):
+    root = get_root()
+    software_collection = SoftwareCollection()
+    root['software_collection'] = software_collection
 
-    def test_software_project_only_bitbucket_owner_and_repo_provided(self):
-        root = get_root()
-        software_collection = SoftwareCollection()
-        root['software_collection'] = software_collection
+    software_project = SoftwareProject(
+            bitbucket_owner="pypy",
+            bitbucket_repo="pypy")
 
-        software_project = SoftwareProject(
-                bitbucket_owner="pypy",
-                bitbucket_repo="pypy")
+    software_collection['software_project'] = software_project
 
-        software_collection['software_project'] = software_project
+    assert len(software_collection.values()) == 1
 
-        assert len(software_collection.values()) == 1
+def test_software_project_bitbucket_data(db_session):
+    root = get_root()
+    software_collection = SoftwareCollection()
+    root['software_collection'] = software_collection
 
-    def test_software_project_bitbucket_data(self):
-        root = get_root()
-        software_collection = SoftwareCollection()
-        root['software_collection'] = software_collection
+    software_project = SoftwareProject(
+            title="kotti_software Project",
+            date_handling_choice="use_bitbucket_date",
+            desc_handling_choice="use_bitbucket_description",
+            bitbucket_owner="pypy",
+            bitbucket_repo="pypy")
 
-        software_project = SoftwareProject(
-                title="kotti_software Project",
-                date_handling_choice="use_bitbucket_date",
-                desc_handling_choice="use_bitbucket_description",
-                bitbucket_owner="pypy",
-                bitbucket_repo="pypy")
+    software_collection['software_project'] = software_project
 
-        software_collection['software_project'] = software_project
+    assert len(software_collection.values()) == 1
 
-        assert len(software_collection.values()) == 1
+def test_software_project_pypi_overwriting(db_session):
+    root = get_root()
+    software_collection = SoftwareCollection()
+    root['software_collection'] = software_collection
 
-    def test_software_project_pypi_overwriting(self):
-        root = get_root()
-        software_collection = SoftwareCollection()
-        root['software_collection'] = software_collection
+    software_project = SoftwareProject(
+            pypi_url="http://pypi.python.org/pypi/Kotti/json",
+            overwrite_home_page_url=True,
+            overwrite_docs_url=True,
+            overwrite_package_url=True,
+            overwrite_bugtrack_url=True,
+            desc_handling_choice='use_pypi_summary')
 
-        software_project = SoftwareProject(
-                pypi_url="http://pypi.python.org/pypi/Kotti/json",
-                overwrite_home_page_url=True,
-                overwrite_docs_url=True,
-                overwrite_package_url=True,
-                overwrite_bugtrack_url=True,
-                desc_handling_choice='use_pypi_summary')
+    software_collection['software_project'] = software_project
 
-        software_collection['software_project'] = software_project
+    assert len(software_collection.values()) == 1
 
-        assert len(software_collection.values()) == 1
-
-        # desc_handling_choice is an either/or,
-        # so also check for description overwriting
-        software_project = SoftwareProject(
-                pypi_url="http://pypi.python.org/pypi/Kotti/json",
-                desc_handling_choice='use_pypi_description')
+    # desc_handling_choice is an either/or,
+    # so also check for description overwriting
+    software_project = SoftwareProject(
+            pypi_url="http://pypi.python.org/pypi/Kotti/json",
+            desc_handling_choice='use_pypi_description')
 
 
 class FunctionalTests(FunctionalTestBase):
