@@ -380,8 +380,8 @@ Edit the ordered software collection to reverse sorting
   >>> ctrl("Title").value = "I was descending, but now am ascending"
   >>> ctrl("Description").value = "I was ascending, but now am descending"
   >>> ctrl("Tags").value = "sorting order lists"
-  >>> ctrl("Ascending").selected = False
-  >>> ctrl("Descending").selected = True
+  >>> ctrl("Ascending").selected = True
+  >>> ctrl("Descending").selected = False
   >>> ctrl("save").click()
   >>> "I was ascending, but now am descending" in browser.contents
   True
