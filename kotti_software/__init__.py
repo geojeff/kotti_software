@@ -10,6 +10,7 @@ def kotti_configure(settings):
         ' kotti_software.resources.SoftwareCollection'
     settings['kotti.available_types'] += \
         ' kotti_software.resources.SoftwareProject'
+    settings['kotti.alembic_dirs'] += ' kotti_software:alembic'
 
 
 def check_true(value):
