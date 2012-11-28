@@ -8,16 +8,13 @@ def test_settings(db_session):
     settings = {
         'kotti.includes': '',
         'kotti.available_types': '',
+        'kotti.alembic_dirs': '',
         'pyramid.includes': '',
     }
 
-    from kotti import main
+    import kotti_software
 
-    settings = {'kotti.configurators': 'kotti_software.kotti_configure',
-                'sqlalchemy.url': testing_db_url(),
-                'kotti.secret': 'qwerty',
-                'kotti_software.collection_settings.pagesize': '10'}
-    main({}, **settings)
+    kotti_software.kotti_configure(settings)
 
     # make sure all the types are available
     assert settings['kotti.available_types'].find('kotti_software.resources.SoftwareCollection') > 0
