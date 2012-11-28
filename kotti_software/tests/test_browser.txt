@@ -386,8 +386,7 @@ Edit the ordered software collection to reverse sorting
   >>> "I was ascending, but now am descending" in browser.contents
   True
 
-# This returns True, correctly, but something with doctests fails here.
-#  >>> browser.open(testing.BASE_URL + '/ordered-github-software-collection/')
-#  >>> pos = browser.contents.index
-#  >>> pos("GitHub Kotti geojeff fork") > pos("GitHub kotti_software")
-#  True 
+  >>> browser.open(testing.BASE_URL + '/ordered-github-software-collection/')
+  >>> pos = browser.contents.index
+  >>> pos("GitHub Kotti geojeff fork") > pos("GitHub kotti_software")
+  True
