@@ -9,9 +9,10 @@ def test_settings(db_session):
         'pyramid.includes': '',
     }
 
-    import kotti_software
+    from kotti import main
 
-    kotti_software.kotti_configure(settings)
+    settings = {'kotti.configurators': 'kotti_software.kotti_configure'}
+    main({}, **settings)
 
     # make sure all the types are available
     assert settings['kotti.available_types'].find('kotti_software.resources.SoftwareCollection') > 0
