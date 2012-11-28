@@ -11,7 +11,10 @@ def test_settings(db_session):
 
     from kotti import main
 
-    settings = {'kotti.configurators': 'kotti_software.kotti_configure'}
+    settings = {'kotti.configurators': 'kotti_software.kotti_configure',
+                'sqlalchemy.url': testing_db_url(),
+                'kotti.secret': 'qwerty',
+                'kotti_software.collection_settings.pagesize': '10'}
     main({}, **settings)
 
     # make sure all the types are available
