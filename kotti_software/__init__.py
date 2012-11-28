@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from pyramid.i18n import TranslationStringFactory
 from kotti.util import extract_from_settings
 
