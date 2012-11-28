@@ -2,7 +2,7 @@
 
 from __future__ import absolute_import
 
-from kotti.static import view_needed
+from kotti.fanstatic import view_needed
 
 from fanstatic import Group
 from fanstatic import Library

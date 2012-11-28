@@ -19,7 +19,7 @@ from kotti.views.edit import DocumentSchema
 from kotti_software import collection_settings
 from kotti_software.resources import SoftwareCollection
 from kotti_software.resources import SoftwareProject
-from kotti_software.static import kotti_software_js
+from kotti_software.fanstatic import kotti_software_js
 from kotti_software import _
 
 from kotti.security import has_permission

@@ -13,8 +13,8 @@ from sqlalchemy import types
 
 from zope.interface import implements
 
-from kotti.resources import IDocument
-from kotti.resources import IDefaultWorkflow
+from kotti.interfaces import IDocument
+from kotti.interfaces import IDefaultWorkflow
 from kotti.resources import Document
 
 from kotti_software import _

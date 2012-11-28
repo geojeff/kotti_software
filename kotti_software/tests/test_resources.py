@@ -36,7 +36,7 @@ def test_software_project_only_pypi_url_provided(db_session):
     root['software_collection'] = software_collection
 
     software_project = SoftwareProject(
-        pypi_url="http://pypi.python.org/pypi/kotti_software/json")
+        pypi_url=u"http://pypi.python.org/pypi/kotti_software/json")
 
     software_collection['software_project'] = software_project
 
@@ -49,8 +49,8 @@ def test_software_project_only_github_owner_and_repo_provided(db_session):
     root['software_collection'] = software_collection
 
     software_project = SoftwareProject(
-        github_owner="geojeff",
-        github_repo="kotti_software")
+        github_owner=u"geojeff",
+        github_repo=u"kotti_software")
 
     software_collection['software_project'] = software_project
 
@@ -63,11 +63,11 @@ def test_software_project_github_data(db_session):
     root['software_collection'] = software_collection
 
     software_project = SoftwareProject(
-        title="kotti_software Project",
-        date_handling_choice="use_github_date",
-        desc_handling_choice="use_github_description",
-        github_owner="geojeff",
-        github_repo="kotti_software")
+        title=u"kotti_software Project",
+        date_handling_choice=u"use_github_date",
+        desc_handling_choice=u"use_github_description",
+        github_owner=u"geojeff",
+        github_repo=u"kotti_software")
 
     software_collection['software_project'] = software_project
 
@@ -80,8 +80,8 @@ def test_software_project_only_bitbucket_owner_and_repo_provided(db_session):
     root['software_collection'] = software_collection
 
     software_project = SoftwareProject(
-        bitbucket_owner="pypy",
-        bitbucket_repo="pypy")
+        bitbucket_owner=u"pypy",
+        bitbucket_repo=u"pypy")
 
     software_collection['software_project'] = software_project
 
@@ -94,11 +94,11 @@ def test_software_project_bitbucket_data(db_session):
     root['software_collection'] = software_collection
 
     software_project = SoftwareProject(
-        title="kotti_software Project",
-        date_handling_choice="use_bitbucket_date",
-        desc_handling_choice="use_bitbucket_description",
-        bitbucket_owner="pypy",
-        bitbucket_repo="pypy")
+        title=u"kotti_software Project",
+        date_handling_choice=u"use_bitbucket_date",
+        desc_handling_choice=u"use_bitbucket_description",
+        bitbucket_owner=u"pypy",
+        bitbucket_repo=u"pypy")
 
     software_collection['software_project'] = software_project
 
@@ -111,12 +111,12 @@ def test_software_project_pypi_overwriting(db_session):
     root['software_collection'] = software_collection
 
     software_project = SoftwareProject(
-        pypi_url="http://pypi.python.org/pypi/Kotti/json",
+        pypi_url=u"http://pypi.python.org/pypi/Kotti/json",
         overwrite_home_page_url=True,
         overwrite_docs_url=True,
         overwrite_package_url=True,
         overwrite_bugtrack_url=True,
-        desc_handling_choice='use_pypi_summary')
+        desc_handling_choice=u'use_pypi_summary')
 
     software_collection['software_project'] = software_project
 
@@ -125,19 +125,19 @@ def test_software_project_pypi_overwriting(db_session):
     # desc_handling_choice is an either/or,
     # so also check for description overwriting
     software_project = SoftwareProject(
-        pypi_url="http://pypi.python.org/pypi/Kotti/json",
-        desc_handling_choice='use_pypi_description')
+        pypi_url=u"http://pypi.python.org/pypi/Kotti/json",
+        desc_handling_choice=u'use_pypi_description')
 
 # Functional Tests
 
-def test_asset_overrides(db_session):
-    from kotti import main
-    settings = {'kotti.configurators': 'kotti_software.kotti_configure',
-                'sqlalchemy.url': testing_db_url(),
-                'kotti.secret': 'dude',
-                'kotti_software.collection_settings.pagesize': '10'}
-    settings['kotti_software.asset_overrides'] = 'kotti_software:hello_world/'
-    main({}, **settings)
+#def test_asset_overrides(db_session):
+#    from kotti import main
+#    settings = {'kotti.configurators': 'kotti_software.kotti_configure',
+#                'sqlalchemy.url': testing_db_url(),
+#                'kotti.secret': 'dude',
+#                'kotti_software.collection_settings.pagesize': '10'}
+#    settings['kotti_software.asset_overrides'] = 'kotti_software:hello_world/'
+#    main({}, **settings)
 
 
 def test_softwarecollection_default_settings(db_session):
