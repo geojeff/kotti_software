@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from kotti.testing import testing_db_url
+
 
 def test_settings(db_session):
 
